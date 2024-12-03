@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Oxford, UK",
+    "address": "testing 134, Phnom Penh",
+    "email": "info@rupp.edu.kh"
+  },
+  {
+    "id": "2",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Harvard, USA",
+    "address": "testing 123, Cambridge",
+    "email": "info@harvard.edu"
+  },
+  {
+    "id": "3",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Stanford, USA",
+    "address": "testing 456, Palo Alto",
+    "email": "info@stanford.edu"
+  },
+  {
+    "id": "4",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Yale, USA",
+    "address": "testing 789, New Haven",
+    "email": "info@yale.edu"
+  },
+  {
+    "id": "5",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Berkeley, USA",
+    "address": "testing 234, Berkeley",
+    "email": "info@berkeley.edu"
+  },
+  {
+    "id": "6",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Princeton, USA",
+    "address": "testing 567, Princeton",
+    "email": "info@princeton.edu"
+  },
+  {
+    "id": "7",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "MIT, USA",
+    "address": "testing 901, Cambridge",
+    "email": "info@mit.edu"
+  },
+  {
+    "id": "8",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Columbia, USA",
+    "address": "testing 345, New York",
+    "email": "info@columbia.edu"
+  },
+  {
+    "id": "9",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Harvard, UK",
+    "address": "testing 123, Cambridge",
+    "email": "info@harvard.edu"
+  },
+  {
+    "id": "10",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Stanford, USA",
+    "address": "testing 456, Palo Alto",
+    "email": "info@stanford.edu"
+  },
+  {
+    "id": "11",
+    "logo": "https://imageplaceholder.net/600",
+    "name": "Yale, USA",
+    "address": "testing 789, New Haven",
+    "email": "info@yale.edu"
+  }
+]
