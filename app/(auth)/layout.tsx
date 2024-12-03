@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-
-import StoreProvider from "@/app/StoreProvider";
-import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
-import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";
+import StoreProvider from "../StoreProvider";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -19,11 +16,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <header>
-            <NavbarComponent />
-          </header>
+          <header></header>
           <aside className="flex">
-            <SidebarComponent />
             <div className="flex h-screen bg-[#fdfdfd]">{children}</div>
           </aside>
         </StoreProvider>
