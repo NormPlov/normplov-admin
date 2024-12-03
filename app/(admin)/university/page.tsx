@@ -55,7 +55,7 @@ const University = () => {
   };
 
   return (
-    <div>
+    <main>
       <div className="flex items-center justify-between">
         {/* Title */}
         <h1 className="text-secondary text-2xl font-bold">All Universities</h1>
@@ -164,7 +164,7 @@ const University = () => {
           </PaginationContent>
         </Pagination>
       </div>
-    </div>
+    </main>
   );
 };
 

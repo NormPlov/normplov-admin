@@ -42,7 +42,6 @@ const users = [
     email: "jane@microsoft.com",
     status: "Active",
   },
-
 ];
 
 export function UserTable() {
@@ -62,8 +61,8 @@ export function UserTable() {
   });
 
   return (
-    <div className="h-screen w-[1260px] p-6 text-textprimary rounded-md">
-      <div className="space-y-5 h-full bg-white rounded-md p-6 overflow-auto">
+    <div className="h-screen w-screen p-6 text-textprimary rounded-md">
+      <div className="space-y-5 w-10/12 h-full bg-white rounded-md p-6 overflow-auto">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-secondary">All Users</h2>
           <div className="flex items-center gap-4">
@@ -117,7 +116,9 @@ export function UserTable() {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={user.status === "Active" ? "default" : "secondary"}
+                      variant={
+                        user.status === "Active" ? "default" : "secondary"
+                      }
                       className={
                         user.status === "Active"
                           ? "bg-emerald-500"
@@ -192,6 +193,6 @@ export function UserTable() {
           </Button>
         </div>
       </div>
-     </div>
+    </div>
   );
 }
