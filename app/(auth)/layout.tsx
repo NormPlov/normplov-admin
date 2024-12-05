@@ -1,21 +1,6 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import { NavbarComponent } from "./Components/layout/navbar/NavbarComponent";
-import { SidebarComponent } from "./Components/layout/sidebar/SidebarComponent";
-import StoreProvider from "./StoreProvider";
 import "./globals.css";
-
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import StoreProvider from "../StoreProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,18 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      > 
-           <StoreProvider>
-          <header>
-            <NavbarComponent />
-          </header>
+      <body>
+        <StoreProvider>
+          <header></header>
           <aside className="flex">
-            <SidebarComponent />
-            <div className="flex h-screen bg-[#fdfdfd]">
-              {children}
-              </div>
+            <div className="flex h-screen bg-[#fdfdfd]">{children}</div>
           </aside>
         </StoreProvider>
       </body>

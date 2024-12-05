@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-
-// import { SidebarComponent } from "@/app/Components/layout/sidebar/SidebarComponent";
-// import { NavbarComponent } from "@/app/Components/layout/navbar/NavbarComponent";
 import StoreProvider from "@/app/StoreProvider";
+import "@/app/globals.css";
+import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
+import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,11 +18,15 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <header>{/* <NavbarComponent /> */}</header>
-          <aside className="flex">
-            {/* <SidebarComponent /> */}
-            <div className="flex h-screen bg-[#fdfdfd]">{children}</div>
-          </aside>
+          <header>
+            <NavbarComponent />
+          </header>
+          <main className="flex">
+            <aside>
+              <SidebarComponent />
+            </aside>
+            <div className="bg-[#fdfdfd] w-full">{children}</div>
+          </main>
         </StoreProvider>
       </body>
     </html>
