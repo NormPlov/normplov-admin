@@ -1,111 +1,67 @@
-"use client";
-
-import * as React from "react";
-import { PiSignOutBold } from "react-icons/pi";
-import { items } from "./menu"; 
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { HiMiniBars3CenterLeft } from "react-icons/hi2";
+"use client"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
+  SidebarGroup,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar"
+import {
+  SidebarInset,
   SidebarProvider,
-} from "@/components/ui/sidebar";
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
+import { items } from "./menu"
+import Image from "next/image"
+
 
 export function SidebarComponent() {
-  const [collapsed, setCollapsed] = React.useState(false);
-
-  const toggleSidebar = () => setCollapsed((prev) => !prev);
-
   return (
-    <SidebarProvider> 
-     <div
-        className={`flex min-h-screen transition-all duration-300 ${collapsed ? "bg-[#fdfdfd]" : "bg-white"}`}
-      >
-        {/* Sidebar */}
-        <Sidebar
-          className={`transition-all duration-300 bg-white ${collapsed ? "w-[85px]" : "w-[240px]"} `}
-        >
-          {/* Sidebar Header */}
-          <SidebarHeader className=" flex justify-between items-center py-4 px-4 ">
-            <div
-              className={`flex items-center transition-all duration-300 ${collapsed ? "justify-center w-full gap-2" : "justify-between w-full gap-4"}`}
-            >
-              {/* Logo */}
-              <Image
-                width={1000}
-                height={1000}
-                src="/"
-                alt="Logo"
-                className="h-12 w-12 rounded-full bg-primary"
-              />
-              {/* Collapse Button */}
-              {!collapsed && (
-                <span className="font-semibold text-textprimary transition-all duration-300">
-                 {/* for space */}
-                </span>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={toggleSidebar}
+    <SidebarProvider className="text-textprimary ">
+     
+      <Sidebar collapsible="icon" className="list-none">
+      
+        <SidebarGroup>
+          <Image width={1000} height={1000} src={``} alt=""
+            className="w-8 h-8 my-4  rounded-full object-cover bg-primary" />
+          <SidebarContent>
+            {items.map((item, index) => (
+              <SidebarMenuItem
+                key={index}
+                className={`py-1.5 hover:bg-[#def1ec] rounded-md ${item.title === "Sign out" ? "text-red-500 hover:bg-red-100" : ""
+                  }`}
               >
-                <HiMiniBars3CenterLeft className="h-8 w-8 text-textprimary" />
-              </Button>
-            </div>
-
-          </SidebarHeader>
-
-          {/* Sidebar Content */}
-          <SidebarContent className="flex-1 p-2 overflow-auto">
-            <SidebarMenu>
-              {items.map((item, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton
-                    className={`flex items-center gap-x-4 gap-y-6 ${collapsed ? "justify-center px-2 py-3.5" : "px-4 py-3.5"
-                      } hover:bg-[#DEF1EC] rounded-md`}
-                  >
-                    <Link
-                      href={item.path}
-                      className={`flex items-center ${collapsed ? "justify-center" : "gap-4 py-3.5"
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icons && (
+                    <item.icons
+                      className={`w-12 h-12 ${item.title === "Sign out" ? "text-red-500" : ""
                         }`}
-                    >
-                      <item.icons
-                        className="h-6 w-6 text-textprimary"
-                        aria-hidden="true"
-                      />
-                      {!collapsed && (
-                        <span className="text-textprimary text-md">
-                          {item.title}
-                        </span>
-                      )}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+                    />
+                  )}
+                  <span
+                    className={`text-[16px] ${item.title === "Sign out" ? "text-red-500" : ""
+                      }`}
+                  >
+                    {item.title}
+                  </span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
           </SidebarContent>
 
-          {/* Sidebar Footer */}
-          <SidebarFooter className="py-2">
-            <Button
-              variant="ghost"
-              className={`flex justify-start items-center gap-2 w-full text-md mb-12 ${collapsed ? "justify-center px-2" : "px-4"
-                } text-red-500 hover:bg-red-50 hover:text-red-500`}
-            >
-              <PiSignOutBold className="h-6 w-6 " aria-hidden="true" />
-              {!collapsed && <span>Sign out</span>}
-            </Button>
-          </SidebarFooter>
+          <SidebarRail />
+        </SidebarGroup> 
         </Sidebar>
-      </div>
+        <SidebarInset>
+        <header className="flex h-8 shrink-0 items-center transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-8">
+          <div className="flex items-center  rounded-md">
+            <SidebarTrigger className="" />
+          </div>
+        </header>
+      </SidebarInset>
+     
+      
     </SidebarProvider>
-  );
+  )
 }

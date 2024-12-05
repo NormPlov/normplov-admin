@@ -1,12 +1,11 @@
 import React from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Users, MessageCircle, LogOut, Activity } from 'lucide-react'
-import { UserTable } from '@/app/Components/table/TableComponent'
+import { Separator } from '@radix-ui/react-separator'
 
-const page = () => {
+const CardComponent = () => {
   return (
-    <div>
-       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 ">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 ">
       <Card>
         <CardContent className="flex items-center gap-4 p-6">
           <div className="rounded-full bg-emerald-50 p-3">
@@ -16,6 +15,7 @@ const page = () => {
             <p className="text-sm font-medium text-muted-foreground">Total User</p>
             <p className="text-2xl font-bold">5,423</p>
           </div>
+          <Separator orientation="vertical" className="mr-2 h-4" />
         </CardContent>
       </Card>
       <Card>
@@ -51,10 +51,8 @@ const page = () => {
           </div>
         </CardContent>
       </Card>
-      <UserTable/>
-    </div>
     </div>
   )
 }
 
-export default page
+export default CardComponent
