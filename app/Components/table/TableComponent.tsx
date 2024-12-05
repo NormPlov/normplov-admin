@@ -11,8 +11,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -62,8 +60,8 @@ export function UserTable() {
   });
 
   return (
-    <div className="h-screen w-[1260px] p-6 text-textprimary rounded-md">
-      <div className="space-y-5 h-full bg-white rounded-md p-6 overflow-auto">
+    <div className="h-screen  p-6 text-textprimary rounded-md">
+      <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-secondary">All Users</h2>
           <div className="flex items-center gap-4">
@@ -135,8 +133,6 @@ export function UserTable() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuItem>Edit user</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600">

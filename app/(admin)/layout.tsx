@@ -19,13 +19,15 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <header>
-            <NavbarComponent />
-          </header>
-          <aside className="flex">
+          <main className="flex">
+          <aside>
             <SidebarComponent />
-            <div className="flex h-screen bg-[#fdfdfd]">{children}</div>
-          </aside>
+            </aside>
+            <div className="w-full bg-[#fdfdfd]">
+              <NavbarComponent />
+              {children}
+              </div>
+          </main>
         </StoreProvider>
       </body>
     </html>
