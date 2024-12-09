@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import StoreProvider from "../StoreProvider";
+
+import StoreProvider from "@/app/StoreProvider";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -16,10 +17,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <header></header>
-          <aside className="flex">
-            <div className="flex h-screen bg-[#fdfdfd]">{children}</div>
-          </aside>
+          <main className="bg-[fdfdf]">
+              {children}
+          </main>
         </StoreProvider>
       </body>
     </html>

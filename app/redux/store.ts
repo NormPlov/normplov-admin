@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
-import {  normplovapi } from './api'
+import {  normPlovApi } from './api'
 import authSlice from './features/auth/authSlice'
 // create store
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      [normplovapi.reducerPath]: normplovapi.reducer,
+      [normPlovApi.reducerPath]: normPlovApi.reducer,
         auth:authSlice
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(normplovapi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(normPlovApi.middleware),
   })
 }
 

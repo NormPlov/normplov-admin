@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function POST() {
 	// Get the refresh token from the client-side cookies
 	const cookieStore = cookies();
-	const cookieName = process.env.COOKIE_REFRESH_TOKEN_NAME || "refresh";
+	const cookieName = process.env.COOKIE_REFRESH_TOKEN || "refresh";
 	const credential = cookieStore.get(cookieName); 
 
 	console.log("Credential", credential);
@@ -31,7 +31,7 @@ export async function POST() {
 		{
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ refresh: refreshToken }),
+			body: JSON.stringify({ refresh_token: refreshToken }),
 		}
 	);
 
@@ -49,8 +49,8 @@ export async function POST() {
 
 	// Parse the response body to get the data
 	const data = await response.json();
-	const refresh = data?.refresh || null;
-	const access = data?.access || null;
+	const refresh = data?.payload?.refresh_token || null;
+	const access = data?.payload?.access_token || null;
 
 	// Serialize the refresh token and set it as a cookie with
 	// (httpOnly, secure, path, and sameSite options) in the response headers to the client-side
