@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { items } from "./menu"
 import Image from "next/image"
+import Link from "next/link"
 
 
 export function SidebarComponent() {
@@ -27,8 +28,9 @@ export function SidebarComponent() {
             className="w-8 h-8 my-4  rounded-full object-cover bg-primary" />
           <SidebarContent>
             {items.map((item, index) => (
-              <SidebarMenuItem
-                key={index}
+             <Link key={index} href={item.path}>
+              <SidebarMenuItem 
+               
                 className={`py-1.5 hover:bg-[#def1ec] rounded-md ${item.title === "Sign out" ? "text-red-500 hover:bg-red-100" : ""
                   }`}
               >
@@ -47,6 +49,7 @@ export function SidebarComponent() {
                   </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+             </Link>
             ))}
           </SidebarContent>
 
