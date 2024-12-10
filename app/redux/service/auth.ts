@@ -1,14 +1,11 @@
-import { normplovapi } from "../api";
+import { normPlovApi } from "../api";
+import { LoginType } from "@/types/types";
 
-type auth = {
-    email:string,
-    password:string
-}
 
-export const authApi = normplovapi.injectEndpoints({
+export const authApi = normPlovApi.injectEndpoints({
     endpoints: (builder) => ({
-        login: builder.mutation<any, auth>({
-            query: ({ email, password }:auth) => ({
+        login: builder.mutation<LoginType, LoginType>({
+            query: ({ email, password }:LoginType) => ({
                 url:`auth/login`,
                 method: "POST",
                 body: JSON.stringify({email, password}),

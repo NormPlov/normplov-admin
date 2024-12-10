@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+
 import StoreProvider from "@/app/StoreProvider";
-import "@/app/globals.css";
 import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
 import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title: "Norm Plov Admin Dashboard",
@@ -18,14 +19,14 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <header>
-            <NavbarComponent />
-          </header>
           <main className="flex">
             <aside>
               <SidebarComponent />
             </aside>
-            <div className="bg-[#fdfdfd] w-full">{children}</div>
+            <div className="w-full bg-[#fdfdfd]">
+              <NavbarComponent />
+              {children}
+            </div>
           </main>
         </StoreProvider>
       </body>

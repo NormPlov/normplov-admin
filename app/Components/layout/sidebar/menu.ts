@@ -3,7 +3,7 @@ import { LuUser2 } from "react-icons/lu";
 import { MdOutlineFeedback } from "react-icons/md";
 import { MdHistory } from "react-icons/md";
 import { MdOutlineWorkOutline } from "react-icons/md";
-import { PiGraduationCap } from "react-icons/pi";
+import { PiGraduationCap, PiSignOutBold } from "react-icons/pi";
 import { SiScrapy } from "react-icons/si";
 import { IoSettingsOutline } from "react-icons/io5";
 
@@ -47,5 +47,11 @@ export const items = [
         icons: IoSettingsOutline,
         title: "Setting",
         path: "/setting"
+    },
+    {
+        icons: PiSignOutBold,
+        title: "Sign out",
+        path: "/signout",
     }
+    
 ]
