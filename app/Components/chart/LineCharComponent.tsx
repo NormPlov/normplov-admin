@@ -56,7 +56,7 @@ export default function UserSatisfactionChart() {
           User Satisfactions
         </CardTitle>
       </CardHeader>
-      <LineChart width={550} height={280} data={data}
+      <LineChart width={550} height={270} data={data}
         margin={{ top: 6, right: 20, left: 8, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3"  className="text-gray-300"/>
         <XAxis dataKey="name" />

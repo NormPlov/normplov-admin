@@ -36,7 +36,7 @@ export const items = [
     {
         icons: PiGraduationCap,
         title: "Majors & universities",
-        path: "/majors-universities"
+        path: "/universities"
     },
     {
         icons: SiScrapy,
