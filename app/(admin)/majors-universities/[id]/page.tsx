@@ -1,7 +1,9 @@
 "use client";
+
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import React from "react";
-import RUPP from "@/public/rupp.jpg";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
   FaEnvelope,
   FaGlobe,
@@ -13,16 +15,12 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import MajorCard from "@/app/Components/cards/MajorCard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,15 +28,21 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
+  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
+import MajorCard from "@/app/Components/cards/MajorCard";
+import { UniversityType } from "@/types/types";
+import { useUniversityDetailsQuery } from "@/app/redux/service/university";
 
-const Datail = () => {
-  const [faculty, setFaculty] = React.useState<string[]>([]);
-  const [newFaculty, setNewFaculty] = React.useState("");
-  const [selectedFaculty, setSelectedFaculty] = React.useState("");
+const UniversityPage = () => {
+  const [university, setUniversity] = useState<UniversityType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [faculty, setFaculty] = useState<string[]>([]);
+  const [newFaculty, setNewFaculty] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+  // const [uuid] = useUniversityDetailsQuery;
 
   const handleAddFaculty = () => {
     if (newFaculty && !faculty.includes(newFaculty)) {
@@ -48,40 +52,64 @@ const Datail = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        {error}
+      </div>
+    );
+  }
+
+  if (!university) {
+    return notFound();
+  }
+
   return (
     <div className="m-6">
       <div className="p-4 flex gap-8 items-center border border-gray-200 rounded-md">
-        <Image src={RUPP} alt="logo" className="rounded-full w-72" />
+        <Image
+          src={university.logo_url || "/placeholder.svg?height=288&width=288"}
+          alt={`${university.en_name} logo`}
+          width={288}
+          height={288}
+          className="rounded-full w-72"
+        />
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-textprimary">
-            សកលវិទ្យាល័យភូមិន្ទភ្នំពេញ
+            {university.kh_name}
           </h1>
           <div className="text-textprimary flex flex-col gap-3">
-            <p className="text-gray-400 text-2xl">
-              Royal University of Phnom Penh
-            </p>
+            <p className="text-gray-400 text-2xl">{university.en_name}</p>
             <p className="flex items-center gap-2">
-              <FaPhone /> 012 345 678
+              <FaPhone /> {university.phone}
             </p>
             <Link
-              href={"mailto:info@example.com"}
+              href={`mailto:${university.email}`}
               className="flex items-center gap-2"
             >
-              <FaEnvelope /> info@example.com
+              <FaEnvelope /> {university.email}
             </Link>
-            <Link href={"www.example.com"} className="flex items-center gap-2">
-              <FaGlobe /> www.example.com
+            <Link
+              href={`university.website`}
+              className="flex items-center gap-2"
+            >
+              <FaGlobe /> {university.website}
             </Link>
             <p className="flex items-center gap-2">
-              <FaMapMarkerAlt /> Phnom Penh, Cambodia
+              <FaMapMarkerAlt /> {university.location}
             </p>
             <p className="flex items-center gap-2">
               <FaMapMarkedAlt />{" "}
-              <Link
-                href={"https://maps.app.goo.gl/tgLR9h6p7pR6W3XV7"}
-                className="text-primary"
-              >
-                https://maps.app.goo.gl/tgLR9h6p7pR6W3XV7
+              <Link href={`university.map_url`} className="text-primary">
+                {university.map_url}
               </Link>
             </p>
           </div>
@@ -89,51 +117,16 @@ const Datail = () => {
       </div>
       <div>
         <h1 className="text-2xl text-textprimary font-bold py-4">Summary</h1>
-        <p className="text-justify	">
-          The Royal University of Phnom Penh (RUPP), founded in 1960, has
-          undergone a series of transformations to become the leading national
-          university in Cambodia. Other transformations are still happening. In
-          the last five years, for example, Rupp has made considerable
-          progresses in many areas including organizational structure,
-          institutional governance, capacity building, infrastructure
-          development, research, teaching and learning, curriculum development,
-          and quality assurance. These achievements have encouraged RUPP
-          management and faculty to strive harder to implement the institutional
-          reform and achieve development goals. Looking towards the future, Rupp
-          will grasp opportunities and assume a key role in driving Cambodia’s
-          socio-economic development through the creation of human capital and
-          the provision of quality research, training and community service.
-          Rupp aspires to contribute to the achievement of the 2030 and 2050
-          national development goals of the Royal Government of Cambodia as well
-          as the higher education vision of the Ministry of Education, Youth,
-          and Sport. Against this backdrop, this Strategic Plan 2019-2023 has
-          been developed to guide Rupp in realizing its development vision and
-          goals for the next five years. It will serve as a roadmap for the
-          university to orient its focus and for its sub-units to devise their
-          own action plans accordingly. The strategic plan will move Rupp closer
-          to assuming its place among other national universities in the ASEAN
-          region as a center for intellectual and cultural development.
-        </p>
+        <p className="text-justify">{university.summary}</p>
       </div>
-      <div className=" gap-8">
+      <div className="gap-8">
         <div>
           <h1 className="text-2xl text-textprimary font-bold py-4">Vision</h1>
-          <p className="text-justify	">
-            To be Cambodia’s flagship university with regional standing in
-            teaching and learning, research and innovation, and social
-            engagement.
-          </p>
+          <p className="text-justify">{university.vision}</p>
         </div>
         <div>
           <h1 className="text-2xl text-textprimary font-bold py-4">Mission</h1>
-          <p className="text-justify	">
-            To contribute to national, regional, and global sustainable
-            development and the preservation of national cultural and natural
-            heritage by equipping our students with the essential knowledge,
-            skills, values, and attitudes required by the information- and
-            knowledge-based society; providing high quality research and
-            innovation; and being actively engaged with society.
-          </p>
+          <p className="text-justify">{university.mission}</p>
         </div>
       </div>
 
@@ -160,7 +153,7 @@ const Datail = () => {
                 </Label>
                 <Input
                   id="name"
-                  value="Royal University of Phnom Penh"
+                  defaultValue={university.en_name}
                   className="col-span-3"
                 />
               </div>
@@ -177,7 +170,6 @@ const Datail = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {/* <SelectLabel>Faculties</SelectLabel> */}
                       {faculty.map((fac) => (
                         <SelectItem key={fac} value={fac}>
                           {fac}
@@ -216,4 +208,4 @@ const Datail = () => {
   );
 };
 
-export default Datail;
+export default UniversityPage;

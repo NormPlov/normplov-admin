@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -28,43 +28,41 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableRowActions } from "@/components/ui/actionbutton";
-import universityData from "@/lib/university.json";
-// import { UniversityType } from "../types/university";
-
-type UniversityType = {
-  logo: string;
-  name: string;
-  address: string;
-  email: string;
-};
+import { useUniversityQuery } from "../redux/service/university";
+import { SchoolsType, UniversitiesResponse } from "@/types/types";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export function UniversityListing() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [schoolType, setSchoolType] = useState<string | undefined>();
+  const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
 
-  // Filter and sort the data
-  const filteredData = universityData.filter((university: UniversityType) =>
-    university.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const { data, isLoading, isError, refetch } = useUniversityQuery({
+    page: currentPage,
+    size: pageSize,
+  });
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const currentItems = filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  useEffect(() => {
+    refetch();
+  }, [currentPage, pageSize, refetch]);
+
+  const totalItems = data?.payload?.metadata?.total_items || 0;
+  const totalPages = Math.ceil(totalItems / pageSize);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
-  const handleItemsPerPageChange = (value: string) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1); // Reset to first page when changing items per page
+  const handlePageSizeChange = (value: string) => {
+    const newSize = Number(value);
+    setPageSize(newSize);
+    setCurrentPage(1); // Reset to the first page when changing page size
+    refetch();
   };
+
+  const universities = data?.payload?.schools || [];
 
   return (
     <main className="p-4">
@@ -73,14 +71,9 @@ export function UniversityListing() {
         <div className="flex items-center space-x-4">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search"
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <Input placeholder="Search" className="pl-8" />
           </div>
-          <Select value={schoolType} onValueChange={setSchoolType}>
+          <Select>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select School" />
             </SelectTrigger>
@@ -110,20 +103,24 @@ export function UniversityListing() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentItems.map((university: UniversityType, index: number) => (
-            <TableRow key={index}>
+          {universities.map((school: SchoolsType) => (
+            <TableRow key={school.id}>
               <TableCell>
                 <img
-                  src={university.logo}
-                  alt={`${university.name} Logo`}
+                  src={school.logo_url || "/placeholder.svg?height=40&width=40"}
+                  alt={`${school.en_name || "University"} Logo`}
                   className="w-10 h-10 object-cover rounded-md"
                 />
               </TableCell>
-              <TableCell className="font-medium">{university.name}</TableCell>
-              <TableCell>{university.address}</TableCell>
-              <TableCell className="text-right">{university.email}</TableCell>
+              <TableCell className="font-medium">
+                {school.en_name || "N/A"}
+              </TableCell>
+              <TableCell>{school.location || "N/A"}</TableCell>
+              <TableCell className="text-right">
+                {school.email || "N/A"}
+              </TableCell>
               <TableCell className="text-center">
-                <DataTableRowActions row={university} />
+                <DataTableRowActions row={school as UniversityType} />
               </TableCell>
             </TableRow>
           ))}
@@ -131,31 +128,25 @@ export function UniversityListing() {
       </Table>
 
       <div className="flex items-center justify-end mt-4">
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
-          <Select
-            value={`${itemsPerPage}`}
-            onValueChange={handleItemsPerPageChange}
-          >
+          <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={itemsPerPage} />
+              <SelectValue placeholder={`${pageSize}`} />
             </SelectTrigger>
             <SelectContent side="top">
-              {ITEMS_PER_PAGE_OPTIONS.map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
+              {ITEMS_PER_PAGE_OPTIONS.map((size) => (
+                <SelectItem key={size} value={`${size}`}>
+                  {size}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
+        </div> */}
+        <div className="flex items-center space-x-2">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page {currentPage} of {totalPages}
           </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
