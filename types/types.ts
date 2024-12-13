@@ -143,18 +143,18 @@ export type Feedback = {
 }
 
 
-export interface FeedbackResponse {
-        payload: [Feedback[],
-                {
-                        page: number;
-                        page_size: number;
-                        total_items: number;
-                        total_pages: number;
-                }];
-        date: string;
-        status: number;
-        message: string;
-}
+// export interface FeedbackResponse {
+//         payload: {Feedback[],
+//                 {
+//                         page: number;
+//                         page_size: number;
+//                         total_items: number;
+//                         total_pages: number;
+//                 }};
+//         date: string;
+//         status: number;
+//         message: string;
+// }
 
 
 // change password

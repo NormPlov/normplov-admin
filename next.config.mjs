@@ -4,6 +4,7 @@ const nextConfig = {
     images: {
         domains: [
             "136.228.158.126",
+            "normplov-api.shinoshike.studio"
         ],
     }
 
