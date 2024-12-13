@@ -91,11 +91,11 @@ export function UserTable() {
   };
 
   return (
-    <main className="h-screen p-6 text-textprimary rounded-md">
+    <div className="h-screen p-6 text-textprimary rounded-md">
       <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-normal text-secondary">All Users</h2>
+          <div className="text-3xl font-normal text-secondary">All Users</div>
           <div className="flex items-center gap-4">
             <div className="relative">
               <IoIosSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-800 rounded-md" />
@@ -246,7 +246,7 @@ export function UserTable() {
           onClose={() => setIsModalOpen(false)} // Close the modal
         />
       )}
-    </main>
+    </div>
   );
 }
 
