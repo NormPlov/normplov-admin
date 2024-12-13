@@ -131,7 +131,7 @@ export function TableUserFeedback() {
                       </TableCell>
                     <TableCell className="line-camp-2">{feedback.feedback}</TableCell>
                     <TableCell>{feedback.created_at}</TableCell>
-                    <TableCell className="flex justify-center items-center mt-1.5">
+                    <TableCell className="flex justify-center items-center ">
                       {feedback.is_promoted ? (
                         <span className="px-4 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
                           Yes

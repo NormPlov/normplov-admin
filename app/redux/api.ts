@@ -65,7 +65,8 @@ return result;
 
 // Create the API service with Redux Toolkit's `createApi`
 export const normPlovApi = createApi({
-  reducerPath: "normPlovApi",
-  baseQuery: baseQueryWithReAuth, // Use the custom base query with re-authentication logic
-  endpoints: () => ({}),
+	tagTypes:["userProfile"],
+	reducerPath: "normPlovApi",
+	baseQuery: baseQueryWithReAuth, // Use the custom base query with re-authentication logic
+	endpoints: () => ({}),
 });

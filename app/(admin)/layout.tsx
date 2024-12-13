@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <main className="flex">
+          <div className="flex">
           <aside>
             <SidebarComponent />
             </aside>
@@ -27,7 +27,7 @@ export default function RootLayout({
               <NavbarComponent />
               {children}
               </div>
-          </main>
+          </div>
         </StoreProvider>
       </body>
     </html>

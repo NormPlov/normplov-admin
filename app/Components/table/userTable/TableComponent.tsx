@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-import { HiOutlineLockOpen, HiOutlineLockClosed, HiOutlineTrash } from "react-icons/hi";
+import { HiOutlineLockOpen, HiOutlineLockClosed} from "react-icons/hi";
+import { FaEye } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,17 +12,34 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useGetAllUserQuery, useBlockUserMutation } from "@/app/redux/service/user";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useGetAllUserQuery, useBlockUserMutation, useUnBlockUserMutation } from "@/app/redux/service/user";
+import { ToastContainer, ToastOptions, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ProfileModal from "../../popup/PopupViewProfile";
+import { User } from "@/types/types";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export function UserTable() {
+  const [Unblock] = useUnBlockUserMutation();
   const [blockUser] = useBlockUserMutation();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Store the selected user data
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
+
+  // Toastify Config
+  const toastConfig: ToastOptions = {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
 
   // Fetch data
   const { data, isLoading } = useGetAllUserQuery({
@@ -45,25 +63,36 @@ export function UserTable() {
       return matchesSearch && matchesFilter;
     }) || [];
 
-  const handleBlockClick = (username: string, uuid: string) => {
-    blockUser(uuid);
-    alert(`User "${username}" has been blocked.`);
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
+  const handleBlockClick = (uuid: string, is_blocked: boolean) => {
+    if (is_blocked) {
+      toast.success("Unblock user successfully", toastConfig);
+      Unblock(uuid);
+    } else {
+      toast.success("Block user successfully", toastConfig);
+      blockUser(uuid);
     }
   };
+
+  // const handlePageChange = (page: number) => {
+  //   if (page > 0 && page <= totalPages) {
+  //     setCurrentPage(page);
+  //   }
+  // };
 
   const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(Number(value));
     setCurrentPage(1); // Reset to the first page when changing items per page
   };
+  
+// handle view profile
+  const handleViewProfileClick = (user:User) => {
+    setSelectedUser(user);
+    setIsModalOpen(true); // Open the modal
+  };
 
   return (
     <main className="h-screen p-6 text-textprimary rounded-md">
-      <section className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
+      <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-normal text-secondary">All Users</h2>
@@ -90,7 +119,8 @@ export function UserTable() {
         </div>
 
         {/* Table */}
-        <section className="rounded-md border border-gray-200">
+        <div className="rounded-md border border-gray-200">
+          <ToastContainer />
           <Table>
             <TableHeader>
               <TableRow>
@@ -149,50 +179,32 @@ export function UserTable() {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              
-                            >
-                              {user.is_active ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" onClick={() => handleViewProfileClick(user)}>
                                 <FaEye className="text-textprimary" />
-                              ) : (
-                                <FaEyeSlash className="text-textprimary" />
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {user.is_active ? "Block User" : "Unblock User"}
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              onClick={() => handleBlockClick(user.username, user.uuid)}
-                            >
-                              {user.is_active ? (
-                                <HiOutlineLockOpen className="text-red-500" />
-                              ) : (
-                                <HiOutlineLockClosed className="text-green-500" />
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {user.is_active ? "Block User" : "Unblock User"}
-                          </TooltipContent>
-                        </Tooltip>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>View Profile</TooltipContent>
+                          </Tooltip>
 
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost">
-                              <HiOutlineTrash className="text-red-500" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Delete User</TooltipContent>
-                        </Tooltip>
-
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                onClick={() => handleBlockClick(user.uuid, user.is_blocked)}
+                              >
+                                {user.is_active ? (
+                                  <HiOutlineLockOpen className="text-red-500" />
+                                ) : (
+                                  <HiOutlineLockClosed className="text-green-500" />
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {user.is_blocked ? "Unblock User" : "Block User"}
+                            </TooltipContent>
+                          </Tooltip>
                         </TooltipProvider>
                       </div>
                     </TableCell>
@@ -201,12 +213,12 @@ export function UserTable() {
               )}
             </TableBody>
           </Table>
-        </section>
+        </div>
 
         {/* Pagination */}
-        <section className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-between mt-4">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
+            <div className="text-sm font-medium">Rows per page</div>
             <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
               <SelectTrigger className="h-8 w-[70px]">
                 <SelectValue placeholder={itemsPerPage} />
@@ -223,38 +235,18 @@ export function UserTable() {
           <div className="text-sm font-medium">
             Page {currentPage} of {totalPages}
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-            >
-              &lt;&lt;
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              &lt;
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              &gt;
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              &gt;&gt;
-            </Button>
-          </div>
-        </section>
-      </section>
+        </div>
+      </div>
+
+      {/* Profile Modal */}
+      {selectedUser && (
+        <ProfileModal
+          user={selectedUser}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)} // Close the modal
+        />
+      )}
     </main>
   );
 }
+
