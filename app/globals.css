@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: Inter, Suwannaphum, sans-serif;
+  font-family: var(--font-inter), var(--font-suwannaphum) !important;
 }
 
 @layer base {
@@ -28,4 +28,3 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
-
