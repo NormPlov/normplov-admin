@@ -31,15 +31,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${suwannaphum.variable} ${inter.variable}`}>
         <StoreProvider>
-          <main className="flex">
-            <aside>
-              <SidebarComponent />
+          <div className="flex">
+          <aside>
+            <SidebarComponent />
             </aside>
             <div className="w-full bg-[#fdfdfd]">
               <NavbarComponent />
               {children}
-            </div>
-          </main>
+              </div>
+          </div>
         </StoreProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import {  CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const data = [
@@ -50,13 +50,13 @@ const data = [
 
 export default function UserSatisfactionChart() {
   return (
-    <Card className="w-full mx-auto w-[570px] rounded-xl ">
+    <div className="w-full mx-auto w-[570px] rounded-xl ">
       <CardHeader>
         <CardTitle className="text-2xl font-normal text-primary">
           User Satisfactions
         </CardTitle>
       </CardHeader>
-      <LineChart width={550} height={280} data={data}
+      <LineChart width={550} height={270} data={data}
         margin={{ top: 6, right: 20, left: 8, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3"  className="text-gray-300"/>
         <XAxis dataKey="name" />
@@ -66,7 +66,7 @@ export default function UserSatisfactionChart() {
         <Line type="monotone" dataKey="Last Month" stroke="#0BBB8A" />
         <Line type="monotone" dataKey="This Month" stroke="#FFA500" />
       </LineChart>
-    </Card>
+    </div>
 
   )
 }

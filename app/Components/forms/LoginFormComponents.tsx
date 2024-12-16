@@ -52,7 +52,7 @@ export default function Login() {
         toast.info("Login Processing!", toastConfig);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_NORMPLOV}/api/login`, {
+            const res = await fetch(`/api/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

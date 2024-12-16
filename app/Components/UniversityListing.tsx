@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
+  // ChevronLeft,
+  // ChevronRight,
+  // ChevronsLeft,
+  // ChevronsRight,
 } from "lucide-react";
 import { FaPlus } from "react-icons/fa";
 import {
@@ -29,15 +29,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableRowActions } from "@/components/ui/actionbutton";
 import { useUniversityQuery } from "../redux/service/university";
-import { SchoolsType, UniversitiesResponse } from "@/types/types";
+import { SchoolsType, UniversityType } from "@/types/types";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export function UniversityListing() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+  const [currentPage] = useState(1);
+  const [pageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
 
-  const { data, isLoading, isError, refetch } = useUniversityQuery({
+  const { data, refetch } = useUniversityQuery({
     page: currentPage,
     size: pageSize,
   });
@@ -46,26 +47,26 @@ export function UniversityListing() {
     refetch();
   }, [currentPage, pageSize, refetch]);
 
-  const totalItems = data?.payload?.metadata?.total_items || 0;
-  const totalPages = Math.ceil(totalItems / pageSize);
+  // const totalItems = data?.payload?.metadata?.total_items || 0;
+  // const totalPages = Math.ceil(totalItems / pageSize);
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  // const handlePageChange = (page: number) => {
+  //   if (page >= 1 && page <= totalPages) {
+  //     setCurrentPage(page);
+  //   }
+  // };
 
-  const handlePageSizeChange = (value: string) => {
-    const newSize = Number(value);
-    setPageSize(newSize);
-    setCurrentPage(1); // Reset to the first page when changing page size
-    refetch();
-  };
+  // const handlePageSizeChange = (value: string) => {
+  //   const newSize = Number(value);
+  //   setPageSize(newSize);
+  //   setCurrentPage(1); // Reset to the first page when changing page size
+  //   refetch();
+  // };
 
   const universities = data?.payload?.schools || [];
 
   return (
-    <main className="p-4">
+    <div className="p-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4">
@@ -106,7 +107,7 @@ export function UniversityListing() {
           {universities.map((school: SchoolsType) => (
             <TableRow key={school.id}>
               <TableCell>
-                <img
+                <Image width={1000} height={1000}
                   src={school.logo_url || "/placeholder.svg?height=40&width=40"}
                   alt={`${school.en_name || "University"} Logo`}
                   className="w-10 h-10 object-cover rounded-md"
@@ -120,15 +121,15 @@ export function UniversityListing() {
                 {school.email || "N/A"}
               </TableCell>
               <TableCell className="text-center">
-                <DataTableRowActions row={school as UniversityType} />
+                  <DataTableRowActions row={school as UniversityType} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-end mt-4">
-        {/* <div className="flex items-center space-x-2">
+      {/* <div className="flex items-center justify-end mt-4">
+        <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="h-8 w-[70px]">
@@ -143,7 +144,9 @@ export function UniversityListing() {
             </SelectContent>
           </Select>
         </div> */}
-        <div className="flex items-center space-x-2">
+
+
+        {/* <div className="flex items-center space-x-2">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page {currentPage} of {totalPages}
           </div>
@@ -183,8 +186,8 @@ export function UniversityListing() {
             <span className="sr-only">Go to last page</span>
             <ChevronsRight className="h-4 w-4" />
           </Button>
-        </div>
+        </div> */}
       </div>
-    </main>
+
   );
 }

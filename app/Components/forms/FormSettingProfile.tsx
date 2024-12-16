@@ -11,6 +11,7 @@ import { useGetMeQuery } from "@/app/redux/service/user";
 const ProfileSetting = () => {
     const router = useRouter();
     const { data: user, isLoading, error } = useGetMeQuery();
+    const userData = user?.payload;
 
     const handleUpdateProfile = () => {
         router.push("/updateProfile");
@@ -41,7 +42,7 @@ const ProfileSetting = () => {
                     <div className="absolute -bottom-24 left-20">
                         <div className="relative bg-yellow">
                             <Image
-                                src={user?.avatar || "/default-avatar.png"} // Provide a default avatar
+                                src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}` || "/assets/placeholderProfile.png"} 
                                 alt="Profile picture"
                                 width={1000}
                                 height={1000}
@@ -57,10 +58,10 @@ const ProfileSetting = () => {
 
                         <div className="mt-2">
                             <h2 className="font-semibold text-lg text-textprimary">
-                                {user?.username || "N/A"}
+                                {userData?.username || "N/A"}
                             </h2>
                             <p className="text-sm text-gray-400">
-                                {user?.email || "N/A"}
+                                {userData?.email || "N/A"}
                             </p>
                         </div>
                     </div>
@@ -79,7 +80,7 @@ const ProfileSetting = () => {
                                     Username
                                 </label>
                                 <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
-                                    {user?.username || "N/A"}
+                                    {userData?.username || "N/A"}
                                 </div>
                             </div>
 
@@ -88,7 +89,7 @@ const ProfileSetting = () => {
                                     Email
                                 </label>
                                 <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
-                                    {user?.email || "N/A"}
+                                    {userData?.email || "N/A"}
                                 </div>
                             </div>
                         </div>
@@ -99,7 +100,7 @@ const ProfileSetting = () => {
                                     Gender
                                 </label>
                                 <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
-                                    {user?.gender || "N/A"}
+                                    {userData?.gender || "N/A"}
                                 </div>
                             </div>
 
@@ -109,7 +110,7 @@ const ProfileSetting = () => {
                                 </label>
                                 <div className="flex items-center border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
                                     <div className="bg-transparent w-full border-none outline-none text-textprimary">
-                                        {user?.date_of_birth || "N/A"}
+                                        {userData?.date_of_birth || "N/A"}
                                     </div>
                                     <IoMdCalendar className="text-gray-400 text-xl" />
                                 </div>
@@ -121,7 +122,7 @@ const ProfileSetting = () => {
                                 Bio
                             </label>
                             <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
-                                {user?.bio || "N/A"}
+                                {userData?.bio || "N/A"}
                             </div>
                         </div>
                     </form>

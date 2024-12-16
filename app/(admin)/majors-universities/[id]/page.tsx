@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -33,12 +33,12 @@ import {
 } from "@/components/ui/select";
 import MajorCard from "@/app/Components/cards/MajorCard";
 import { UniversityType } from "@/types/types";
-import { useUniversityDetailsQuery } from "@/app/redux/service/university";
+// import { useUniversityDetailsQuery } from "@/app/redux/service/university";
 
 const UniversityPage = () => {
-  const [university, setUniversity] = useState<UniversityType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [university] = useState<UniversityType | null>(null);
+  const [loading] = useState(true);
+  const [error] = useState<string | null>(null);
   const [faculty, setFaculty] = useState<string[]>([]);
   const [newFaculty, setNewFaculty] = useState("");
   const [selectedFaculty, setSelectedFaculty] = useState("");

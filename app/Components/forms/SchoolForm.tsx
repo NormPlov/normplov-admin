@@ -70,7 +70,7 @@ export default function SchoolForm() {
             <div className="space-y-6 mb-6">
               <div className="bg-gray-400 grid place-content-center w-full h-[260px] rounded-lg">
                 <ImageUpload
-                  onImageUpload={(file, dataUrl) => {
+                  onImageUpload={(file) => {
                     setFieldValue("schoolCover", file);
                   }}
                   label=""
@@ -80,7 +80,7 @@ export default function SchoolForm() {
             <div className="flex gap-4 w-full">
               <div className="bg-gray-400 h-[230px] min-w-[250px] grid place-content-center rounded-lg">
                 <ImageUpload
-                  onImageUpload={(file, dataUrl) => {
+                  onImageUpload={(file) => {
                     setFieldValue("schoolLogo", file);
                   }}
                   label=""

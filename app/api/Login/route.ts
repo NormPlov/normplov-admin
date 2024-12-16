@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     // Make a POST request to the API
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_NORMPLOV_API}auth/login`,
+        `https://normplov-api.shinoshike.studio/api/v1/auth/login`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },

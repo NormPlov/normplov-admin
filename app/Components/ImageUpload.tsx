@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { FaUpload } from "react-icons/fa";
+import Image from "next/image";
 
 interface ImageUploadProps {
   onImageUpload: (file: File, dataUrl: string) => void;
@@ -42,7 +43,7 @@ export function ImageUpload({ onImageUpload, label }: ImageUploadProps) {
       </div>
       {preview && (
         <div className="mt-2">
-          <img
+          <Image width={1000} height={1000}
             src={preview}
             alt="Preview"
             className="max-w-full h-auto max-h-48 rounded"

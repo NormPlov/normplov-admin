@@ -6,7 +6,7 @@ export const authApi = normPlovApi.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation<LoginType, LoginType>({
             query: ({ email, password }:LoginType) => ({
-                url:`auth/login`,
+                url:`api/v1/auth/login`,
                 method: "POST",
                 body: JSON.stringify({email, password}),
             })
