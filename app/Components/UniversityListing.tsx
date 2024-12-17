@@ -37,10 +37,10 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 export function UniversityListing() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [schoolType, setSchoolType] = useState<string | undefined>();
+  const [searchQuery] = useState("");
+  const [schoolType] = useState<string | undefined>();
 
-  const { data, isLoading, isError, refetch } = useUniversityQuery({
+  const { data, refetch } = useUniversityQuery({
     page: currentPage,
     size: pageSize,
   });

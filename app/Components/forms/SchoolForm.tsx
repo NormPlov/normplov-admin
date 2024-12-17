@@ -40,6 +40,8 @@ export default function SchoolForm() {
   const [schoolType, setSchoolType] = useState<string | undefined>();
   const [createUniversity, { isLoading }] = useCreateUniversityMutation();
 
+  console.log(createUniversity);
+
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create School</h1>
@@ -70,14 +72,15 @@ export default function SchoolForm() {
                 if (values[key]) {
                   formData.append(key, values[key]);
                 }
-              } else {
-                formData.append(key, values[key]);
               }
+              // else {
+              //   formData.append(key, values[key]);
+              // }
             });
             formData.append("type", schoolType || "");
 
-            const result = await createUniversity(formData).unwrap();
-            console.log("University created:", result);
+            // const result = await createUniversity(formData).unwrap();
+            // console.log("University created:", result);
             toast.success("School created successfully!");
             resetForm();
           } catch (err) {

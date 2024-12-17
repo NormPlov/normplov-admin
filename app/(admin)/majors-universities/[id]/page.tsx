@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   FaEnvelope,
   FaGlobe,
@@ -35,10 +34,13 @@ import MajorCard from "@/app/Components/cards/MajorCard";
 import { UniversityType } from "@/types/types";
 import { useUniversityDetailsQuery } from "@/app/redux/service/university";
 import { useParams } from "next/navigation";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
-interface UniversityData {
-  payload: UniversityType;
-}
+// type ErrorType = FetchBaseQueryError | SerializedError | undefined;
+
+// interface UniversityData {
+//   payload: UniversityType;
+// }
 
 const UniversityPage: React.FC = () => {
   const params = useParams();
@@ -66,14 +68,13 @@ const UniversityPage: React.FC = () => {
   }
 
   if (error || !university) {
+    const errorMessage = "status" in (error as FetchBaseQueryError);
     return (
       <div className="flex justify-center items-center h-screen text-red-500">
-        {(error as any)?.data?.message ||
-          "An error occurred while fetching university details."}
+        {errorMessage}
       </div>
     );
   }
-
   const logoUrl = university.logo_url
     ? `${process.env.NEXT_PUBLIC_NORMPLOV_API || ""}${university.logo_url}`
     : "/placeholder.svg?height=288&width=288";
