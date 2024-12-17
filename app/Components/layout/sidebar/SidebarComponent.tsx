@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -15,8 +16,42 @@ import {
 import { items } from "./menu";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 export function SidebarComponent() {
+  const router = useRouter()
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+
+      const handleLogout = async () => {
+        try {
+          const res = await fetch(`/api/logout`, {
+            method: "POST",
+            credentials: "include",
+          });
+          router.push("/login");
+          const data = await res.json();
+    
+          if (res.ok) {
+            window.location.reload();
+            toast.success(data.message || "Logged out successfully!");
+            
+           
+          } else {
+            toast.error(data.message || "Failed to log out.");
+          }
+        } catch (error) {
+          toast.error("An error occurred during logout.");
+          console.error(error);
+        }
+      };
+    
+      
+      
+
   return (
     <SidebarProvider className="text-textprimary ">
       <Sidebar collapsible="icon" className="list-none">
@@ -26,37 +61,38 @@ export function SidebarComponent() {
             height={1000}
             src={``}
             alt=""
-            className="w-8 h-8 my-4  rounded-full object-cover bg-primary"
+            className="w-8 h-8 my-4 rounded-full object-cover bg-primary"
           />
           <SidebarContent>
-            {items.map((item, index) => (
-              <Link key={index} href={item.path}>
-                <SidebarMenuItem
-                  className={`py-1.5 hover:bg-[#def1ec] rounded-md ${
-                    item.title === "Sign out"
-                      ? "text-red-500 hover:bg-red-100"
-                      : ""
-                  }`}
-                >
-                  <SidebarMenuButton tooltip={item.title}>
-                    {item.icons && (
-                      <item.icons
-                        className={`w-12 h-12 ${
-                          item.title === "Sign out" ? "text-red-500" : ""
-                        }`}
-                      />
-                    )}
-                    <span
-                      className={`text-[16px] ${
-                        item.title === "Sign out" ? "text-red-500" : ""
-                      }`}
-                    >
-                      {item.title}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </Link>
-            ))}
+            {items.map((item, index) => {
+              if (item.title === "Sign out") {
+                return (
+                  <div key={index} onClick={() => setShowLogoutConfirm(true)}>
+                    <SidebarMenuItem className="py-1.5 hover:bg-red-100 rounded-md text-red-500 cursor-pointer list-none">
+                      <SidebarMenuButton tooltip={item.title}>
+                        {item.icons && (
+                          <item.icons className="w-12 h-12 text-red-500" />
+                        )}
+                        <span className="text-[16px] text-red-500">
+                          {item.title}
+                        </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </div>
+                );
+              } else {
+                return (
+                  <Link key={index} href={item.path} className="list-none">
+                    <SidebarMenuItem className="py-1.5 hover:bg-[#def1ec] rounded-md">
+                      <SidebarMenuButton tooltip={item.title}>
+                        {item.icons && <item.icons className="w-12 h-12" />}
+                        <span className="text-[16px]">{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </Link>
+                );
+              }
+            })}
           </SidebarContent>
 
           <SidebarRail />
@@ -64,11 +100,35 @@ export function SidebarComponent() {
       </Sidebar>
       <SidebarInset>
         <header className="flex h-8 shrink-0 items-center transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-8">
-          <div className="flex items-center  rounded-md">
+          <div className="flex items-center rounded-md">
             <SidebarTrigger className="" />
           </div>
         </header>
       </SidebarInset>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p className="mb-4">Are you sure you want to log out?</p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => setShowLogoutConfirm(false)}
+              >
+                No
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={handleLogout}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </SidebarProvider>
   );
 }

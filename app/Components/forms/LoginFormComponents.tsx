@@ -187,7 +187,7 @@ export default function Login() {
                                         className="text-sm text-red-500" />
                                     <div className="text-right">
                                         <Button variant="link" className="p-0 text-primary text-sm">
-                                            ForgetPassword?
+                                            Forget Password?
                                         </Button>
                                     </div>
                                 </div>

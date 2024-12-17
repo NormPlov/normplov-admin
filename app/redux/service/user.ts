@@ -1,6 +1,7 @@
 
 import { normPlovApi } from "../api";
-import { User, UserReponse, UserListResponse, FeedbackResponse, UpdateProfileResponse, ChangePasswordType } from "@/types/types";
+import { User, UserReponse, UserListResponse, FeedbackResponse, UpdateProfileResponse, ChangePasswordType, TestHistoryResponse } from "@/types/types";
+
 
 export const userApi = normPlovApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -116,7 +117,17 @@ export const userApi = normPlovApi.injectEndpoints({
                 }
             }),
             invalidatesTags:["userProfile"]
-        })
+        }),
+
+        // list test history
+        getTestHistory: builder.query<TestHistoryResponse, { page: number; pageSize: number }>({
+            query: ({ page, pageSize }) => ({
+              url: `api/v1/test/all-tests?page=${page}&page_size=${pageSize}`,
+              method: 'GET',
+            }),
+            providesTags: ["userProfile"], 
+          }),
+          
 
     }),
 });
@@ -133,4 +144,5 @@ export const {
     useUpdateUserInfoMutation,
     usePostImageMutation,
     useChangePasswordMutation,
+    useGetTestHistoryQuery,
 } = userApi;

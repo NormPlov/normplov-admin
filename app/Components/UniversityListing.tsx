@@ -71,8 +71,8 @@ export function UniversityListing() {
     <main className="p-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
+        <div className="flex items-center space-x-4 text-textprimary">
+          <div className="relative ">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search"
@@ -99,42 +99,47 @@ export function UniversityListing() {
         </div>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Logo</TableHead>
-            <TableHead>Universities / Institute</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead className="text-right">Email</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {universities.map((school: SchoolsType) => (
-            <TableRow key={school.id}>
-              <TableCell>
-                <img
-                  src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${
-                    school.logo_url || "/placeholder.svg?height=40&width=40"
-                  }`}
-                  alt={`${school.en_name || "University"} Logo`}
-                  className="w-10 h-10 object-cover rounded-md"
-                />
-              </TableCell>
-              <TableCell className="font-medium">
-                {school.en_name || "N/A"}
-              </TableCell>
-              <TableCell>{school.location || "N/A"}</TableCell>
-              <TableCell className="text-right">
-                {school.email || "N/A"}
-              </TableCell>
-              <TableCell className="text-center">
-                <DataTableRowActions row={school as UniversityType} />
-              </TableCell>
+      <div className="rounded-md border border-gray-200 text-textprimary">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Logo</TableHead>
+              <TableHead>Universities / Institute</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead className="text-right">Email</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {universities.map((school: SchoolsType) => (
+              <TableRow key={school.id}>
+                <TableCell>
+                  <Image
+                    width={1000}
+                    height={1000}
+                    src={
+                      `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}` ||
+                      "/placeholder.svg?height=40&width=40"
+                    }
+                    alt={`${school.en_name || "University"} Logo`}
+                    className="w-10 h-10 object-cover rounded-md"
+                  />
+                </TableCell>
+                <TableCell className="font-medium">
+                  {school.en_name || "N/A"}
+                </TableCell>
+                <TableCell>{school.location || "N/A"}</TableCell>
+                <TableCell className="text-right">
+                  {school.email || "N/A"}
+                </TableCell>
+                <TableCell className="text-center">
+                  <DataTableRowActions row={school as UniversityType} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <div className="flex items-center justify-between mt-4">
         <div className="flex items-center space-x-2">

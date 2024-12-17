@@ -1,7 +1,7 @@
 "use client"
 
 
-import {  CardHeader, CardTitle } from "@/components/ui/card"
+import {  Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const data = [
@@ -44,8 +44,7 @@ const data = [
 
 export default function QuizTestChart() {
   return (
-   <div className="">
-     <div className="w-full w-[530px] mx-auto">
+     <Card className="w-full w-[530px] mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl font-normal text-[#00A76F]">Quiz Test</CardTitle>
       </CardHeader>
@@ -60,8 +59,7 @@ export default function QuizTestChart() {
         <Bar dataKey="This Weeks" fill="#034B72" radius={[10, 10, 10, 10]}/>
       </BarChart>
 
-    </div>
-   </div>
+    </Card>
   )
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TableUserFeedback } from '@/app/Components/table/tableFeedback/TableComponent'
+import TableUserFeedback from '@/app/Components/table/tableFeedback/TableComponent'
 
 const page = () => {
   return (

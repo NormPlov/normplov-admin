@@ -4,9 +4,12 @@ import { NextResponse } from "next/server";
 // Create a POST request handler for Logout
 export async function POST() {
     // Get the refresh token from the client-side cookies
-    const cookieName = process.env.COOKIE_REFRESH_TOKEN_NAME || "refresh";
+    const cookieName = process.env.COOKIE_REFRESH_TOKEN || "refresh";
     const cookieStore = cookies();
     const credential = cookieStore.get(cookieName);
+    console.log("creadentail:", credential)
+    console.log("cookieStore:", cookieStore)
+    console.log("Cookiename:", cookieName)
 
      // If the refresh token is not found, return an error message to the client-side
      if (!credential) {
