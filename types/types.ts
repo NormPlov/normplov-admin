@@ -143,15 +143,15 @@ export type Feedback = {
 }
 
 
-    
+
 export type FeedbackResponse = {
-        payload:{
+        payload: {
                 items: Feedback[];
                 metadata: Metadata;
         }
-       
-    };
-    
+
+};
+
 
 
 // change password
@@ -167,62 +167,87 @@ export type BlockUserModalProps = {
         onCancel: () => void;
         actionType: "block" | "unblock";
 }
-      
+
 
 export type TestHistoryResponse = {
         date: string;
         status: number;
         payload: Payload;
         message: string;
-      }
-      
-      export type Payload = {
-        items: TestItem[];
+}
+
+export type Payload = {
+        tests: TestResponse[];
         metadata: Metadata;
-      }
-      
-      export type TestItem = {
-        test_uuid: string;
-        test_name: string;
-        assessment_type_name:string;
-        is_completed: boolean;
-        is_deleted: boolean;
-        created_at: string;
-        user: User;
-      }
-      
+}
+
+export // TypeScript Type Definition
+        type TestResponse = {
+                test_uuid: string;
+                test_name: string;
+                user_avatar: string;
+                user_name: string;
+                user_email: string;
+                response_data: Array<{
+                        user_uuid: string;
+                        test_uuid: string;
+                        test_name: string;
+                        personality_type: {
+                                name: string;
+                                title: string;
+                                description: string;
+                        };
+                        dimensions: Array<{
+                                dimension_name: string;
+                                score: number;
+                        }>;
+                        traits: {
+                                positive: string[];
+                                negative: string[];
+                        };
+                        strengths: string[];
+                        weaknesses: string[];
+                        career_recommendations: string[];
+                }>;
+                is_draft: boolean;
+                is_completed: boolean;
+                created_at: string
+        };
+
+
+
 
 //  Post job type
 export type JobDetails = {
-        uuid:string;
-        title: string; 
-        company_name: string; 
+        uuid: string;
+        title: string;
+        company_name: string;
         logo: string;
-        facebook_url: string; 
-        location: string; 
-        posted_at: string; 
-        description: string; 
-        category: string; 
-        job_type: string; 
-        schedule: string; 
-        salary: string; 
-        closing_date: string; 
-        requirements: string[]; 
-        responsibilities: string[]; 
-        benefits: string[]; 
-        email: string; 
-        phone: string; 
-        website: string; 
-        is_active: boolean; 
-      }
-      
-    
+        facebook_url: string;
+        location: string;
+        posted_at: string;
+        description: string;
+        category: string;
+        job_type: string;
+        schedule: string;
+        salary: string;
+        closing_date: string;
+        requirements: string[];
+        responsibilities: string[];
+        benefits: string[];
+        email: string;
+        phone: string;
+        website: string;
+        is_active: boolean;
+}
+
+
 //     Jobs api response
 export type JobsResponse = {
-        message:string;
-        date:string;
-        status:string;
-        payload:{
+        message: string;
+        date: string;
+        status: string;
+        payload: {
                 items: JobDetails[];
                 metadata: Metadata;
         }
@@ -231,7 +256,7 @@ export type JobsResponse = {
 //    
 export type JobDetailsProps = {
         uuid: string;
-      }
+}
 
 //       post job type
 export type PostJobType = {
@@ -254,5 +279,4 @@ export type PostJobType = {
         website: string;
         is_active: boolean | string; // Depending on how "true" is being sent
         job_category_uuid: string;
-      }
-      
+}

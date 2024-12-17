@@ -67,10 +67,10 @@ const TestHistoryTable = () => {
 
     // Filter logic
     const filteredUsers =
-        data?.payload?.items.filter((test) => {
+        data?.payload?.tests.filter((test) => {
             const matchesSearch =
                 test?.test_name.toLowerCase().includes(search.toLowerCase()) ||
-                test?.user?.email.toLowerCase().includes(search.toLowerCase());
+                test?.user_email.toLowerCase().includes(search.toLowerCase());
             const matchesFilter =
                 filter === "all" ||
                 (filter === "Done" && test?.is_completed) ||
@@ -143,20 +143,20 @@ const TestHistoryTable = () => {
                                             <TableCell>
                                                 <Avatar>
                                                     <AvatarImage
-                                                        src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${test?.user?.avatar}`}
-                                                        alt={test?.user?.username || "User"}
+                                                        src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${test?.user_avatar}`}
+                                                        alt={test?.user_name || "User"}
                                                     />
                                                     <AvatarFallback >
-                                                        {test?.user?.username?.[0]?.toUpperCase() || "?"}
+                                                        {test?.user_name[0]?.toUpperCase() || "?"}
                                                     </AvatarFallback>
                                                 </Avatar>
                                             </TableCell>
                                             {/* Username */}
                                             <TableCell className="px-4 py-2">
                                                 <div>
-                                                    <p className="font-medium text-textprimary">{test?.user?.username}</p>
+                                                    <p className="font-medium text-textprimary">{test?.user_name}</p>
                                                     <p className="text-sm text-gray-500">
-                                                        {test?.user?.email}
+                                                        {test?.user_email}
                                                     </p>
                                                 </div>
                                             </TableCell>
@@ -172,7 +172,7 @@ const TestHistoryTable = () => {
                                                     {/* Text Details */}
                                                     <div>
                                                         <p className="font-medium text-primary">{test?.test_name}</p>
-                                                        <p className="font-medium text-gray-800">{test?.assessment_type_name}</p>
+                                                        {/* <p className="font-medium text-gray-800">{test?.assessment_type_name}</p> */}
                                                         <p className="text-sm text-gray-500 text-normal">{test?.created_at}</p>
                                                     </div>
                                                 </div>
