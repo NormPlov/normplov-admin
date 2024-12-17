@@ -1,8 +1,8 @@
 <a href="https://admin-normplov.shinoshike.studio/">
-    <h1>Norm Plov Admin</h1>
+    <h1>Norm Plov Admin Website</h1>
 </a>
 
-# **Norm Plov Admin Website**  
+
 
 Norm Plov is a solution designed to simplify the career decision-making process for users, empowering them to uncover their potential and confidently make choices that align with their unique skills and interests. The platform not only provides a seamless experience for users but also equips administrators with powerful tools to manage and enhance platform operations effectively.
 
