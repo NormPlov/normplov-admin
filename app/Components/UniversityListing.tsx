@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Search,
   ChevronLeft,
@@ -115,8 +116,8 @@ export function UniversityListing() {
               <TableRow key={school.id}>
                 <TableCell>
                   <Image
-                    width={1000}
-                    height={1000}
+                    width={250}
+                    height={250}
                     src={
                       `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}` ||
                       "/placeholder.svg?height=40&width=40"

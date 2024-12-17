@@ -18,7 +18,10 @@ export default function AdminLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${suwannaphum.variable} ${inter.variable}`}>
+      <body
+        className={`${suwannaphum.variable} ${inter.variable}`}
+        suppressHydrationWarning
+      >
         <StoreProvider>
           <div className="flex">
             <aside>
