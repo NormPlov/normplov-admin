@@ -32,7 +32,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link href={`/majors-universities/${row.uuid}`}>
             <Eye className="mr-2 h-4 w-4" />
