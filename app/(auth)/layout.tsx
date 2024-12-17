@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-
 import StoreProvider from "@/app/StoreProvider";
 import "@/app/globals.css";
+
+import { inter, suwannaphum } from "@/app/font";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,7 +16,7 @@ export default function AuthLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${suwannaphum.variable} ${inter.variable}`}>
         <StoreProvider>
           {children}
         </StoreProvider>
