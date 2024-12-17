@@ -143,18 +143,15 @@ export type Feedback = {
 }
 
 
-// export interface FeedbackResponse {
-//         payload: {Feedback[],
-//                 {
-//                         page: number;
-//                         page_size: number;
-//                         total_items: number;
-//                         total_pages: number;
-//                 }};
-//         date: string;
-//         status: number;
-//         message: string;
-// }
+    
+export type FeedbackResponse = {
+        payload:{
+                items: Feedback[];
+                metadata: Metadata;
+        }
+       
+    };
+    
 
 
 // change password
@@ -163,3 +160,99 @@ export type ChangePasswordType = {
         new_password: string;
         confirm_new_password: string;
 }
+
+// Block user modal
+export type BlockUserModalProps = {
+        onConfirm: () => void;
+        onCancel: () => void;
+        actionType: "block" | "unblock";
+}
+      
+
+export type TestHistoryResponse = {
+        date: string;
+        status: number;
+        payload: Payload;
+        message: string;
+      }
+      
+      export type Payload = {
+        items: TestItem[];
+        metadata: Metadata;
+      }
+      
+      export type TestItem = {
+        test_uuid: string;
+        test_name: string;
+        assessment_type_name:string;
+        is_completed: boolean;
+        is_deleted: boolean;
+        created_at: string;
+        user: User;
+      }
+      
+
+//  Post job type
+export type JobDetails = {
+        uuid:string;
+        title: string; 
+        company_name: string; 
+        logo: string;
+        facebook_url: string; 
+        location: string; 
+        posted_at: string; 
+        description: string; 
+        category: string; 
+        job_type: string; 
+        schedule: string; 
+        salary: string; 
+        closing_date: string; 
+        requirements: string[]; 
+        responsibilities: string[]; 
+        benefits: string[]; 
+        email: string; 
+        phone: string; 
+        website: string; 
+        is_active: boolean; 
+      }
+      
+    
+//     Jobs api response
+export type JobsResponse = {
+        message:string;
+        date:string;
+        status:string;
+        payload:{
+                items: JobDetails[];
+                metadata: Metadata;
+        }
+}
+
+//    
+export type JobDetailsProps = {
+        uuid: string;
+      }
+
+//       post job type
+export type PostJobType = {
+        title: string;
+        company: string;
+        logo: File; // Representing the uploaded file
+        facebook_url: string;
+        location: string;
+        posted_at: string; // ISO Date-Time string format
+        description: string;
+        job_type: string;
+        schedule: string;
+        salary: string;
+        closing_date: string; // ISO Date-Time string format
+        requirements: string;
+        responsibilities: string;
+        benefits: string;
+        email: string;
+        phone: string;
+        website: string;
+        is_active: boolean | string; // Depending on how "true" is being sent
+        job_category_uuid: string;
+      }
+      

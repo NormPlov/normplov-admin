@@ -25,8 +25,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, isOpen, onClose }) =>
         <p className="text-primary text-2xl">{user.username}</p>
           <p className="text-gray-400 text-md">{user.email}</p>
           <p className="text-md"> {user.gender}</p>
-          <p className="text-md">{user.date_of_birth}</p>
-          <p>{user.bio}</p>
+          <p className="text-md text-gray-400 py-1">{user.date_of_birth}</p>
+          <p className="text-sm">{user.bio}</p>
         </div>
           
         </div>
