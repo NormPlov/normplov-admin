@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import { useGetJobQuery } from "@/app/redux/service/job";
 import { JobDetails } from "@/types/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -127,13 +129,17 @@ export default function JobListTableComponent() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    Loading...
+                 <TableRow>
+                  <TableCell colSpan={6}>
+                    <Skeleton className="h-8 w-full" />
                   </TableCell>
+                </TableRow>
                 </TableRow>
               ) : filteredJobs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
+                  <TableCell colSpan={6} className="text-center p-0">
+                    <Image width={1000} height={1000} src={"/assets/not-found.png"} alt={"Image not found"}
+                    className="w-40 h-40 object-cover rounded-md" />
                     No jobs found.
                   </TableCell>
                 </TableRow>
@@ -144,7 +150,7 @@ export default function JobListTableComponent() {
                     <TableCell>
                       <Avatar className="rounded-md w-16 h-16">
                         <AvatarImage
-                          src={job.logo}
+                          src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`}
                           alt={job.title || "Job Logo"}
                           className="object-cover rounded-md w-full h-full"
                         />

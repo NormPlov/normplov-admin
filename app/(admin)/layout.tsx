@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Poppins, Suwannaphum } from "next/font/google";
+import { Inter, Suwannaphum } from "next/font/google";
 import StoreProvider from "@/app/StoreProvider";
 import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
 import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";

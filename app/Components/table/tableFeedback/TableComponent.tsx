@@ -38,16 +38,16 @@ export default function TableUserFeedback() {
   const totalItems = data?.payload?.metadata?.total_items || 0;
 
   const handleItemsPerPageChange = (value: string) => {
-      setItemsPerPage(Number(value));
-      setCurrentPage(1);
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
   };
 
   const handlePreviousPage = () => {
-      if (currentPage > 1) setCurrentPage(currentPage - 1);
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const handleNextPage = () => {
-      if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
 
@@ -165,74 +165,72 @@ export default function TableUserFeedback() {
             </TableBody>
           </Table>
         </div>
+        {/* Pagination Section */}
+        <div className="flex justify-between items-center mt-4">
+          {/* Showing data */}
+          <div className="text-sm font-medium">
+            Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+          </div>
 
-       
-                {/* Pagination Section */}
-                <div className="flex justify-between items-center mt-4">
-                    {/* Showing data */}
-                    <div className="text-sm font-medium">
-                        Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
-                        {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
-                    </div>
+          <div className="flex gap-4">
+            {/* Rows Per Page */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Rows per page:</span>
+              <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
+                <SelectTrigger className="h-8 w-[70px]">
+                  <SelectValue placeholder={itemsPerPage} />
+                </SelectTrigger>
+                <SelectContent side="top">
+                  {ITEMS_PER_PAGE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={`${size}`}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                   <div className="flex gap-4">
-                     {/* Rows Per Page */}
-                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Rows per page:</span>
-                        <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
-                            <SelectTrigger className="h-8 w-[70px]">
-                                <SelectValue placeholder={itemsPerPage} />
-                            </SelectTrigger>
-                            <SelectContent side="top">
-                                {ITEMS_PER_PAGE_OPTIONS.map((size) => (
-                                    <SelectItem key={size} value={`${size}`}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+            {/* Pagination Controls */}
+            <div className="flex items-center gap-4">
+              <Button
+                variant="secondary"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage <= 1}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
 
-                    {/* Pagination Controls */}
-                    <div className="flex items-center gap-4">
-                        <Button
-                            variant="secondary"
-                            onClick={() => setCurrentPage(1)}
-                            disabled={currentPage <= 1}
-                        >
-                            <ChevronsLeft className="h-4 w-4" />
-                        </Button>
+              <Button
+                variant="secondary"
+                onClick={handlePreviousPage}
+                disabled={currentPage <= 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
 
-                        <Button
-                            variant="secondary"
-                            onClick={handlePreviousPage}
-                            disabled={currentPage <= 1}
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
+              <span className="text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
 
-                        <span className="text-sm">
-                            Page {currentPage} of {totalPages}
-                        </span>
+              <Button
+                variant="secondary"
+                onClick={handleNextPage}
+                disabled={currentPage >= totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
 
-                        <Button
-                            variant="secondary"
-                            onClick={handleNextPage}
-                            disabled={currentPage >= totalPages}
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            onClick={() => setCurrentPage(totalPages)}
-                            disabled={currentPage >= totalPages}
-                        >
-                            <ChevronsRight className="h-4 w-4" />
-                        </Button>
-                    </div>
-                   </div>
-                </div>
+              <Button
+                variant="secondary"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage >= totalPages}
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>

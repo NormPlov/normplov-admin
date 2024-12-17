@@ -19,9 +19,7 @@ const Page = () => {
       setIsUuidValid(false);
     } else {
       setIsUuidValid(true);
-      // Example: Fetch job details using the uuid
       console.log(`Fetching job details for UUID: ${validUuid}`);
-      // You can call an API here or trigger other side effects
     }
   }, [validUuid]);
 

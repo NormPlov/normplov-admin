@@ -25,7 +25,8 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
   }
 
   // Find the job with the matching UUID
-  const job = data?.payload?.items.find((item: JobDetails) => item.uuid === uuid);
+  const job = data?.payload?.items.find((item: JobDetails) => item?.uuid === uuid);
+  console.log("uuid: ", uuid);
 
   if (!job) {
     return <div className="p-6 text-center text-red-500">Job not found.</div>;
@@ -44,10 +45,10 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
       </div>
 
       {/* Job Header */}
-      <div className="flex gap-6 items-center mb-6 mx-4" key={uuid}>
+      <div className="flex gap-6 items-center mb-6 mx-4" key={job.uuid}>
         <Avatar className="rounded-md w-16 h-16">
           <AvatarImage
-            src={job.logo}
+            src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`}
             alt={job.title || "Job Logo"}
             className="object-cover rounded-md object-cover w-56 h-56"
           />
