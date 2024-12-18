@@ -1,10 +1,10 @@
 import React from 'react'
-import UserTable from '@/app/Components/table/userTable/TableComponent'
+import ViewTestDetail from '@/app/Components/forms/test/ViewdetailTest'
 
 const page = () => {
   return (
     <div>
-      <UserTable/>
+      <ViewTestDetail/>
     </div>
   )
 }

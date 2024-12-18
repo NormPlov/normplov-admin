@@ -50,7 +50,7 @@ const data = [
 
 export default function UserSatisfactionChart() {
   return (
-    <Card className="w-full mx-auto w-[560px] rounded-xl ">
+    <Card className="w-full mx-auto w-[570px] rounded-xl ">
       <CardHeader>
         <CardTitle className="text-2xl font-normal text-primary">
           User Satisfactions

@@ -1,11 +1,11 @@
 import React from 'react'
-import AddJobForm from '@/app/Components/forms/job/FormCreateJob'
+import JobListTableComponent from '@/app/Components/table/JobTable.tsx/JobTableComponent'
 
 const page = () => {
   return (
-    <div>
-      <AddJobForm/>
-    </div>
+    <>
+      <JobListTableComponent/>
+    </>
   )
 }
 

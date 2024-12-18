@@ -69,8 +69,8 @@ export function UniversityListing() {
     <div className="p-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
+        <div className="flex items-center space-x-4 text-textprimary">
+          <div className="relative ">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search" className="pl-8" />
           </div>
@@ -78,7 +78,7 @@ export function UniversityListing() {
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select School" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent >
               <SelectItem value="public">Public School</SelectItem>
               <SelectItem value="private">Private School</SelectItem>
               <SelectItem value="tvet">TVET</SelectItem>
@@ -93,7 +93,8 @@ export function UniversityListing() {
         </div>
       </div>
 
-      <Table>
+     <div className="rounded-md border border-gray-200 text-textprimary">
+     <Table >
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Logo</TableHead>
@@ -108,7 +109,7 @@ export function UniversityListing() {
             <TableRow key={school.id}>
               <TableCell>
                 <Image width={1000} height={1000}
-                  src={school.logo_url || "/placeholder.svg?height=40&width=40"}
+                  src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}` || "/placeholder.svg?height=40&width=40"}
                   alt={`${school.en_name || "University"} Logo`}
                   className="w-10 h-10 object-cover rounded-md"
                 />
@@ -127,6 +128,7 @@ export function UniversityListing() {
           ))}
         </TableBody>
       </Table>
+     </div>
 
       {/* <div className="flex items-center justify-end mt-4">
         <div className="flex items-center space-x-2">

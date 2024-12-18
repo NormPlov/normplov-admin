@@ -44,7 +44,6 @@ const data = [
 
 export default function QuizTestChart() {
   return (
-   <div >
      <Card className="w-full w-[530px] mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl font-normal text-[#00A76F]">Quiz Test</CardTitle>
@@ -61,7 +60,6 @@ export default function QuizTestChart() {
       </BarChart>
 
     </Card>
-   </div>
   )
 }
 

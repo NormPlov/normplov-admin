@@ -194,7 +194,7 @@ const UpdateProfile = () => {
                         <div className="relative w-full h-40 bg-primary rounded-lg mb-16">
                             <div className="absolute -bottom-24 left-20">
                                 <div
-                                    className="relative border border-2 bg-[#fdfdfd] w-36 h-36 rounded-full p-6"
+                                    className="relative border border-2 bg-[#fdfdfd] w-40 h-40 rounded-full "
                                     onDrop={(e) => handleDrop(e, setFieldValue)}
                                     onDragOver={(e) => e.preventDefault()}
                                 >
@@ -203,7 +203,7 @@ const UpdateProfile = () => {
                                         alt="Profile picture"
                                         width={1000}
                                         height={1000}
-                                        className="object-cover rounded-full"
+                                        className="object-cover w-40 h-40 rounded-full"
                                     />
                                     <input
                                         type="file"
