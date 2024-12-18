@@ -172,7 +172,7 @@ const TestHistoryTable = () => {
                                                     {/* Text Details */}
                                                     <div>
                                                         <p className="font-medium text-primary">{test?.test_name}</p>
-                                                        {/* <p className="font-medium text-gray-800">{test?.assessment_type_name}</p> */}
+                                                        <p className="font-medium text-gray-800">{test?.assessment_type_name}</p>
                                                         <p className="text-sm text-gray-500 text-normal">{test?.created_at}</p>
                                                     </div>
                                                 </div>

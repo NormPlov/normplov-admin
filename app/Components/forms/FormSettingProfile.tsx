@@ -37,16 +37,16 @@ const ProfileSetting = () => {
     return (
         <div className="w-full mx-auto">
             <div className="mx-10">
-                <h1 className="text-3xl font-normal my-6 text-secondary">Profile Setting</h1>
-                <div className="relative w-full h-40 bg-primary rounded-lg mb-16">
-                    <div className="absolute -bottom-24 left-20">
-                        <div className="relative bg-yellow">
+                <h1 className="text-3xl font-semibold my-5 text-secondary">Profile Setting</h1>
+                <div className="relative w-full h-40 bg-primary rounded-lg mb-20">
+                    <div className="absolute -bottom-32 left-20">
+                        <div className="relative border border-1 bg-[#fdfdfd] w-40 h-40 rounded-full ">
                             <Image
                                 src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}` || "/assets/placeholderProfile.png"} 
                                 alt="Profile picture"
                                 width={1000}
                                 height={1000}
-                                className="w-32 h-32 rounded-full border-4 border-white"
+                                className="w-40 h-40 rounded-full border-4 border-white"
                             />
                             <button
                                 onClick={handleUpdateProfile}
@@ -56,11 +56,11 @@ const ProfileSetting = () => {
                             </button>
                         </div>
 
-                        <div className="mt-2">
+                        <div className="mt-2 text-center">
                             <h2 className="font-semibold text-lg text-textprimary">
                                 {userData?.username || "N/A"}
                             </h2>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-gray-700">
                                 {userData?.email || "N/A"}
                             </p>
                         </div>
@@ -74,9 +74,9 @@ const ProfileSetting = () => {
                     </div>
 
                     <form className="space-y-6">
-                        <div className="grid grid-cols-2 gap-8">
-                            <div className="flex flex-col">
-                                <label htmlFor="username" className="text-sm font-normal text-textprimary">
+                        <div className="grid grid-cols-2 gap-8 ">
+                            <div className="flex flex-col space-y-3">
+                                <label htmlFor="username" className="text-sm font-normal text-gray-500">
                                     Username
                                 </label>
                                 <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
@@ -84,8 +84,8 @@ const ProfileSetting = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col">
-                                <label htmlFor="email" className="text-sm font-normal text-textprimary">
+                            <div className="flex flex-col space-y-3">
+                                <label htmlFor="email" className="text-sm font-normal text-gray-500">
                                     Email
                                 </label>
                                 <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
@@ -95,8 +95,8 @@ const ProfileSetting = () => {
                         </div>
 
                         <div className="grid grid-cols-2 gap-8">
-                            <div className="flex flex-col">
-                                <label htmlFor="gender" className="text-sm font-normal text-textprimary">
+                            <div className="flex flex-col space-y-3">
+                                <label htmlFor="gender" className="text-sm font-normal text-gray-500">
                                     Gender
                                 </label>
                                 <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
@@ -104,8 +104,8 @@ const ProfileSetting = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col">
-                                <label htmlFor="dob" className="text-sm font-normal text-textprimary">
+                            <div className="flex flex-col space-y-3">
+                                <label htmlFor="dob" className="text-sm font-normal text-gray-500">
                                     Date of Birth
                                 </label>
                                 <div className="flex items-center border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
@@ -117,8 +117,8 @@ const ProfileSetting = () => {
                             </div>
                         </div>
 
-                        <div className="flex flex-col">
-                            <label htmlFor="bio" className="text-sm font-normal text-textprimary">
+                        <div className="flex flex-col space-y-3">
+                            <label htmlFor="bio" className="text-sm font-normal text-gray-500">
                                 Bio
                             </label>
                             <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">

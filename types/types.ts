@@ -188,6 +188,7 @@ export // TypeScript Type Definition
                 user_avatar: string;
                 user_name: string;
                 user_email: string;
+                assessment_type_name: string;
                 response_data: Array<{
                         user_uuid: string;
                         test_uuid: string;

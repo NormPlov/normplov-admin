@@ -141,24 +141,24 @@ const UpdateProfile = () => {
             // Check if user has input for password change and handle accordingly
             // if (values.old_password && values.new_password && values.confirm_new_password) {
                 // Make sure the new password and confirm password match before calling changePassword
-                if (values.new_password === values.confirm_new_password) {
+                // if (values.new_password === values.confirm_new_password) {
 
-                    console.log('old:', values.old_password)
-                    console.log('new:', values.new_password)
-                    console.log("confirm:", values.confirm_new_password)
-                    await changePassword({
-                        changePassword: {
-                            old_password: values.old_password,
-                            new_password: values.new_password,
-                            confirm_new_password: values.confirm_new_password
-                        },
-                    }).unwrap();
-                    console.log("Password changed successfully");
-                    toast.success("Password changed successfully")
-                } else {
-                    console.error("New password and confirm password do not match.");
-                    toast.error("New password and confirm password do not match.")
-                }
+                //     console.log('old:', values.old_password)
+                //     console.log('new:', values.new_password)
+                //     console.log("confirm:", values.confirm_new_password)
+                //     await changePassword({
+                //         changePassword: {
+                //             old_password: values.old_password,
+                //             new_password: values.new_password,
+                //             confirm_new_password: values.confirm_new_password
+                //         },
+                //     }).unwrap();
+                //     console.log("Password changed successfully");
+                //     toast.success("Password changed successfully")
+                // } else {
+                //     console.error("New password and confirm password do not match.");
+                //     toast.error("New password and confirm password do not match.")
+                // }
             // }
 
         } catch (error) {
