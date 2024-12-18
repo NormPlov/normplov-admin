@@ -15,9 +15,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { useCreateUniversityMutation } from "@/app/redux/service/university";
+import { toast } from "react-hot-toast";
 
 const SchoolSchema = Yup.object().shape({
-  name: Yup.string().required("Required"),
+  kh_name: Yup.string().required("Required"),
+  en_name: Yup.string().required("Required"),
   phone: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Required"),
   website: Yup.string().url("Invalid URL").required("Required"),
@@ -35,12 +38,17 @@ const SchoolSchema = Yup.object().shape({
 
 export default function SchoolForm() {
   const [schoolType, setSchoolType] = useState<string | undefined>();
+  const [createUniversity, { isLoading }] = useCreateUniversityMutation();
+
+  console.log(createUniversity);
+
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create School</h1>
       <Formik
         initialValues={{
-          name: "",
+          kh_name: "",
+          en_name: "",
           phone: "",
           email: "",
           website: "",
@@ -56,52 +64,72 @@ export default function SchoolForm() {
           schoolLogo: null,
         }}
         validationSchema={SchoolSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log("Form values:", values);
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          try {
+            const formData = new FormData();
+            Object.keys(values).forEach((key) => {
+              if (key === "schoolCover" || key === "schoolLogo") {
+                if (values[key]) {
+                  formData.append(key, values[key]);
+                }
+              }
+              // else {
+              //   formData.append(key, values[key]);
+              // }
+            });
+            formData.append("type", schoolType || "");
 
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
+            // const result = await createUniversity(formData).unwrap();
+            // console.log("University created:", result);
+            toast.success("School created successfully!");
+            resetForm();
+          } catch (err) {
+            console.error("Failed to create university:", err);
+            toast.error("Failed to create school. Please try again.");
+          } finally {
             setSubmitting(false);
-          }, 400);
+          }
         }}
       >
         {({ isSubmitting, setFieldValue }) => (
           <Form className="space-y-6">
             <div className="space-y-6 mb-6">
-              <div className="bg-gray-400 grid place-content-center w-full h-[260px] rounded-lg">
+              <div className="bg-gray-400 flex flex-col items-center justify-center w-full h-[260px] rounded-lg">
                 <ImageUpload
                   onImageUpload={(file) => {
-                    setFieldValue("schoolCover", file);
+                    setFieldValue("cover_image", file);
                   }}
                   label=""
                 />
+                <div className="">Image size 1200 X 300 pixels</div>
               </div>
             </div>
             <div className="flex gap-4 w-full">
-              <div className="bg-gray-400 h-[230px] min-w-[250px] grid place-content-center rounded-lg">
+              <div className="bg-gray-400 h-[230px] min-w-[250px] flex flex-col items-center justify-center rounded-lg">
                 <ImageUpload
                   onImageUpload={(file) => {
                     setFieldValue("schoolLogo", file);
                   }}
                   label=""
                 />
+                <p className="wrap">Image size 250 X 250 pixels</p>
               </div>
               <div className="w-full flex flex-col gap-4">
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
-                    <Label htmlFor="name">Khmer Name</Label>
-                    <Field as={Input} id="name" name="name" type="text" />
+                    <Label htmlFor="kh_name">Khmer Name</Label>
+                    <Field as={Input} id="kh_name" name="kh_name" type="text" />
                     <ErrorMessage
-                      name="name"
+                      name="kh_name"
                       component="div"
                       className="text-red-500 text-sm"
                     />
                   </div>
                   <div className="w-full">
-                    <Label htmlFor="name">English Name</Label>
-                    <Field as={Input} id="name" name="name" type="text" />
+                    <Label htmlFor="en_name">English Name</Label>
+                    <Field as={Input} id="en_name" name="en_name" type="text" />
                     <ErrorMessage
-                      name="name"
+                      name="en_name"
                       component="div"
                       className="text-red-500 text-sm"
                     />
@@ -109,7 +137,7 @@ export default function SchoolForm() {
                 </div>
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
-                    <Label htmlFor="name">Phone</Label>
+                    <Label htmlFor="phone">Phone</Label>
                     <Field as={Input} id="phone" name="phone" type="text" />
                     <ErrorMessage
                       name="phone"
@@ -169,15 +197,15 @@ export default function SchoolForm() {
 
                   <div className="flex gap-4 w-full">
                     <div className="flex-1">
-                      <Label htmlFor="lowestPrice">Lowest Price</Label>
+                      <Label htmlFor="lowest_price">Lowest Price</Label>
                       <Field
                         as={Input}
-                        id="lowestPrice"
-                        name="lowestPrice"
+                        id="lowest_price"
+                        name="lowest_price"
                         type="number"
                       />
                       <ErrorMessage
-                        name="lowestPrice"
+                        name="lowest_price"
                         component="div"
                         className="text-red-500 text-sm"
                       />
@@ -256,10 +284,10 @@ export default function SchoolForm() {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoading}
                 className="bg-primary"
               >
-                {isSubmitting ? "Submitting..." : "Create"}
+                {isSubmitting || isLoading ? "Submitting..." : "Create"}
               </Button>
             </div>
           </Form>

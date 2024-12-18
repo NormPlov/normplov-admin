@@ -1,21 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Suwannaphum } from "next/font/google";
 import StoreProvider from "@/app/StoreProvider";
 import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
 import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";
 import "@/app/globals.css";
-
-const suwannaphum = Suwannaphum({
-  weight: ["100", "300", "400", "700", "900"],
-  subsets: ["khmer"],
-  variable: "--font-suwannaphum",
-});
-
-const inter = Inter({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
+import { suwannaphum, inter } from "../font";
 
 export const metadata: Metadata = {
   title: "Norm Plov Admin Dashboard",
@@ -29,16 +17,19 @@ export default function AdminLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${suwannaphum.variable} ${inter.variable}`}>
+      <body
+        className={`${suwannaphum.variable} ${inter.variable}`}
+        suppressHydrationWarning
+      >
         <StoreProvider>
           <div className="flex">
-          <aside>
-            <SidebarComponent />
+            <aside>
+              <SidebarComponent />
             </aside>
             <div className="w-full bg-[#fdfdfd]">
               <NavbarComponent />
               {children}
-              </div>
+            </div>
           </div>
         </StoreProvider>
       </body>
