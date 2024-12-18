@@ -38,7 +38,7 @@ const baseQueryWithReAuth = async (
 
   if (result.error?.status === 401) {
 	// Attempt to refresh the token
-	const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_NORMPLOV}/api/refresh`, {
+	const refreshResponse = await fetch(`/api/refresh`, {
 		method: "POST",
 		credentials: "include",
 	});
@@ -50,7 +50,7 @@ const baseQueryWithReAuth = async (
 		result = await baseQuery(args, api, extraOptions);
 	} else {
 		// Handle token refresh failure (e.g., log out the user)
-		const res = await fetch(`${process.env.NEXT_PUBLIC_NORMPLOV}/api/logout`, {
+		const res = await fetch(`/api/logout`, {
 			method: "POST",
 			credentials: "include",
 		});
