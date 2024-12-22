@@ -108,6 +108,7 @@ export function UniversityListing() {
               <TableHead>Universities / Institute</TableHead>
               <TableHead>Address</TableHead>
               <TableHead className="text-right">Email</TableHead>
+              <TableHead className="text-right">School Type</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -132,6 +133,9 @@ export function UniversityListing() {
                 <TableCell>{school.location || "N/A"}</TableCell>
                 <TableCell className="text-right">
                   {school.email || "N/A"}
+                </TableCell>
+                <TableCell className="text-right">
+                  {school.type || "N/A"}
                 </TableCell>
                 <TableCell className="text-center">
                   <DataTableRowActions row={school as UniversityType} />

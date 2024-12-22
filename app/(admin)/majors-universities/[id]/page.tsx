@@ -36,13 +36,7 @@ import { useUniversityDetailsQuery } from "@/app/redux/service/university";
 import { useParams } from "next/navigation";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
-// type ErrorType = FetchBaseQueryError | SerializedError | undefined;
-
-// interface UniversityData {
-//   payload: UniversityType;
-// }
-
-const UniversityPage: React.FC = () => {
+const UniversityPage = () => {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useUniversityDetailsQuery(id || "");
@@ -87,7 +81,7 @@ const UniversityPage: React.FC = () => {
           alt={`${university.en_name} logo`}
           width={288}
           height={288}
-          className="rounded-full w-72"
+          className="rounded-lg"
         />
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-textprimary">

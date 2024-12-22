@@ -43,8 +43,10 @@ export function ImageUpload({ onImageUpload, label }: ImageUploadProps) {
       </div>
       {preview && (
         <div className="mt-2">
-          <Image width={1000} height={1000}
-            src={preview}
+          <Image
+            width={1000}
+            height={1000}
+            src={`${preview}`}
             alt="Preview"
             className="max-w-full h-auto max-h-48 rounded"
           />
