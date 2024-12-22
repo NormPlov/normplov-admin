@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   FaEnvelope,
   FaGlobe,
@@ -36,11 +35,7 @@ import { UniversityType } from "@/types/types";
 import { useUniversityDetailsQuery } from "@/app/redux/service/university";
 import { useParams } from "next/navigation";
 
-interface UniversityData {
-  payload: UniversityType;
-}
-
-const UniversityPage: React.FC = () => {
+const UniversityPage = () => {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useUniversityDetailsQuery(id || "");

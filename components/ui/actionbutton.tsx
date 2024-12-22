@@ -6,7 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -38,9 +37,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             View
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Pencil className="mr-2 h-4 w-4" />
-          Edit
+        <DropdownMenuItem asChild>
+          <Link href={`/majors-universities/edit/${row.uuid}`}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>

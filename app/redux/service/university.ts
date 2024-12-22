@@ -7,23 +7,23 @@ export const universityApi = normPlovApi.injectEndpoints({
       UniversitiesResponse,
       { page: number; size: number }
     >({
-      query: ({ page }) => ({
-        url: `api/v1/schools?page=${page}&size=50`,
-        method: "GET", // Optional, 'GET' is the default
+      query: ({ page, size }) => ({
+        url: `api/v1/schools?page=${page}&size=${size}`,
+        method: "GET",
       }),
     }),
 
     universityDetails: builder.query<UniversityType, string>({
       query: (uuid) => ({
         url: `api/v1/schools/${uuid}`,
-        method: "GET", // Optional, 'GET' is the default
+        method: "GET",
       }),
     }),
 
     createUniversity: builder.mutation<UniversityType, Partial<UniversityType>>(
       {
         query: (newUniversity) => ({
-          url: "api/v1/universities",
+          url: "api/v1/schools",
           method: "POST",
           body: newUniversity,
         }),
@@ -32,7 +32,7 @@ export const universityApi = normPlovApi.injectEndpoints({
 
     editUniversity: builder.mutation<UniversityType, Partial<UniversityType>>({
       query: (updatedUniversity) => ({
-        url: `api/v1/universities/${updatedUniversity.uuid}`,
+        url: `api/v1/schools/${updatedUniversity.uuid}`,
         method: "PUT",
         body: updatedUniversity,
       }),
@@ -40,7 +40,7 @@ export const universityApi = normPlovApi.injectEndpoints({
 
     deleteUniversity: builder.mutation<void, string>({
       query: (uuid) => ({
-        url: `api/v1/universities/${uuid}`,
+        url: `api/v1/schools/${uuid}`,
         method: "DELETE",
       }),
     }),

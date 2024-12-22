@@ -60,6 +60,12 @@ export type UniversityType = {
   description?: string;
   vision?: string;
   mission?: string;
+  popular_major?: string;
+  lowest_price?: string;
+  highest_price?: string;
+  latitude?: number;
+  longitude?: number;
+  school_type?: string;
 };
 
 export interface SchoolsType extends UniversityType {
