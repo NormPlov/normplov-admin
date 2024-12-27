@@ -1,0 +1,41 @@
+{
+    "introEn": {
+      "title": "Career",
+      "highlight": " Test",
+      "description": "Choosing the right career path can be challenging, but understanding yourself is the first step towards finding the right career for you.This questionnaire is designed to help you identify your strengths, weaknesses, interests, learning Style, values, and personality, and give you suggestions on careers, skills, and skills that you should consider."
+    },
+
+    "instructEn": {
+      "instructionLabel": "Instruction",
+      "howItWorksTitle": "How it works",
+      "howItWorksSteps": [
+        "Taking the quiz is quick and easy.",
+        "Choose the emoji that best represents your level of agreement for each question, responding with honesty and attention."
+      ],
+      "representedImageTitle": "Represented Image",
+      "emojiLabels": ["Very Disagree", "Disagree", "Neutral", "Agree", "Very Agree"]
+    },
+
+    "typeOfQuizEn": {
+      "title": "Select a quiz that interests you",
+      "description": "Depending on the type of test you choose, you will get results on career and major guidance that you should choose and get to know yourself better."
+    },
+
+    "RecommendationEn": {
+      "jobTitle": "Teacher / Trainer",
+      "jobdesc": "A Teacher/Trainer educates and inspires learners by delivering engaging lessons or training sessions tailored to their needs. They create structured plans, assess progress, and provide feedback to ensure effective skill and ...",
+      "majors": [
+        "Computer Science",
+        "Software Engineering",
+        "Information Technology"
+      ],
+      "unis": [
+        "Institute of science and technology advanced development",
+        "ITC",
+        "CADT"
+      ]
+      
+    }
+    
+        
+}

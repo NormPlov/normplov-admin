@@ -68,9 +68,13 @@ const TestHistoryTable = () => {
     // Filter logic
     const filteredUsers =
         data?.payload?.tests.filter((test) => {
+            const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
+
             const matchesSearch =
-                test?.test_name.toLowerCase().includes(search.toLowerCase()) ||
-                test?.user_email.toLowerCase().includes(search.toLowerCase());
+                normalizeString(test?.test_name).includes(normalizeString(search)) ||
+                normalizeString(test?.user_email).includes(normalizeString(search)) ||
+                normalizeString(test?.assessment_type_name).includes(normalizeString(search));
+
             const matchesFilter =
                 filter === "all" ||
                 (filter === "Done" && test?.is_completed) ||
@@ -79,11 +83,11 @@ const TestHistoryTable = () => {
         }) || [];
 
     return (
-        <div className="h-screen p-6 text-textprimary rounded-md">
+        <div className="h-screen p-6 rounded-md">
             <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <div className="text-3xl font-normal text-secondary">User Feedback</div>
+                    <div className="text-3xl font-semibold text-secondary">Test History </div>
                     <div className="flex items-center gap-4">
                         {/* Search */}
                         <div className="relative">
@@ -154,7 +158,7 @@ const TestHistoryTable = () => {
                                             {/* Username */}
                                             <TableCell className="px-4 py-2">
                                                 <div>
-                                                    <p className="font-medium text-textprimary">{test?.user_name}</p>
+                                                    <p className="font-medium text-md text-textprimary">{test?.user_name}</p>
                                                     <p className="text-sm text-gray-500">
                                                         {test?.user_email}
                                                     </p>
@@ -190,7 +194,7 @@ const TestHistoryTable = () => {
                                             </TableCell>
                                             {/* Action */}
                                             <TableCell className="px-4 py-2">
-                                                <button onClick={() => route.push(`/test-history/detail`)} className="px-4 py-1 text-white bg-primary rounded-md hover:bg-green-500">
+                                                <button onClick={() => route.push(`/test-history/${test?.assessment_type_name}/${test?.test_uuid}`)} className="px-4 py-1 text-white bg-primary rounded-md hover:bg-green-500">
                                                     View
                                                 </button>
                                             </TableCell>
@@ -199,73 +203,73 @@ const TestHistoryTable = () => {
                                 )}
                         </TableBody>
                     </Table>
-                </div>     
+                </div>
 
                 {/* Pagination Section */}
                 <div className="flex justify-between items-center mt-4">
                     {/* Showing data */}
-                    <div className="text-sm font-medium">
+                    <div className="text-sm font-medium text-gray-500">
                         Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
                         {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
                     </div>
 
-                   <div className="flex gap-4">
-                     {/* Rows Per Page */}
-                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Rows per page:</span>
-                        <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
-                            <SelectTrigger className="h-8 w-[70px]">
-                                <SelectValue placeholder={itemsPerPage} />
-                            </SelectTrigger>
-                            <SelectContent side="top">
-                                {ITEMS_PER_PAGE_OPTIONS.map((size) => (
-                                    <SelectItem key={size} value={`${size}`}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                    <div className="flex gap-4">
+                        {/* Rows Per Page */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Rows per page:</span>
+                            <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
+                                <SelectTrigger className="h-8 w-[70px]">
+                                    <SelectValue placeholder={itemsPerPage} />
+                                </SelectTrigger>
+                                <SelectContent side="top">
+                                    {ITEMS_PER_PAGE_OPTIONS.map((size) => (
+                                        <SelectItem key={size} value={`${size}`}>
+                                            {size}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {/* Pagination Controls */}
+                        <div className="flex items-center gap-4">
+                            <Button
+                                variant="secondary"
+                                onClick={() => setCurrentPage(1)}
+                                disabled={currentPage <= 1}
+                            >
+                                <ChevronsLeft className="h-4 w-4" />
+                            </Button>
+
+                            <Button
+                                variant="secondary"
+                                onClick={handlePreviousPage}
+                                disabled={currentPage <= 1}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+
+                            <span className="text-sm font-medium text-gray-800">
+                                Page {currentPage} of {totalPages}
+                            </span>
+
+                            <Button
+                                variant="secondary"
+                                onClick={handleNextPage}
+                                disabled={currentPage >= totalPages}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+
+                            <Button
+                                variant="secondary"
+                                onClick={() => setCurrentPage(totalPages)}
+                                disabled={currentPage >= totalPages}
+                            >
+                                <ChevronsRight className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
-
-                    {/* Pagination Controls */}
-                    <div className="flex items-center gap-4">
-                        <Button
-                            variant="secondary"
-                            onClick={() => setCurrentPage(1)}
-                            disabled={currentPage <= 1}
-                        >
-                            <ChevronsLeft className="h-4 w-4" />
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            onClick={handlePreviousPage}
-                            disabled={currentPage <= 1}
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
-
-                        <span className="text-sm">
-                            Page {currentPage} of {totalPages}
-                        </span>
-
-                        <Button
-                            variant="secondary"
-                            onClick={handleNextPage}
-                            disabled={currentPage >= totalPages}
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            onClick={() => setCurrentPage(totalPages)}
-                            disabled={currentPage >= totalPages}
-                        >
-                            <ChevronsRight className="h-4 w-4" />
-                        </Button>
-                    </div>
-                   </div>
                 </div>
 
 

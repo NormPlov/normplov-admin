@@ -28,10 +28,10 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-import { useGetJobQuery } from "@/app/redux/service/job";
+import { useGetJobQuery, useDeleteJobMutation } from "@/app/redux/service/job";
 import { JobDetails } from "@/types/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import Image from "next/image";
+import { FiAlertCircle } from "react-icons/fi";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -39,8 +39,13 @@ export default function JobListTableComponent() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState<JobDetails | null>(null)
+  // const [filter, setFilter] = useState("all");
 
   const router = useRouter();
+
+  const [deleteJob] = useDeleteJobMutation();
 
   // Fetch job data
   const { data, isLoading } = useGetJobQuery({
@@ -53,13 +58,34 @@ export default function JobListTableComponent() {
   const totalPages = data?.payload?.metadata?.total_pages || 0;
   const totalItems = data?.payload?.metadata?.total_items || 0;
 
+  // const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
+
   // Filtered Jobs
-  const filteredJobs = jobs.filter(
-    (job: JobDetails) =>
-      job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.company_name.toLowerCase().includes(search.toLowerCase()) ||
-      job.category.toLowerCase().includes(search.toLowerCase())
-  );
+  // const filteredJobs = jobs.filter(
+  //   (job: JobDetails) =>
+  //     job.title.toLowerCase().includes(normalizeString(search)) ||
+  //     job.company_name.toLowerCase().includes(normalizeString(search))
+  //     const matchesFilter =
+  //     filter === "all" ||
+  //     (filter === "promoted" && item.is_promoted) ||
+  //     (filter === "not-promoted" && !item.is_promoted);
+  //   return matchesSearch && matchesFilter;
+  // }) || [];
+  // );
+  const filteredJobs =
+    jobs.filter((job) => {
+      const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
+
+      const matchesJobs =
+        job.company_name.toLowerCase().includes(normalizeString(search)) ||
+        job.title.toLowerCase().includes(normalizeString(search));
+      // const matchesFilter =
+      //   filter === "all" ||
+      //   (filter && job?.category.includes(filter));
+      // return matchesSearch && matchesFilter;
+      return matchesJobs;
+    }) || [];
+
 
   // Pagination handlers
   const handleItemsPerPageChange = (value: string) => {
@@ -84,16 +110,27 @@ export default function JobListTableComponent() {
     router.push(`/jobs/updateJob/${uuid}`);
   };
 
-  const handleDelete = (uuid: string) => {
-    router.push(`/jobs/deleteJob/${uuid}`);
+  const handleDeleteClick = (job: JobDetails) => {
+    setJobToDelete(job);
+    setDeleteModalOpen(true); // Open modal before API call
   };
 
+  const handleDeleteConfirm = async () => {
+    if (jobToDelete) {
+      console.log("delete", jobToDelete)
+      await deleteJob({ uuid: jobToDelete.uuid }); // Perform API call
+      setDeleteModalOpen(false); // Close modal
+      setJobToDelete(null); // Reset jobToDelete
+    }
+  };
+
+
   return (
-    <div className="h-screen p-6 text-textprimary rounded-md">
+    <div className="h-screen p-6 rounded-md">
       <div className="space-y-5 w-full h-full p-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-4">
-          <div className="text-3xl font-normal text-secondary">Jobs</div>
+          <div className="text-3xl font-semibold text-secondary">Jobs</div>
           <div className="flex items-center gap-4">
             <div className="relative">
               <IoIosSearch className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
@@ -104,6 +141,17 @@ export default function JobListTableComponent() {
                 className="w-64 pl-10 py-2 border rounded-md focus:border-yellow-500 focus:ring-yellow-500"
               />
             </div>
+            {/* Filter */}
+            {/* <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="promoted">Promoted</SelectItem>
+                <SelectItem value="not-promoted">Not Promoted</SelectItem>
+              </SelectContent>
+            </Select> */}
             <Button
               onClick={() => router.push("/jobs/addJob")}
               className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1"
@@ -129,17 +177,13 @@ export default function JobListTableComponent() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                 <TableRow>
                   <TableCell colSpan={6}>
                     <Skeleton className="h-8 w-full" />
                   </TableCell>
                 </TableRow>
-                </TableRow>
               ) : filteredJobs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center p-0">
-                    <Image width={1000} height={1000} src={"/assets/not-found.png"} alt={"Image not found"}
-                    className="w-40 h-40 object-cover rounded-md" />
+                  <TableCell colSpan={6} className="text-center p-4 text-red-500 text-md">
                     No jobs found.
                   </TableCell>
                 </TableRow>
@@ -155,26 +199,26 @@ export default function JobListTableComponent() {
                           className="object-cover rounded-md w-full h-full"
                         />
                         <AvatarFallback className="rounded-md">
-                          {job.title[0]?.toUpperCase() || "?"}
+                          {job.company_name[0]?.toUpperCase() || "?"}
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
                     {/* Company */}
-                    <TableCell>{job?.company_name || "N/A"}</TableCell>
+                    <TableCell className="text-gray-700 font-medium">{job?.company_name || "N/A"}</TableCell>
                     {/* Category */}
-                    <TableCell>{job?.category || "N/A"}</TableCell>
+                    <TableCell className="text-gray-700">{job?.category || "N/A"}</TableCell>
                     {/* Position */}
-                    <TableCell>{job?.title || "N/A"}</TableCell>
+                    <TableCell className="text-gray-700">{job?.title || "N/A"}</TableCell>
                     {/* Closing Date */}
-                    <TableCell>
+                    <TableCell className="text-gray-700">
                       {new Date(job.closing_date || "N/A").toLocaleDateString()}
                     </TableCell>
                     {/* Actions */}
-                    <TableCell>
+                    <TableCell className="text-gray-700">
                       <DropdownPopup
                         onView={() => handleView(job?.uuid)}
                         onEdit={() => handleEdit(job?.uuid)}
-                        onDelete={() => handleDelete(job?.uuid)}
+                        onDelete={() => handleDeleteClick(job)}
                       />
                     </TableCell>
                   </TableRow>
@@ -186,7 +230,7 @@ export default function JobListTableComponent() {
         {/* Pagination Section */}
         <div className="flex justify-between items-center mt-4">
           {/* Showing data */}
-          <div className="text-sm font-medium mb-10">
+          <div className="text-sm font-medium mb-10 text-gray-500">
             Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
             {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
           </div>
@@ -227,7 +271,7 @@ export default function JobListTableComponent() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <span className="text-sm">
+              <span className="text-sm font-medium">
                 Page {currentPage} of {totalPages}
               </span>
 
@@ -249,8 +293,48 @@ export default function JobListTableComponent() {
             </div>
           </div>
         </div>
-      </div>
+        {/* Delete Confirmation Modal */}
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-[400px] text-center relative">
+              {/* Close Button */}
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              >
+                &times;
+              </button>
 
+              {/* Alert Icon */}
+              <div className="flex justify-center mb-4">
+                <FiAlertCircle className="text-red-500 text-5xl" />
+              </div>
+
+              {/* Confirmation Message */}
+              <p className="text-gray-700 text-lg mb-6">
+                Are you sure delete this job?
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeleteModalOpen(false)}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteConfirm}
+                  className="bg-red-500 text-white hover:bg-red-600 px-6"
+                >
+                  Yes
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

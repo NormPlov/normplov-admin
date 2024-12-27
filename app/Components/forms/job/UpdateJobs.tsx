@@ -7,38 +7,59 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { FaUpload } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
-import { useGetJobQuery } from '@/app/redux/service/job';
-import { JobDetails, JobDetailsProps } from '@/types/types';
+import {
+    useGetJobQuery,
+    useGetJobCategoryQuery,
+    useUpdateJobMutation
+} from '@/app/redux/service/job';
+import { JobDetailsProps, UpdateJob } from '@/types/types';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ClosingDate } from '../../calendar/ClosingDate';
 
-const jobCategories = ['IT', 'Education', 'Healthcare', 'Finance'];
-const jobTypes = ['Full-time', 'Part-time', 'Contract'];
-const qualifications = ['High School', 'Associate', 'Bachelor', 'Master', 'PhD'];
+
+const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
 const validationSchema = Yup.object({
-    companyName: Yup.string().required('Company Name is required'),
-    position: Yup.string().required('Position is required'),
-    jobCategory: Yup.string().required('Job Category is required'),
-    jobType: Yup.string().required('Job Type is required'),
-    qualification: Yup.string().required('Qualification is required'),
-    experience: Yup.string().required('Experience is required'),
-    closingDate: Yup.date().required('Closing Date is required'),
-    jobDescription: Yup.string().required('Job Description is required'),
-    jobResponsibility: Yup.string().required('Job Responsibility is required'),
-    resources: Yup.string().url('Must be a valid URL').required('Resources URL is required'),
+    category: Yup.string().min(1, 'At least one category is required'),
+    title: Yup.string(),
+    company: Yup.string(),
+    logo: Yup.mixed()
+        .nullable()
+        .test(
+            'fileType',
+            'Invalid file type. Only JPG, PNG, or GIF files are allowed.',
+            (value) => !value || (value instanceof File && SUPPORTED_FORMATS.includes(value.type))
+        )
+        .test(
+            'fileSize',
+            'File size is too large. Maximum size is 5 MB.',
+            (value) => !value || (value instanceof File && value.size <= FILE_SIZE)
+        ),
+    facebook_url: Yup.string().url('Must be a valid URL'),
+    location: Yup.string(),
+    description: Yup.string(),
+    job_type: Yup.string(),
+    salary: Yup.string(),
+    closing_date: Yup.date()
+        .required('Closing Date is required')
+        .test(
+            'is-greater',
+            'Closing date must be later than the posting date',
+            function (value) {
+                const { posted_at } = this.parent;
+                return value > posted_at;
+            }
+        ),
+    requirements: Yup.string(),
+    responsibilities: Yup.string(),
+    email: Yup.string().email('Must be a valid email'),
+    phone: Yup.string(),
+    website: Yup.string(),
 });
-
-const initialValues = {
-    companyName: '',
-    position: '',
-    jobCategory: '',
-    jobType: '',
-    qualification: '',
-    experience: '',
-    closingDate: '',
-    jobDescription: '',
-    jobResponsibility: '',
-    resources: '',
-};
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -46,12 +67,12 @@ const FILE_SIZE = 1024 * 1024 * 5; // Max file size 5 MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 
 
-
 const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [, setImageFile] = useState<File | null>(null);
-    const [currentPage, ] = useState(1);
+    const [currentPage,] = useState(1);
     const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+
 
     const router = useRouter();
 
@@ -61,16 +82,42 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         pageSize: itemsPerPage,
     });
 
+    const { data: jobCategory } = useGetJobCategoryQuery()
+    const [updateJob] = useUpdateJobMutation()
+
     if (isLoading) {
-        return <div className="p-6 text-center text-primary">Loading...</div>;
+        return <div className="w-10/12 h-screen flex justify-center items-center text-primary">
+            Loading...
+        </div>;
     }
 
     // Find the job with the matching UUID
-    const job = data?.payload?.items.find((item: JobDetails) => item.uuid === uuid);
+    const job = data?.payload?.items.find((item) => item.uuid === uuid);
 
     if (!job) {
         return <div className="p-6 text-center text-red-500">Job not found.</div>;
     }
+
+
+    if (!jobCategory) {
+        return <div className="p-6 text-center text-red-500">Job category not found.</div>
+    }
+
+
+    // const handleDrop = (
+    //     e: React.DragEvent<HTMLDivElement>,
+    //     setFieldValue: (field: string, value: File | null) => void
+    // ): void => {
+    //     e.preventDefault();
+
+    //     const file = e.dataTransfer.files[0];
+    //     if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
+    //         const previewUrl = URL.createObjectURL(file);
+    //         setSelectedImage(previewUrl);
+    //         setImageFile(file);
+    //         setFieldValue("logo", file);
+    //     }
+    // };
 
     const handleDrop = (
         e: React.DragEvent<HTMLDivElement>,
@@ -83,456 +130,405 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             const previewUrl = URL.createObjectURL(file);
             setSelectedImage(previewUrl);
             setImageFile(file);
-            setFieldValue("avatar", file);
+            setFieldValue("logo", file); // Set the File object correctly
+        } else {
+            toast.error("Invalid file. Please upload a valid image file.");
+        }
+    };
+
+    const initialValues = {
+        company: job?.company_name || '',
+        title: job?.title || '',
+        category: Array.isArray(job?.category) ? job.category : [job?.category || ''],
+        job_type: job?.job_type || '',
+        salary: '',
+        closing_date: job?.closing_date || '',
+        description: job?.description || '',
+        responsibilities: job?.responsibilities || ' ', // Ensure this is an array
+        requirements: job?.requirements || '', // Ensure this is an array
+        email: job?.email || '',
+        phone: job?.phone || '',
+        website: job?.website || '',
+        logo: null, // Set to null for proper typing
+        location: job?.location || '',
+        facebook_url: job?.facebook_url || '',
+    };
+
+
+    console.log("category: ", jobCategory?.payload?.categories)
+
+    const handleUpdateJob = async (values: UpdateJob) => {
+        try {
+            // Ensure `logo` is a valid File object
+            if (!(values.logo instanceof File)) {
+                toast.error("Logo must be a valid file.");
+                return;
+            }
+
+            // Call the `updateJob` mutation with the appropriate structure
+             await updateJob({
+                uuid, // Pass the job's unique identifier
+                job: {
+                    company: values.company,
+                    title: values.title,
+                    logo: values.logo, // Attach the logo file
+                    facebook_url: values.facebook_url || "",
+                    location: values.location || "",
+                    description: values.description || "",
+                    job_type: values.job_type || "",
+                    salary: values.salary || "",
+                    closing_date: values.closing_date || "",
+                    requirements: values.requirements || [], // Ensure arrays are passed as expected
+                    responsibilities: values.responsibilities || [],
+                    email: values.email || "",
+                    phone: values.phone || "",
+                    website: values.website || "",
+                    category: values.category || [],
+                },
+            }).unwrap();
+
+            // Display success notification
+            toast.success("Job updated successfully!");
+
+            // Redirect to jobs page
+            router.push("/jobs");
+        } catch (error) {
+            console.error("Error updating job:", error);
+            toast.error("Failed to update the job. Please try again.");
         }
     };
 
 
     return (
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleUpdateJob}
 
-
-        <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={(values) => {
-                console.log('Form data:', values);
-                alert('Job added successfully!');
-            }}
-
-        >
-            {({ setFieldValue }) => (
-                <Form className="w-full p-10 space-y-4">
-                    <h2 className="text-3xl font-normal mb-6 text-secondary">Update Jobs</h2>
-                    {/* Back Button */}
-                    <div className="mb-6 flex justify-end mx-4">
-                        <button
-                            onClick={() => router.back()}
-                            className="text-secondary font-medium hover:underline text-md"
-                        >
-                            &larr; Back
-                        </button>
-                    </div>
-
-                    {/* Company Name */}
-                    <div className="mb-2.5">
-                        <label htmlFor="companyName" className="block text-md font-normal py-2 text-primary">
-                            Company Name
-                        </label>
-                        <Field
-                            id="companyName"
-                            name="companyName"
-                            placeholder={job.company_name}
-                            type="text"
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg px-6 py-1.5`}
-                        />
-                        <ErrorMessage name="companyName" component="p" className="text-red-500 text-sm mt-1" />
-                    </div>
-                    {/* cover Job seeking  */}
-                    <label htmlFor="position" className="block font-normal text-primary text-md pt-2">
-                        Cover
-                    </label>
-                    <div
-                        className="relative border-dashed border-2 bg-[#fdfdfd] w-full h-56 rounded-lg p-4 mx-auto "
-                        onDrop={(e) => handleDrop(e, setFieldValue)}
-                        onDragOver={(e) => e.preventDefault()}
-                    >
-                        <Image
-                            src={selectedImage || "/assets/Placeholderimage.png"}
-                            alt="Profile picture"
-                            width={1000}
-                            height={1000}
-                            className="object-cover w-full h-full rounded-lg"
-                        />
-                        <input
-                            type="file"
-                            name="avatar"
-                            accept="image/jpg, image/jpeg, image/png, image/gif"
-                            onChange={(e) => {
-                                const file = e.target.files ? e.target.files[0] : null;
-                                if (file) {
-                                    const previewUrl = URL.createObjectURL(file);
-                                    setSelectedImage(previewUrl);
-                                    setFieldValue("avatar", file);
-                                }
-                            }}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                        />
-                        <div className="bg-gray-200 absolute left-[500px] top-20 flex items-center justify-center gap-2 px-6 py-2 rounded-md">
-                            <FaUpload className='text-gray-700' />
-                            <span className=' text-gray-700 font-normal'>Upload</span>
-                        </div>
-                    </div>
-                    <div className="flex justify-between w-full gap-24">
-                        {/* Job Category */}
-                        <div className="mb-2.5 w-full">
-                            <label htmlFor="jobCategory" className="block text-md font-normal text-primary py-2">
-                                Job Category
-                            </label>
-                            <Field
-                                as="select"
-                                id="jobCategory"
-                                name="jobCategory"
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-gray-400`}
+            >
+                {({ values, setFieldValue }) => (
+                    <Form className="w-full p-10 space-y-4">
+                        {/* {errors['at-least-one-field-updated'] && (
+                            <div className="text-red-500 text-sm">
+                                {errors['at-least-one-field-updated']}
+                            </div>
+                        )} */}
+                        <h2 className="text-3xl font-semibold mb-6 text-secondary">Update Jobs</h2>
+                        {/* Back Button */}
+                        <div className="mb-6 flex justify-end mx-4">
+                            <Button
+                                onClick={() => router.back()}
+                                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1"
                             >
-                                <option value="" >Select Job Category</option>
-                                {jobCategories.map((category) => (
-                                    <option key={category} value={category}>
-                                        {category}
-                                    </option>
-                                ))}
-                            </Field>
-                            <ErrorMessage name="jobCategory" component="p" className="text-red-500 text-sm mt-1" />
+                                &larr; Back
+                            </Button>
                         </div>
-                        {/* Position */}
-                        <div className="mb-2.5 w-full">
-                            <label htmlFor="position" className="block font-normal text-primary text-md py-2">
-                                Position
+
+                        {/* Company Name */}
+                        <div className="mb-2.5">
+                            <label htmlFor="company" className="block text-md font-normal py-2 text-primary">
+                                Company Name
                             </label>
                             <Field
-                                id="position"
-                                name="position"
-                                placeholder={job.title}
-                                type="text"
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-lg`}
+                                id="company"
+                                name="ccompany"
+                                placeholder={job.company_name}
+                                type="input"
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md px-6 py-1.5`}
                             />
-                            <ErrorMessage name="position" component="p" className="text-red-500 text-sm mt-1" />
+                            <ErrorMessage name="company" component="p" className="text-red-500 text-sm mt-1" />
+                        </div>
+                        {/* cover Job seeking  */}
+                        <label htmlFor="logo" className="block font-medium text-primary text-md mb-2">
+                            Cover
+                        </label>
+
+                        {/* File Drop */}
+                        <div
+                            className="relative border-dashed border-2 bg-[#fdfdfd] bg-white w-full h-64 rounded-lg overflow-hidden shadow-sm"
+                            onDrop={(e) => handleDrop(e, setFieldValue)}
+                            onDragOver={(e) => e.preventDefault()}
+                        >
+                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                                <Image
+                                    src={selectedImage || '/assets/placeholder.jpg'}
+                                    alt="Logo preview"
+                                    width={1000}
+                                    height={1000}
+                                    className="object-contain w-full h-full rounded-lg"
+                                />
+                            </div>
+
+                            <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
+                                <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                                    <FaUpload className="text-gray-400 text-lg" />
+                                    <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex justify-between w-full gap-24">
+                            {/* Job Category */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
+                                    Job Category
+                                </label>
+                                <Select
+                                    name="category"
+                                    onValueChange={(value) => setFieldValue('category', value)} // Set the category as a string
+                                >
+                                    <SelectTrigger id="category" className="w-full">
+                                        <SelectValue placeholder="Select Job Category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {jobCategory?.payload?.categories?.map((type: string) => (
+                                            <SelectItem key={type} value={type}>
+                                                {type}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+
+                            {/* Position */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
+                                    Position
+                                </label>
+                                <Field
+                                    id="title"
+                                    name="title"
+                                    placeholder={job.title}
+                                    type="text"
+                                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
+                                />
+                                <ErrorMessage name="title" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+
+
+                        </div>
+
+                        <div className="flex justify-between w-full gap-24">
+                            {/* Job Type */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="job_type" className="block text-md font-normal py-2 text-primary">
+                                    Job Type
+                                </label>
+                                <Field
+                                    as="div"
+                                    id="job_type"
+                                    name="job_type"
+
+                                >
+                                    <Select
+                                        name="job_type"
+                                        onValueChange={(value) => setFieldValue("job_type", value)}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select Job Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {jobTypes.map((type) => (
+                                                    <SelectItem key={type} value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </Field>
+                                <ErrorMessage name="job_type" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+                            {/* Closing date */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="closing_date" className="block text-md font-normal text-primary py-2">
+                                    Closing Date
+                                </label>
+                                <ClosingDate
+                                    selectedDate={values.closing_date}
+                                    onDateChange={(date) => setFieldValue("closing_date", date)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-between w-full gap-24">
+
+
+                            {/* Salary */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="salary" className="block font-normal text-primary text-md py-2">
+                                    Salary
+                                </label>
+                                <Field
+                                    as={Input}
+                                    id="salary"
+                                    name="salary"
+                                    placeholder="1000-1200"
+                                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
+                                />
+                                <ErrorMessage name="salary" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+
                         </div>
 
 
-                    </div>
-                    <div className="flex justify-between w-full gap-24">
-                        {/* Job Type */}
-                        <div className="mb-2.5 w-full">
-                            <label htmlFor="jobType" className="block text-md font-normal py-2 text-primary">
-                                Job Type
+                        {/* Job description */}
+                        <div className="mb-2.5">
+                            <label htmlFor="description" className="block text-md font-normal py-2 text-primary">
+                                Job description
                             </label>
                             <Field
-                                as="select"
-                                id="jobType"
-                                name="jobType"
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
+                                as="textarea"
+                                id="description"
+                                name="description"
+                                placeholder={job.description}
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
                             >
-                                <option value="">Select Job Type</option>
-                                {jobTypes.map((type) => (
-                                    <option key={type} value={type}>
-                                        {type}
-                                    </option>
-                                ))}
+
                             </Field>
-                            <ErrorMessage name="jobType" component="p" className="text-red-500 text-sm mt-1" />
+                            <ErrorMessage name="description" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
-                        {/* Qulification */}
-                        <div className="mb-2.5 w-full">
-                            <label htmlFor="qulification" className="block text-md font-normal py-2 text-primary">
-                                Qulification
+
+                        {/* Job responsibility */}
+                        <div className="mb-2.5">
+                            <label htmlFor="responsibilities" className="block text-md font-normal text-primary py-2">
+                                Job responsibility
                             </label>
                             <Field
-                                as="select"
-                                id="qulification"
-                                name="qulification"
+                                as="textarea"
+                                id="responsibilities"
+                                name="responsibilities"
+                                placeholder={job.responsibilities}
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                                    setFieldValue("responsibilities", e.target.value);
+                                }}
+                            />
+                            <ErrorMessage name="responsibilities" component="p" className="text-red-500 text-sm mt-1" />
+                        </div>
+                        {/* Job requirements */}
+                        <div className="mb-2.5">
+                            <label htmlFor="requirements" className="block text-md font-normal text-primary py-2">
+                                Job requirements
+                            </label>
+                            <Field
+                                as="textarea"
+                                id="requirements"
+                                name="requirements"
                                 placeholder={job.requirements}
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                                    setFieldValue("requirements", e.target.value);
+                                }}
+                            />
+                            <ErrorMessage name="requirements" component="p" className="text-red-500 text-sm mt-1" />
+                        </div>
+                        <div className="flex justify-between w-full gap-24">
+
+                            {/* Facebook */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="facebook_url" className="block text-md font-normal text-primary py-2">
+                                    Facebook
+                                </label>
+                                <Field
+                                    as="input"
+                                    id="facebook_url"
+                                    name="facebook_url"
+                                    placeholder={job.facebook_url}
+                                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
+                                />
+                                <ErrorMessage name="facebook_url" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+                            {/* email */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="email" className="block text-md font-normal text-primary py-2">
+                                    Email
+                                </label>
+                                <Field
+                                    id="email"
+                                    name="email"
+                                    placeholder={job.email}
+                                    type="input"
+                                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
+                                />
+                                <ErrorMessage name="email" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+                        </div>
+
+
+                        <div className="flex justify-between w-full gap-24">
+                            {/* Location */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="location" className="block text-md font-normal py-2 text-primary">
+                                    Location
+                                </label>
+                                <Field
+                                    as="input"
+                                    id="location"
+                                    name="location"
+                                    placeholder={job.location}
+                                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
+                                />
+                                <ErrorMessage name="location" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+                            {/* Phone number */}
+                            <div className="mb-2.5 w-full">
+                                <label htmlFor="phone" className="block text-md font-normal py-2 text-primary">
+                                    Phone Number
+                                </label>
+                                <Field
+                                    as="input"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder={job.phone}
+                                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
+                                >
+                                </Field>
+                                <ErrorMessage name="phone" component="p" className="text-red-500 text-sm mt-1" />
+                            </div>
+
+
+                        </div>
+
+                        {/* Resources */}
+                        <div className="mb-2.5 w-full">
+                            <label htmlFor="website" className="block text-md font-normal text-primary py-2">
+                                Resources
+                            </label>
+                            <Field
+                                as="input"
+                                id="website"
+                                name="website"
+                                placeholder={job.website}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
+                            />
+                            <ErrorMessage name="website" component="p" className="text-red-500 text-sm mt-1" />
+                        </div>
+                        {/* Submit Button */}
+                        <div className="flex justify-end">
+                            <Button
+                                type="submit"
+                                disabled={isLoading} // Disable button during submission
+                                className={`bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1 ${isLoading ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
                             >
-                                <option value="">Select Qulification</option>
-                                {qualifications.map((type) => (
-                                    <option key={type} value={type}>
-                                        {type}
-                                    </option>
-                                ))}
-                            </Field>
-                            <ErrorMessage name="qulification" component="p" className="text-red-500 text-sm mt-1" />
+                                {isLoading ? "Submitting..." : "Submit"}
+                            </Button>
                         </div>
+                        {/* Debug output */}
+                        {/* <div className="mt-8 p-4 bg-gray-100 rounded">
+                            <h3 className="text-lg font-semibold mb-2">
+                                Form Values (Debug):
+                            </h3>
+                            <pre>{JSON.stringify(values, null, 2)}</pre>
+                        </div> */}
+                    </Form>
 
+                )}
 
-                    </div>
-                    <div className="flex justify-between w-full gap-24">
-                        {/* Closing date */}
-                        <div className="mb-2.5 w-full">
-                            <label htmlFor="closingDate" className="block text-md font-normal text-primary py-2">
-                                Closing Date
-                            </label>
-                            <Field
-                                id="closingDate"
-                                name="closingDate"
-                                placeholder={job.closing_date}
-                                type="date"
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
-                            />
-                            <ErrorMessage name="closingDate" component="p" className="text-red-500 text-sm mt-1" />
-                        </div>
-                        {/* Experience */}
-                        <div className="mb-2.5 w-full">
-                            <label htmlFor="experience" className="block font-normal text-primary text-md py-2">
-                                Experience
-                            </label>
-                            <Field
-                                id="experience"
-                                name="experience"
-                                type="text"
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-lg`}
-                            />
-                            <ErrorMessage name="experience" component="p" className="text-red-500 text-sm mt-1" />
-                        </div>
+            </Formik>
 
-
-                    </div>
-
-                    {/* Job description */}
-                    <div className="mb-2.5">
-                        <label htmlFor="jobDescription" className="block text-md font-normal py-2 text-primary">
-                            Job description
-                        </label>
-                        <Field
-                            as="textarea"
-                            id="jobDescription"
-                            name="jobDescription"
-                            placeholder={job.description}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
-                        >
-
-                        </Field>
-                        <ErrorMessage name="jobDescription" component="p" className="text-red-500 text-sm mt-1" />
-                    </div>
-
-                    {/* Job responsibility */}
-                    <div className="mb-2.5">
-                        <label htmlFor="jobResponsibility" className="block text-md font-normal text-primary py-2">
-                            Job responsibility
-                        </label>
-                        <Field
-                            as="textarea"
-                            id="jobResponsibility"
-                            name="jobResponsibility"
-                            placeholder={job.responsibilities}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
-                        />
-                        <ErrorMessage name="jobResponsibility" component="p" className="text-red-500 text-sm mt-1" />
-                    </div>
-                    {/* Resources */}
-                    <div className="mb-2.5">
-                        <label htmlFor="Resources" className="block text-md font-normal text-primary py-2">
-                            Resources
-                        </label>
-                        <Field
-                            as="input"
-                            id="Resources"
-                            name="Resources"
-                            placeholder={job.website}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
-                        />
-                        <ErrorMessage name="Resources" component="p" className="text-red-500 text-sm mt-1" />
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="bg-primary text-white font-medium px-6 py-2 rounded-md shadow hover:bg-blue-600 focus:ring focus:ring-blue-300"
-                        >
-                            Submit
-                        </button>
-                    </div>
-                </Form>
-            )}
-        </Formik>
 
     );
 };
 
 export default UpdateJobForm;
-
-
-
-
-// "use client";
-
-// import React, { useState } from "react";
-// import { Formik, Form, Field, ErrorMessage } from "formik";
-// import * as Yup from "yup";
-// import { usePostJobMutation } from "@/app/redux/service/job";
-// import Image from "next/image";
-// import { FaUpload } from "react-icons/fa";
-// import { JobDetails } from "@/types/types";
-
-// const jobCategories = ["IT", "Education", "Healthcare", "Finance"];
-// const jobTypes = ["Full-time", "Part-time", "Contract"];
-// const qualifications = ["High School", "Associate", "Bachelor", "Master", "PhD"];
-
-// // Validation schema for form fields
-// const validationSchema = Yup.object({
-//   companyName: Yup.string().required("Company Name is required"),
-//   title: Yup.string().required("Position is required"),
-//   jobCategory: Yup.string().required("Job Category is required"),
-//   jobType: Yup.string().required("Job Type is required"),
-//   qualification: Yup.string().required("Qualification is required"),
-//   experience: Yup.string().required("Experience is required"),
-//   closingDate: Yup.date().required("Closing Date is required"),
-//   jobDescription: Yup.string().required("Job Description is required"),
-//   jobResponsibility: Yup.string().required("Job Responsibility is required"),
-//   resources: Yup.string().url("Must be a valid URL").required("Resources URL is required"),
-//   logo: Yup.mixed()
-//     .required("Logo is required")
-//     .test(
-//       "fileSize",
-//       "File size must be less than 5MB",
-//       (value) => !value || value.size <= 1024 * 1024 * 5
-//     )
-//     .test(
-//       "fileFormat",
-//       "Unsupported Format",
-//       (value) => !value || ["image/jpg", "image/jpeg", "image/png", "image/gif"].includes(value.type)
-//     ),
-// });
-
-// const initialValues = {
-//   companyName: "",
-//   title: "",
-//   jobCategory: "",
-//   jobType: "",
-//   qualification: "",
-//   experience: "",
-//   closingDate: "",
-//   jobDescription: "",
-//   jobResponsibility: "",
-//   resources: "",
-//   logo: null,
-// };
-
-// const AddJobForm = () => {
-//   const [postJob] = usePostJobMutation();
-//   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-//   const [imageFile, setImageFile] = useState<File | null>(null);
-
-//   const handleDrop = (
-//     e: React.DragEvent<HTMLDivElement>,
-//     setFieldValue: (field: string, value: File | null) => void
-//   ): void => {
-//     e.preventDefault();
-
-//     const file = e.dataTransfer.files[0];
-//     if (file && ["image/jpg", "image/jpeg", "image/png", "image/gif"].includes(file.type) && file.size <= 1024 * 1024 * 5) {
-//       const previewUrl = URL.createObjectURL(file);
-//       setSelectedImage(previewUrl);
-//       setImageFile(file);
-//       setFieldValue("logo", file);
-//     }
-//   };
-
-//   const handleSubmit = async (values: typeof initialValues, { resetForm }: { resetForm: () => void }) => {
-//     try {
-//       const formData = new FormData();
-
-//       // Append all form data manually for FormData compatibility
-//       formData.append("companyName", values.companyName);
-//       formData.append("title", values.title);
-//       formData.append("jobCategory", values.jobCategory);
-//       formData.append("jobType", values.jobType);
-//       formData.append("qualification", values.qualification);
-//       formData.append("experience", values.experience);
-//       formData.append("closingDate", values.closingDate);
-//       formData.append("jobDescription", values.jobDescription);
-//       formData.append("jobResponsibility", values.jobResponsibility);
-//       formData.append("resources", values.resources);
-//       if (values.logo) {
-//         formData.append("logo", values.logo);
-//       }
-
-//       // Call API to post the job
-//       await postJob(formData).unwrap();
-//       alert("Job posted successfully!");
-//       resetForm();
-//       setSelectedImage(null);
-//       setImageFile(null);
-//     } catch (error) {
-//       console.error("Error posting job:", error);
-//       alert("Failed to post job. Please try again.");
-//     }
-//   };
-
-//   return (
-//     <Formik
-//       initialValues={initialValues}
-//       validationSchema={validationSchema}
-//       onSubmit={handleSubmit}
-//     >
-//       {({ setFieldValue }) => (
-//         <Form className="w-full p-10 space-y-4">
-//           <h2 className="text-3xl font-normal mb-6 text-secondary">Add Jobs</h2>
-
-//           {/* Company Name */}
-//           <div>
-//             <label htmlFor="companyName" className="block text-md font-normal py-2 text-primary">
-//               Company Name
-//             </label>
-//             <Field
-//               id="companyName"
-//               name="companyName"
-//               type="text"
-//               className="w-full border px-4 py-2 rounded"
-//             />
-//             <ErrorMessage name="companyName" component="p" className="text-red-500 text-sm" />
-//           </div>
-
-//           {/* Logo Upload */}
-//           <div>
-//             <label className="block text-md font-normal py-2 text-primary">Company Logo</label>
-//             <div
-//               className="relative border-dashed border-2 border-gray-300 rounded-lg p-6"
-//               onDrop={(e) => handleDrop(e, setFieldValue)}
-//               onDragOver={(e) => e.preventDefault()}
-//             >
-//               <input
-//                 type="file"
-//                 accept="image/jpg, image/jpeg, image/png, image/gif"
-//                 onChange={(e) => {
-//                   const file = e.target.files?.[0];
-//                   if (file) {
-//                     const previewUrl = URL.createObjectURL(file);
-//                     setSelectedImage(previewUrl);
-//                     setImageFile(file);
-//                     setFieldValue("logo", file);
-//                   }
-//                 }}
-//                 className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-//               />
-//               {selectedImage ? (
-//                 <Image src={selectedImage} alt="Logo Preview" width={100} height={100} />
-//               ) : (
-//                 <div className="flex items-center justify-center">
-//                   <FaUpload className="text-gray-500" />
-//                   <span className="ml-2 text-gray-500">Upload Logo</span>
-//                 </div>
-//               )}
-//             </div>
-//             <ErrorMessage name="logo" component="p" className="text-red-500 text-sm" />
-//           </div>
-
-//           {/* Job Category */}
-//           <div>
-//             <label htmlFor="jobCategory" className="block text-md font-normal py-2 text-primary">
-//               Job Category
-//             </label>
-//             <Field as="select" id="jobCategory" name="jobCategory" className="w-full border px-4 py-2 rounded">
-//               <option value="">Select Category</option>
-//               {jobCategories.map((category) => (
-//                 <option key={category} value={category}>
-//                   {category}
-//                 </option>
-//               ))}
-//             </Field>
-//             <ErrorMessage name="jobCategory" component="p" className="text-red-500 text-sm" />
-//           </div>
-
-//           {/* Submit Button */}
-//           <div className="flex justify-end">
-//             <button type="submit" className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600">
-//               Submit
-//             </button>
-//           </div>
-//         </Form>
-//       )}
-//     </Formik>
-//   );
-// };
-
-// export default AddJobForm;

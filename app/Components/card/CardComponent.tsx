@@ -1,8 +1,12 @@
+"use client"
 import React from 'react'
 import { Users, MessageCircle, Activity } from 'lucide-react'
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { useGetStatisticsQuery } from '@/app/redux/service/user';
 
 const CardComponent = () => {
+  const {data: statitics} = useGetStatisticsQuery()
+
   return (
     <div className="m-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4  shadow-sm rounded-xl text-textprimary bg-white">
      
@@ -12,7 +16,7 @@ const CardComponent = () => {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-400">Total User</p>
-            <p className="text-2xl font-bold">5,423</p>
+            <p className="text-2xl font-bold">{statitics?.payload?.total_users}</p>
           </div>
         </div>
       
@@ -22,7 +26,7 @@ const CardComponent = () => {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-400">Feedback</p>
-            <p className="text-2xl font-bold">1,893</p>
+            <p className="text-2xl font-bold">{statitics?.payload?.total_feedbacks}</p>
           </div>
         </div>
       
@@ -31,8 +35,8 @@ const CardComponent = () => {
             <FaRegCircleCheck className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-400">Total Quiz</p>
-            <p className="text-2xl font-bold">189</p>
+            <p className="text-sm font-medium text-gray-400">Total Test</p>
+            <p className="text-2xl font-bold">{statitics?.payload?.total_tests}</p>
           </div>
         </div>
       
@@ -42,7 +46,7 @@ const CardComponent = () => {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-400">Active Now</p>
-            <p className="text-2xl font-bold">189</p>
+            <p className="text-2xl font-bold">{statitics?.payload?.total_active_users}</p>
           </div>
         </div>
       

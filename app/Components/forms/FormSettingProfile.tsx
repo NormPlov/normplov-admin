@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/app/redux/service/user";
+// import Loading from "@/app/Loading";
+
 
 const ProfileSetting = () => {
     const router = useRouter();
@@ -19,9 +21,7 @@ const ProfileSetting = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-full">
-                <p className="text-gray-500 text-lg">Loading profile...</p>
-            </div>
+            <div className="w-10/12 h-screen flex justify-center items-center text-primary">Loading...</div>
         );
     }
 
@@ -50,7 +50,7 @@ const ProfileSetting = () => {
                             />
                             <button
                                 onClick={handleUpdateProfile}
-                                className="text-textprimary absolute bottom-3 left-24 bg-white p-1 rounded-full border"
+                                className="text-textprimary absolute bottom-4 left-32 bg-white p-1 rounded-full border"
                             >
                                 <HiCamera />
                             </button>
@@ -68,7 +68,7 @@ const ProfileSetting = () => {
                 </div>
                 <div className="bg-white p-6">
                     <div className="flex justify-end">
-                        <Button onClick={handleUpdateProfile} className="bg-primary hover:bg-emerald-600">
+                        <Button onClick={handleUpdateProfile} className="bg-primary hover:bg-emerald-600 px-6">
                             Edit
                         </Button>
                     </div>
@@ -113,6 +113,26 @@ const ProfileSetting = () => {
                                         {userData?.date_of_birth || "N/A"}
                                     </div>
                                     <IoMdCalendar className="text-gray-400 text-xl" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-8 ">
+                            <div className="flex flex-col space-y-3">
+                                <label htmlFor="address" className="text-sm font-normal text-gray-500">
+                                    Address
+                                </label>
+                                <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
+                                    {userData?.address || "N/A"}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col space-y-3">
+                                <label htmlFor="phone_number" className="text-sm font-normal text-gray-500">
+                                    Phone Number
+                                </label>
+                                <div className="border p-2 bg-[#f9f9f9] rounded-md text-textprimary text-md">
+                                    {userData?.phone_number || "N/A"}
                                 </div>
                             </div>
                         </div>

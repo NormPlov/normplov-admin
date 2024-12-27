@@ -1,12 +1,17 @@
-import React from 'react'
-import ViewTestDetail from '@/app/Components/forms/test/ViewdetailTest'
+"use client";
 
-const page = () => {
-  return (
-    <div>
-      <ViewTestDetail/>
-    </div>
-  )
+import React from 'react'
+import { LearningStyleResultComponent } from '@/app/Components/forms/test/resultType/LearningStyle';
+
+
+const Page = () => {
+
+return (
+  <div>
+    <LearningStyleResultComponent />
+  </div>
+);
+
 }
 
-export default page
+export default Page

@@ -1,51 +1,54 @@
-import React from 'react';
-import { PieChart as RePieChart, Pie } from 'recharts';
+"use client";
 
-type PieChartProps ={
-  data01: { name: string; value: number }[];
-  data02: { name: string; value: number }[];
-  width?: number;
-  height?: number;
-  outerRadius01?: number;
-  outerRadius02?: number;
-  innerRadius02?: number;
-}
+import React from "react";
+import { PieChart as RePieChart, Pie, Tooltip, Legend, Cell } from "recharts";
+import { useGetStatisticsQuery } from "@/app/redux/service/user";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
-const CustomPieChart = ({
-  data01,
-  data02,
-  width,
-  height,
-  outerRadius01,
-  outerRadius02,
-  innerRadius02 ,
-}:PieChartProps) => {
+// Define a mapping of "type" to colors
+const colors: Record<string, string> = {
+  PUBLIC: "#82ca9d",   // Green
+  TVET: "#8884d8",     // Purple
+  PRIVATE: "#ffc658",  // Yellow
+    
+};
+
+const PieChart = () => {
+  const { data } = useGetStatisticsQuery();
+  const schoolData = data?.payload?.pie_chart_data;
+
   return (
-    <div>
-      <RePieChart width={width} height={height}>
+    <Card className="w-full max-w-[450px] mx-auto">
+    <CardHeader>
+        <CardTitle className="text-2xl font-normal text-[#00A76F]">
+            Types of Schools
+        </CardTitle>
+    </CardHeader>
+
+      <RePieChart width={480} height={270} className="mb-5">
         <Pie
-          data={data01}
-          dataKey="value"
-          nameKey="name"
+          data={schoolData}
+          dataKey="percentage"
+          nameKey="type"
           cx="50%"
           cy="50%"
-          outerRadius={outerRadius01}
-          fill="#8884d8"
-        />
-        <Pie
-          data={data02}
-          dataKey="value"
-          nameKey="name"
-          cx="50%"
-          cy="50%"
-          innerRadius={innerRadius02}
-          outerRadius={outerRadius02}
-          fill="#82ca9d"
+          innerRadius={60}
+          outerRadius={100}
           label
-        />
+        >
+          {/* Map over each slice to set a custom fill color */} 
+          {schoolData?.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={colors[entry.type] || "#ccc"} 
+            />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
       </RePieChart>
-    </div>
+    </Card>
   );
 };
 
-export default CustomPieChart;
+export default PieChart;

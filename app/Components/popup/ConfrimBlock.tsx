@@ -6,11 +6,11 @@ import { FiAlertCircle } from "react-icons/fi";
 import { BlockUserModalProps } from "@/types/types";
 
 
-const BlockUserModal: React.FC<BlockUserModalProps> = ({
+const BlockUserModal= ({
   onConfirm,
   onCancel,
   actionType,
-}) => {
+}:BlockUserModalProps) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg shadow-lg p-8 w-[400px] text-center relative">
