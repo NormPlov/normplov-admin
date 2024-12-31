@@ -1,0 +1,96 @@
+{
+    "allMainKh": {
+      "title": "តេស្តគ្រប់ការវាយតម្លៃទាំងអស់",
+      "desc": "តេស្តលើគ្រប់ការវាយតម្លៃដើម្បីទទួលបានលទ្ធផលសរុប ​MBTI, Holland theory, VARY Theory, Schwartz Value Theory ",
+      "buttonText": "ចាប់ផ្តើមតេស្ត",
+      "route": "all"
+    },
+ 
+    "introKh": {
+      "title": "តេស្តគ្រប់ការវាយ",
+      "highlight": "តម្លៃទាំងអស់​",
+      "description": "ដោយផ្អែកលើប្រភេទតេស្តនេះ អ្នកនឹងទទួលបានលទ្ធផលពីប្រភេទបុគ្គលិកលក្ខណៈ ចំណាំអារម្មណ៍ ភាពខ្លាំងខ្សោយ​ គុណតម្លៃ  របៀបនៃការសិក្សរបស់អ្នក​ និងការណែនាំពីអាជីពការងារ ជំនាញដែលគួរជ្រើសរើសកាន់តែប្រសើរជាងមុន។"
+    },
+
+    "questions": [
+    {
+      "question": "When faced with a challenging problem, I find multiple ways to approach a solution.",
+      "questionIndex": 0
+    },
+    {
+      "question": "I always evaluate different perspectives before making a decision.",
+      "questionIndex": 1
+    },
+    {
+      "question": "I can easily apply mathematical concepts to everyday situations.",
+      "questionIndex": 2
+    },
+    {
+      "question": "I enjoy solving scientific problems through experimentation and research.",
+      "questionIndex": 3
+    },
+    {
+      "question": "I can adjust my study methods based on the subject or task at hand.",
+      "questionIndex": 4
+    },
+    {
+      "question": "I frequently track my progress when working on a task or project.",
+      "questionIndex": 5
+    },
+    {
+      "question": "I listen carefully to others and fully understand their point of view before responding.",
+      "questionIndex": 6
+    },
+    {
+      "question": "I can easily recognize the emotional state of others based on their actions or words.",
+      "questionIndex": 7
+    },
+    {
+      "question": "I often consider multiple factors before making an important decision.",
+      "questionIndex": 8
+    },
+    {
+      "question": "I feel comfortable teaching or guiding others when they need help learning something new.",
+      "questionIndex": 9
+    },
+    {
+      "question": "I actively seek new knowledge and skills to improve myself.",
+      "questionIndex": 10
+    },
+    {
+      "question": "I am able to organize my time effectively to meet deadlines.",
+      "questionIndex": 11
+    },
+    {
+      "question": "I am able to organize my thoughts clearly and logically in writing.",
+      "questionIndex": 12
+    },
+    {
+      "question": "I feel confident speaking in front of groups or audiences.",
+      "questionIndex": 13
+    },
+    {
+      "question": "I can understand complex reading material and summarize key points effectively.",
+      "questionIndex": 14
+    }
+    
+
+  ],
+
+  "Recommendation": {
+      "jobTitle": "Teacher / Trainer",
+      "jobdesc": "A Teacher/Trainer educates and inspires learners by delivering engaging lessons or training sessions tailored to their needs. They create structured plans, assess progress, and provide feedback to ensure effective skill and ...",
+      "majors": [
+        "Computer Science",
+        "Software Engineering",
+        "Information Technology"
+      ],
+      "unis": [
+        "Institute of science and technology advanced development",
+        "ITC",
+        "CADT"
+      ]
+      
+    }
+
+}

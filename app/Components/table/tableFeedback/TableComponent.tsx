@@ -13,11 +13,12 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { useGetUserFeedbackQuery } from "@/app/redux/service/user";
-import { ToastContainer } from "react-toastify";
+import { useGetUserFeedbackQuery, usePromoteFeedbackMutation } from "@/app/redux/service/user";
+import { toast, ToastContainer, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -26,6 +27,8 @@ export default function TableUserFeedback() {
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+
+  const [promote] = usePromoteFeedbackMutation();
 
   // Fetch feedback data
   const { data, isLoading } = useGetUserFeedbackQuery({
@@ -54,9 +57,11 @@ export default function TableUserFeedback() {
   // Filter logic
   const filteredUsers =
     data?.payload?.items?.filter((item) => {
+      const normalizeString = (str:string) => str.replace(/\s+/g, "").toLowerCase();
+
       const matchesSearch =
-        item.username.toLowerCase().includes(search.toLowerCase()) ||
-        item.email.toLowerCase().includes(search.toLowerCase());
+        item.username.toLowerCase().includes(normalizeString(search)) ||
+        item.email.toLowerCase().includes(normalizeString(search));
       const matchesFilter =
         filter === "all" ||
         (filter === "promoted" && item.is_promoted) ||
@@ -64,12 +69,37 @@ export default function TableUserFeedback() {
       return matchesSearch && matchesFilter;
     }) || [];
 
+    // Toastify Config
+    const toastConfig: ToastOptions = {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    };
+    
+    // Handle promote feedback
+    const handlePromote = async (uuid: string) => {
+      console.log("uuid feedback", uuid);
+    
+      try {
+        await promote({ uuid }).unwrap();
+        toast.success("Promote feedback successfully", toastConfig);
+      } catch (error) {
+        console.error("Error promoting feedback:", error);
+        toast.error("Failed to promote feedback.", toastConfig);
+      }
+    };
+    
+
   return (
-    <div className="h-screen p-6 text-textprimary rounded-md">
+    <div className="h-screen p-6 rounded-md">
       <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="text-3xl font-normal text-secondary">User Feedback</div>
+          <div className="text-3xl font-semibold text-secondary">User Feedback</div>
           <div className="flex items-center gap-4">
             {/* Search */}
             <div className="relative">
@@ -96,7 +126,7 @@ export default function TableUserFeedback() {
         </div>
 
         {/* Table */}
-        <div className="rounded-md border border-gray-200 rounded-xl">
+        <div className="rounded-md border border-gray-200 rounded-md">
           <ToastContainer />
           <Table>
             <TableHeader>
@@ -105,6 +135,7 @@ export default function TableUserFeedback() {
                 <TableHead>User</TableHead>
                 <TableHead>Feedback</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -130,7 +161,7 @@ export default function TableUserFeedback() {
                           src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${item.avatar}`}
                           alt={item?.username || "User"}
                         />
-                        <AvatarFallback>
+                        <AvatarFallback className="text-gray-700">
                           {item.username?.[0]?.toUpperCase() || "?"}
                         </AvatarFallback>
                       </Avatar>
@@ -138,12 +169,12 @@ export default function TableUserFeedback() {
 
                     {/* Username */}
                     <div className="grid ">
-                      <TableCell className="font-medium text-md">{item.username || "User"}</TableCell>
-                      <TableCell className="font-normal text-gray-400">{item.email || "N/A"}</TableCell>
+                      <TableCell className="font-medium text-md text-textprimary">{item.username || "User"}</TableCell>
+                      <TableCell className="font-normal text-gray-500">{item.email || "N/A"}</TableCell>
 
                     </div>
                     {/* Feedback */}
-                    <TableCell>{item.feedback || "No Feedback"}</TableCell>
+                    <TableCell className="text-gray-700 font-medium">{item.feedback || "No Feedback"}</TableCell>
 
                     {/* Promote Status */}
                     <TableCell>
@@ -159,6 +190,9 @@ export default function TableUserFeedback() {
                         )}
                       </button>
                     </TableCell>
+                    <TableCell>
+                      <Button onClick={()=>handlePromote(item?.feedback_uuid)} className="bg-primary hover:bg-green-700 rounded-md py-1">Promote</Button>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
@@ -168,7 +202,7 @@ export default function TableUserFeedback() {
         {/* Pagination Section */}
         <div className="flex justify-between items-center mt-4">
           {/* Showing data */}
-          <div className="text-sm font-medium">
+          <div className="text-sm font-medium text-gray-500">
             Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
             {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
           </div>
@@ -209,7 +243,7 @@ export default function TableUserFeedback() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <span className="text-sm">
+              <span className="text-sm font-medium">  
                 Page {currentPage} of {totalPages}
               </span>
 
