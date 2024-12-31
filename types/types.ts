@@ -153,8 +153,6 @@ export type FeedbackResponse = {
 
 };
 
-
-
 // change password
 export type ChangePasswordType = {
         old_password: string;
@@ -304,27 +302,6 @@ interface MetadataType {
         total_items: number;
         total_pages: number;
 }
-export type JobDetails = {
-        uuid: string;
-        title: string;
-        company_name: string;
-        logo: string | null;
-        location: string;
-        job_type: string;
-        description: string;
-        requirements: string[];
-        responsibilities: string[];
-        facebook_url: string;
-        email: string;
-        phone: string;
-        website: string;
-        created_at: string; // ISO 8601 datetime format
-        closing_date: string; // Date as a string, could be in various formats
-        category: string | null;
-        salary : string;
-      };
-
-      
 
 //       post job type
 export type JobType ={
@@ -395,7 +372,7 @@ export type JobsResponse = {
         date: string;
         status: string;
         payload: {
-                items: JobDetails[];
+                items: JobType[];
                 metadata: Metadata;
         }
 }
@@ -415,30 +392,46 @@ export type GetJobCategoryType = {
 
 // statitics
 export type MetricsResponse = {
-        date: string; // Example: "25-December-2024"
-        status: number; // Example: 200
+        date: string;
+        status: number;
         payload: {
-            total_users: number; // Example: 106
-            total_feedbacks: number; // Example: 2
-            total_tests: number; // Example: 113
-            total_active_users: number; // Example: 106
-            pie_chart_data: {
-                type: string; // Example: "PUBLIC", "TVET", "PRIVATE"
-                percentage: number; // Example: 33.33
-            }[];
+            total_users: number;
+            total_feedbacks: number;
+            total_tests: number;
+            total_active_users: number;
+            pie_chart_data: Array<{
+                type: string;
+                percentage: number;
+            }>;
             bar_chart_jobs_data: {
-                label: string;
-                count: number; // Example: 32
-            }[];
-            bar_chart_assessments_data: {
-                assessment_type: string; // Example: "Interests", "Learning Style"
-                count: number; // Example: 43
-            }[];
-            line_chart_data: {
-                month: string; // Example: "2024-11", "2024-12"
-                user_count: number; // Example: 103
-            }[];
+                [month: string]: Array<{
+                    label: string;
+                    count: number;
+                }>;
+            };
+            bar_chart_assessments_data: Array<{
+                assessment_type: string;
+                count: number;
+            }>;
+            line_chart_data: Array<{
+                month: string;
+                "2023": number;
+                "2024": number;
+            }>;
         };
-        message: string; // Example: "Metrics retrieved successfully."
+        message: string;
     };
     
+      // scrape job
+
+      export type ScrapeJobResponse = {
+        date: string;
+        status: number;
+        message: string;
+        payload: {
+          items: JobType[] ;
+          metadata: Metadata
+        };
+        
+      
+    }

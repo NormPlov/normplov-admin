@@ -12,9 +12,11 @@ import {
     Cell,
 } from "recharts";
 import { useGetStatisticsQuery } from "@/app/redux/service/user";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function QuizTestChart() {
-    const { data: statistics } = useGetStatisticsQuery();
+    const { data: statistics, isLoading } = useGetStatisticsQuery();
+    
 
     // Ensure data exists and is in the correct format
     const barChartData = statistics?.payload?.bar_chart_assessments_data;
@@ -52,7 +54,13 @@ export default function QuizTestChart() {
                     Assessments Types
                 </CardTitle>
             </CardHeader>
-
+            {isLoading ? (
+                    // Skeleton Loading State
+                    <div className="flex flex-col items-center justify-center h-[280px]">
+                        <Skeleton className="w-full h-[200px] mb-4" />
+                        <Skeleton className="w-1/2 h-6" />
+                    </div>
+                ) : (
             <BarChart
                 width={500}
                 height={290}
@@ -75,6 +83,7 @@ export default function QuizTestChart() {
                     ))}
                 </Bar>
             </BarChart>
+                )}
         </Card>
     );
 }

@@ -17,10 +17,14 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import DropdownPopup from "../../popup/ModalAction";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {  useGetJobQuery } from "@/app/redux/service/job";
-import { JobDetails } from "@/types/types";
+import { JobType } from "@/types/types";
 import { FiAlertCircle } from "react-icons/fi";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useScrapeMutation,
+  useGetScrapeQuery
+ } from "@/app/redux/service/scrape";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
@@ -30,30 +34,63 @@ export default function JobPreviewPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [, setJobToDelete] = useState<JobDetails | null>(null)
+  const [, setJobToDelete] = useState<JobType | null>(null)
+  const [url, setUrl] = useState("");
 
   const router = useRouter();
 
+  // scrape job 
+  // const [scrapeJob,{isLoading}] = useScrapeMutation()
+  // if(isLoading){
+  //   return <div>Loading...</div>
+  // }
+  
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUrl(event.target.value);
+  };
+
+  // const handleSubmit = async (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   if (!url) {
+  //     toast.warning("Please enter a valid URL!");
+  //     return;
+  //   }
+
+  //   try {
+  //     const result = await scrapeJob({ url }).unwrap();
+  //     console.log("Scraping successful:", result);
+  //     toast.success("Job scraped successfully!");
+  //   } catch (error) {
+  //     console.error("Error scraping job:", error);
+  //     toast.error("Failed to scrape the job. Please try again.");
+  //   }
+  // };
+
  
   // Fetch job data
-  const { data, isLoading } = useGetJobQuery({
-    page: currentPage,
-    pageSize: itemsPerPage,
-  });
+  const { data, isFetching,isLoading } = useGetScrapeQuery();
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
 
   // Data handling
-  const jobs = data?.payload?.items || [];
+  const scrape = data?.payload?.items || [];
   const totalPages = data?.payload?.metadata?.total_pages || 0;
   const totalItems = data?.payload?.metadata?.total_items || 0;
 
+  console.log("data: ", scrape)
   const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
+  
+  const filteredJobs =
+    scrape.filter((item) => {
+      const matchesSearch =
+        item.company.toLowerCase().includes(normalizeString(search)) ||
+        item.title.toLowerCase().includes(normalizeString(search));
 
-  // Filtered Jobs
-  const filteredJobs = jobs.filter(
-    (job: JobDetails) =>
-      job.title.toLowerCase().includes(normalizeString(search)) ||
-      job.company_name.toLowerCase().includes(normalizeString(search))
-  );
+
+      return matchesSearch ;
+    }) || [];
 
   // Pagination handlers
   const handleItemsPerPageChange = (value: string) => {
@@ -79,7 +116,7 @@ export default function JobPreviewPage() {
   };
 
   const handleDeleteClick = (
-    job: JobDetails
+    job: JobType
   ) => {
     setJobToDelete(job);
     setDeleteModalOpen(true); // Open modal before API call
@@ -93,16 +130,19 @@ export default function JobPreviewPage() {
   return (
     <div className="h-screen p-6 text-textprimary rounded-md mx-6">
       <h2 className="text-2xl font-normal text-secondary mb-6">Scrape Job</h2>
+      <ToastContainer/>
       {/* Scraping Input */}
       <div className="flex items-center gap-4 mb-6">
-        <Input
-          type="text"
-          placeholder="https://example.com"
-          className="w-full border rounded-md px-8 py-2 focus:ring-2 focus:ring-blue-400"
-        />
-        <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-600">
+      {/* <Input
+        type="text"
+        placeholder="https://example.com"
+        className="w-full border rounded-md px-8 py-2 focus:ring-2 focus:ring-blue-400"
+        value={url}
+        onChange={handleInputChange}
+      />
+        <Button onClick={handleSubmit} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-600">
           Scrape
-        </button>
+        </Button> */}
       </div>
 
       {/* Table Header */}
@@ -124,9 +164,8 @@ export default function JobPreviewPage() {
           </button>
         </div>
       </div>
-
-     {/* Table */}
-     <div className="rounded-md border border-gray-200">
+ {/* Table */}
+ <div className="rounded-md border border-gray-200">
           <Table>
             <TableHeader>
               <TableRow className="text-gray-600 text-sm font-semibold border-b">
@@ -152,7 +191,7 @@ export default function JobPreviewPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredJobs.map((job: JobDetails) => (
+                filteredJobs.map((job: JobType) => (
                   <TableRow key={job.uuid} className="hover:bg-gray-50">
                     {/* Logo */}
                     <TableCell>
@@ -160,15 +199,15 @@ export default function JobPreviewPage() {
                         <AvatarImage
                           src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`}
                           alt={job.title || "Job Logo"}
-                          className="object-cover rounded-md w-full h-full "
+                          className="object-cover rounded-md w-full h-full"
                         />
                         <AvatarFallback className="rounded-md">
-                          {job.company_name[0]?.toUpperCase() || "?"}
+                          {job.company[0]?.toUpperCase() || "?"}
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
                     {/* Company */}
-                    <TableCell className="text-gray-700 font-medium">{job?.company_name || "N/A"}</TableCell>
+                    <TableCell className="text-gray-700 font-medium">{job?.company || "N/A"}</TableCell>
                     {/* Category */}
                     <TableCell className="text-gray-700">{job?.category || "N/A"}</TableCell>
                     {/* Position */}
@@ -259,47 +298,48 @@ export default function JobPreviewPage() {
         </div>
         {/* Delete Confirmation Modal */}
         {isDeleteModalOpen && (
-           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div className="bg-white rounded-lg shadow-lg p-8 w-[400px] text-center relative">
-                  {/* Close Button */}
-                  <button
-                    onClick={()=>setDeleteModalOpen(false)}
-                    className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-                  >
-                    &times;
-                  </button>
-          
-                  {/* Alert Icon */}
-                  <div className="flex justify-center mb-4">
-                    <FiAlertCircle className="text-red-500 text-5xl" />
-                  </div>
-          
-                  {/* Confirmation Message */}
-                  <p className="text-gray-700 text-lg mb-6">
-                    Are you sure delete this job?
-                  </p>
-          
-                  {/* Action Buttons */}
-                  <div className="flex justify-center gap-4">
-                    <Button
-                      variant="outline"
-                      onClick={()=>setDeleteModalOpen(false)}
-                      className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleDeleteConfirm}
-                      className="bg-red-500 text-white hover:bg-red-600 px-6"
-                    >
-                      Yes
-                    </Button>
-                  </div>
-                </div>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-[400px] text-center relative">
+              {/* Close Button */}
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              >
+                &times;
+              </button>
+
+              {/* Alert Icon */}
+              <div className="flex justify-center mb-4">
+                <FiAlertCircle className="text-red-500 text-5xl" />
               </div>
+
+              {/* Confirmation Message */}
+              <p className="text-gray-700 text-lg mb-6">
+                Are you sure delete this job?
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeleteModalOpen(false)}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteConfirm}
+                  className="bg-red-500 text-white hover:bg-red-600 px-6"
+                >
+                  Yes
+                </Button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       
 
   );
 }
+

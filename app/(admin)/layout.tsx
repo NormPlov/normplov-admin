@@ -4,6 +4,7 @@ import StoreProvider from "@/app/StoreProvider";
 import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
 import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";
 import "@/app/globals.css";
+import ErrorBoundary from "../ErrorBoundary";
 
 const suwannaphum = Suwannaphum({
   weight: ["100", "300", "400", "700", "900"],
