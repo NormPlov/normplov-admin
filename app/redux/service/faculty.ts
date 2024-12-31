@@ -1,4 +1,5 @@
 import { normPlovApi } from "../api";
+import { FacultyResponse } from "@/types/faculty";
 
 export const faculty = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
