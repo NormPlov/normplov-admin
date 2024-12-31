@@ -6,19 +6,45 @@ import { HiOutlineLockOpen, HiOutlineLockClosed } from "react-icons/hi";
 import { FaEye } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useGetAllUserQuery, useBlockUserMutation, useUnBlockUserMutation } from "@/app/redux/service/user";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  useGetAllUserQuery,
+  useBlockUserMutation,
+  useUnBlockUserMutation,
+} from "@/app/redux/service/user";
 import { ToastContainer, ToastOptions, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfileModal from "../../popup/PopupViewProfile";
 import { User } from "@/types/types";
 import BlockUserModal from "../../popup/ConfrimBlock";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
-
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -143,12 +169,11 @@ export default function UserTable() {
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-
           </div>
         </div>
 
         {/* Table */}
-        <div className="rounded-md border border-gray-200 rounded-md">
+        <div className="rounded-md border border-gray-200">
           <ToastContainer />
           <Table>
             <TableHeader>
@@ -189,27 +214,32 @@ export default function UserTable() {
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell className="font-medium">{user.username}</TableCell>
+                    <TableCell className="font-medium">
+                      {user.username}
+                    </TableCell>
                     <TableCell>{user.gender || "N/A"}</TableCell>
                     <TableCell>{user.date_of_birth || "N/A"}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <div
-                        className={`font-normal rounded-full text-center text-sm px-2 border ${user.is_active
+                        className={`font-normal rounded-full text-center text-sm px-2 border ${
+                          user.is_active
                             ? "bg-green-200 text-green-900 border-green-500"
                             : "bg-red-100 text-red-500 border-red-400"
-                          }`}
+                        }`}
                       >
                         {user.is_active ? "Active" : "Inactive"}
                       </div>
-
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" onClick={() => handleViewProfileClick(user)}>
+                              <Button
+                                variant="ghost"
+                                onClick={() => handleViewProfileClick(user)}
+                              >
                                 <FaEye className="text-textprimary" />
                               </Button>
                             </TooltipTrigger>
@@ -247,15 +277,20 @@ export default function UserTable() {
         <div className="flex justify-between items-center mt-4">
           {/* Showing data */}
           <div className="text-sm font-medium">
-            Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+            Showing data{" "}
+            {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+            entries
           </div>
 
           <div className="flex gap-4">
             {/* Rows Per Page */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Rows per page:</span>
-              <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
+              <Select
+                value={`${itemsPerPage}`}
+                onValueChange={handleItemsPerPageChange}
+              >
                 <SelectTrigger className="h-8 w-[70px]">
                   <SelectValue placeholder={itemsPerPage} />
                 </SelectTrigger>
@@ -309,7 +344,6 @@ export default function UserTable() {
             </div>
           </div>
         </div>
-
       </div>
       {/* Profile Modal */}
       {selectedUser && (
@@ -328,8 +362,6 @@ export default function UserTable() {
           actionType={selectedUser.is_blocked ? "unblock" : "block"}
         />
       )}
-
     </div>
   );
 }
-

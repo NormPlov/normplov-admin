@@ -66,6 +66,7 @@ export type UniversityType = {
   latitude?: number;
   longitude?: number;
   school_type?: string;
+  province_uuid?: string;
 };
 
 export interface SchoolsType extends UniversityType {

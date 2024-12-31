@@ -34,6 +34,7 @@ import MajorCard from "@/app/Components/cards/MajorCard";
 import { UniversityType } from "@/types/types";
 import { useUniversityDetailsQuery } from "@/app/redux/service/university";
 import { useParams } from "next/navigation";
+import GoogleMapComponent from "@/app/Components/map/GoogleMap";
 
 const UniversityPage = () => {
   const params = useParams();
@@ -43,6 +44,8 @@ const UniversityPage = () => {
   const [faculty, setFaculty] = React.useState<string[]>([]);
   const [newFaculty, setNewFaculty] = React.useState("");
   const [selectedFaculty, setSelectedFaculty] = React.useState("");
+
+  console.log(data);
 
   const handleAddFaculty = () => {
     if (newFaculty && !faculty.includes(newFaculty)) {
@@ -81,7 +84,7 @@ const UniversityPage = () => {
           alt={`${university.en_name} logo`}
           width={288}
           height={288}
-          className="rounded-full w-72"
+          className="w-72"
         />
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-textprimary">
@@ -101,44 +104,47 @@ const UniversityPage = () => {
             <Link
               href={university.website || "#"}
               className="flex items-center gap-2"
+              target="_blank"
             >
               <FaGlobe /> {university.website || "Website not available"}
             </Link>
             <p className="flex items-center gap-2">
               <FaMapMarkerAlt /> {university.location}
             </p>
-            <p className="flex items-center gap-2">
-              <FaMapMarkedAlt />{" "}
-              <Link
-                href={
-                  university.map_url
-                    ? `https://${university.map_url.replace(
-                        /^https?:\/\//,
-                        ""
-                      )}`
-                    : "#"
-                }
-                className="text-primary"
-              >
-                View on Map
-              </Link>
-            </p>
+            <Link
+              href={university.map_url || "No map link"}
+              className="flex items-center gap-2"
+              target="_blank"
+            >
+              <FaMapMarkedAlt /> View On Map
+            </Link>
           </div>
         </div>
       </div>
       <div>
         <h1 className="text-2xl text-textprimary font-bold py-4">Summary</h1>
-        <p className="text-justify">{university.description}</p>
+        <p className="text-justify text-gray-600">{university.description}</p>
       </div>
       <div className="gap-8">
         <div>
           <h1 className="text-2xl text-textprimary font-bold py-4">Vision</h1>
-          <p className="text-justify">{university.vision}</p>
+          <p className="text-justify text-gray-600">{university.vision}</p>
         </div>
         <div>
           <h1 className="text-2xl text-textprimary font-bold py-4">Mission</h1>
-          <p className="text-justify">{university.mission}</p>
+          <p className="text-justify text-gray-600">{university.mission}</p>
         </div>
+      </div>
+      {/* Map */}
+      <div>
+        <h1 className="text-2xl text-textprimary font-bold py-4">Location</h1>
+        {university.latitude && university.longitude ? (
+          <GoogleMapComponent
+            center={{ lat: university.latitude, lng: university.longitude }}
+          />
+        ) : (
+          <p>Map location not available</p>
+        )}
       </div>
 
       <div className="flex items-center justify-between">

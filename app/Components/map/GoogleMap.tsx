@@ -26,6 +26,7 @@ interface GoogleMapComponentProps {
 export default function GoogleMapComponent({
   center,
 }: GoogleMapComponentProps) {
+  console.log("GoogleMapComponent render", center);
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({

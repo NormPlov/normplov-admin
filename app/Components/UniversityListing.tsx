@@ -38,6 +38,8 @@ export function UniversityListing() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [searchQuery] = useState("");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
   const [schoolType] = useState<string | undefined>();
 
   const { data, refetch } = useUniversityQuery({
@@ -64,16 +66,34 @@ export function UniversityListing() {
     setCurrentPage(1);
   };
 
+  const filteredUniversities = data?.payload?.schools?.filter((schoolType) => {
+    const matchesSearch = (schoolType?.school_type ?? "")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const matchFilter =
+      filter === "all" ||
+      (filter === "PRIVATE" && schoolType.school_type === "PRIVATE") ||
+      (filter === "PUBLIC" && schoolType.school_type === "PUBLIC") ||
+      (filter === "TVET" && schoolType.school_type === "TVET");
+
+    return matchesSearch && matchFilter;
+  });
+
   const universities = data?.payload?.schools || [];
 
   console.log(universities);
+
+  function handleDeleteSuccess(): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <main className="p-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
-          <div className="relative ">
+          <div className="relative w-[400px]">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search"
@@ -81,14 +101,15 @@ export function UniversityListing() {
               aria-label="Search universities"
             />
           </div>
-          <Select value={schoolType}>
+          <Select value={filter} onValueChange={(value) => setFilter(value)}>
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select School Type" />
+              <SelectValue placeholder="All" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="public">Public School</SelectItem>
-              <SelectItem value="private">Private School</SelectItem>
-              <SelectItem value="tvet">TVET</SelectItem>
+              <SelectItem value="ALL">All</SelectItem>
+              <SelectItem value="PUBLIC">Public School</SelectItem>
+              <SelectItem value="PRIVATE">Private School</SelectItem>
+              <SelectItem value="TVET">TVET</SelectItem>
             </SelectContent>
           </Select>
           <Button asChild className="bg-primary">
@@ -100,14 +121,14 @@ export function UniversityListing() {
         </div>
       </div>
 
-      <div className="rounded-md border border-gray-200 text-textprimary">
+      <div className="rounded-md border border-gray-200 text-textprimary t">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Logo</TableHead>
               <TableHead>Universities / Institute</TableHead>
               <TableHead>Address</TableHead>
-              <TableHead className="text-right">Email</TableHead>
+              <TableHead className="text-left">Popular Major</TableHead>
               <TableHead className="text-right">School Type</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
@@ -131,14 +152,17 @@ export function UniversityListing() {
                   {school.en_name || "N/A"}
                 </TableCell>
                 <TableCell>{school.location || "N/A"}</TableCell>
-                <TableCell className="text-right">
-                  {school.email || "N/A"}
+                <TableCell className="text-left">
+                  {school.popular_major || "N/A"}
                 </TableCell>
                 <TableCell className="text-right">
                   {school.type || "N/A"}
                 </TableCell>
                 <TableCell className="text-center">
-                  <DataTableRowActions row={school as UniversityType} />
+                  <DataTableRowActions
+                    row={school as UniversityType}
+                    onDeleteSuccess={handleDeleteSuccess}
+                  />
                 </TableCell>
               </TableRow>
             ))}

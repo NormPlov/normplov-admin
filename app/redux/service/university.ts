@@ -5,11 +5,12 @@ export const universityApi = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
     university: builder.query<
       UniversitiesResponse,
-      { page: number; size: number }
+      { page: number; size: number; search?: string; type?: string }
     >({
-      query: ({ page, size }) => ({
-        url: `api/v1/schools?page=${page}&size=${size}`,
+      query: ({ page, size, search, type }) => ({
+        url: `api/v1/schools`,
         method: "GET",
+        params: { page, size, search, type },
       }),
     }),
 
@@ -30,11 +31,14 @@ export const universityApi = normPlovApi.injectEndpoints({
       }
     ),
 
-    editUniversity: builder.mutation<UniversityType, Partial<UniversityType>>({
-      query: (updatedUniversity) => ({
-        url: `api/v1/schools/${updatedUniversity.uuid}`,
-        method: "PUT",
-        body: updatedUniversity,
+    editUniversity: builder.mutation<
+      UniversityType,
+      { uuid: string; data: Partial<UniversityType> }
+    >({
+      query: ({ uuid, data }) => ({
+        url: `api/v1/schools/${uuid}`,
+        method: "PATCH",
+        body: data,
       }),
     }),
 

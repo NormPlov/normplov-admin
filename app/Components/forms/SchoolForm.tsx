@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useCreateUniversityMutation } from "@/app/redux/service/university";
 import { toast } from "react-hot-toast";
 import GoogleMapComponent from "../map/GoogleMap";
+import { ImageUploadArea } from "../image/image-upload-area";
 
 const SchoolSchema = Yup.object().shape({
   kh_name: Yup.string().required("Required"),
@@ -29,14 +30,7 @@ const SchoolSchema = Yup.object().shape({
   lowest_price: Yup.number().positive("Must be positive").required("Required"),
   highest_price: Yup.number().positive("Must be positive").required("Required"),
   location: Yup.string().required("Required"),
-  latitude: Yup.number()
-    .min(-90, "Latitude must be between -90 and 90")
-    .max(90, "Latitude must be between -90 and 90")
-    .required("Latitude is required"),
-  longitude: Yup.number()
-    .min(-180, "Longitude must be between -180 and 180")
-    .max(180, "Longitude must be between -180 and 180")
-    .required("Longitude is required"),
+  map_url: Yup.string().required("Required"),
   vision: Yup.string().required("Required"),
   mission: Yup.string().required("Required"),
   description: Yup.string().required("Required"),
@@ -49,6 +43,41 @@ export default function SchoolForm() {
   const [createUniversity, { isLoading }] = useCreateUniversityMutation();
   const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
   const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [mapLink, setMapLink] = useState("");
+  const [isExtracting, setIsExtracting] = useState(false);
+
+  const extractCoordinates = async (link: string) => {
+    try {
+      // First, try to extract coordinates from the original link
+      const directRegex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+      const directMatch = link.match(directRegex);
+      if (directMatch) {
+        return {
+          lat: parseFloat(directMatch[1]),
+          lng: parseFloat(directMatch[2]),
+        };
+      }
+
+      // If not found, fetch the URL to follow redirects
+      const response = await fetch(link);
+      const finalUrl = response.url;
+
+      // Try to extract coordinates from the final URL
+      const finalRegex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+      const finalMatch = finalUrl.match(finalRegex);
+      if (finalMatch) {
+        return {
+          lat: parseFloat(finalMatch[1]),
+          lng: parseFloat(finalMatch[2]),
+        };
+      }
+
+      throw new Error("Could not extract coordinates from the provided link.");
+    } catch (error) {
+      console.error("Error extracting coordinates:", error);
+      return null;
+    }
+  };
 
   return (
     <div className="w-full mx-auto p-6">
@@ -64,8 +93,7 @@ export default function SchoolForm() {
           lowest_price: "",
           highest_price: "",
           location: "",
-          latitude: "",
-          longitude: "",
+          map_url: "",
           vision: "",
           mission: "",
           description: "",
@@ -95,7 +123,7 @@ export default function SchoolForm() {
             const result = await createUniversity(formData).unwrap();
             console.log("University created:", result);
             toast.success("School created successfully!");
-            setTimeout(() => resetForm(), 2000); // Delay reset to show success message
+            setTimeout(() => resetForm(), 2000);
           } catch (err) {
             console.error("Failed to create university:", err);
             setSubmissionError("Failed to create school. Please try again.");
@@ -108,30 +136,21 @@ export default function SchoolForm() {
         {({ isSubmitting, setFieldValue, values }) => (
           <Form className="space-y-6">
             <div className="space-y-6 mb-6">
-              <div className="bg-gray-400 flex flex-col items-center justify-center w-full h-[260px] rounded-lg">
-                <ImageUpload
-                  onImageUpload={(file) => {
-                    setFieldValue("cover_image", file);
-                  }}
-                  label="Upload Cover Image"
-                />
-                <div className="text-sm text-gray-600">
-                  Image size 1200 X 300 pixels
-                </div>
-              </div>
+              <ImageUploadArea
+                image={values.cover_image}
+                onImageUpload={(file) => setFieldValue("cover_image", file)}
+                label="Cover Image"
+                className="bg-gray-200 flex flex-col items-center justify-center w-full h-[260px] rounded-lg overflow-hidden"
+              />
             </div>
             <div className="flex gap-4 w-full">
-              <div className="bg-gray-400 h-[230px] min-w-[250px] flex flex-col items-center justify-center rounded-lg">
-                <ImageUpload
-                  onImageUpload={(file) => {
-                    setFieldValue("logo", file);
-                  }}
-                  label="Upload Logo"
-                />
-                <p className="text-sm text-gray-600">
-                  Image size 250 X 250 pixels
-                </p>
-              </div>
+              <ImageUploadArea
+                image={values.logo}
+                onImageUpload={(file) => setFieldValue("logo", file)}
+                label="Logo"
+                className="bg-gray-200 h-[230px] min-w-[250px] flex flex-col items-center justify-center rounded-lg overflow-hidden"
+                imageClassName="object-contain"
+              />
               <div className="w-full flex flex-col gap-4">
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
@@ -173,6 +192,7 @@ export default function SchoolForm() {
                     />
                   </div>
                 </div>
+
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
                     <Label htmlFor="website">Website</Label>
@@ -374,60 +394,15 @@ export default function SchoolForm() {
                 />
               </div>
             </div>
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <Label htmlFor="latitude">Latitude</Label>
-                <Field
-                  name="latitude"
-                  as={Input}
-                  id="latitude"
-                  type="number"
-                  step="any"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = e.target.value;
-                    setFieldValue("latitude", value);
-                    if (!isNaN(parseFloat(value))) {
-                      setMapCenter((prev) => ({
-                        ...prev,
-                        lat: parseFloat(value),
-                      }));
-                    }
-                  }}
-                />
-                <ErrorMessage
-                  name="latitude"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="longitude">Longitude</Label>
-                <Field
-                  name="longitude"
-                  as={Input}
-                  id="longitude"
-                  type="number"
-                  step="any"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = e.target.value;
-                    setFieldValue("longitude", value);
-                    if (!isNaN(parseFloat(value))) {
-                      setMapCenter((prev) => ({
-                        ...prev,
-                        lng: parseFloat(value),
-                      }));
-                    }
-                  }}
-                />
-                <ErrorMessage
-                  name="longitude"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
+            <div className="w-full">
+              <Label htmlFor="vision">Google Map Url</Label>
+              <Field as={Input} id="map_url" name="map_url" />
+              <ErrorMessage
+                name="map_url"
+                component="div"
+                className="text-red-500 text-sm h-8"
+              />
             </div>
-            <GoogleMapComponent center={mapCenter} />
-
             <div className="flex gap-4 w-full">
               <div className="w-full">
                 <Label htmlFor="vision">Vision</Label>
@@ -435,7 +410,7 @@ export default function SchoolForm() {
                 <ErrorMessage
                   name="vision"
                   component="div"
-                  className="text-red-500 text-sm"
+                  className="text-red-500 text-sm h-8"
                 />
               </div>
               <div className="w-full">

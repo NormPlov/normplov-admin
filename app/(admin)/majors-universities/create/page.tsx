@@ -1,5 +1,6 @@
 import SchoolForm from "@/app/Components/forms/SchoolForm";
 
+
 export default function CreateSchoolPage() {
   return (
     <div>
@@ -7,3 +8,4 @@ export default function CreateSchoolPage() {
     </div>
   );
 }
+
