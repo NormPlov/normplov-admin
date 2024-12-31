@@ -1,18 +1,18 @@
 import { normPlovApi } from "../api";
-import { ScrapeJobResponse, JobType } from "@/types/types";
+import { ScrapeJobResponse, JobScrapeType } from "@/types/types";
 
 export const scrape = normPlovApi.injectEndpoints({
     endpoints: (builder) => ({
-        scrape: builder.mutation<JobType, { url: string }>({
+        scrape: builder.mutation<JobScrapeType, { url: string }>({
             query: ({ url }) => ({
                 url: "api/v1/django/job-scraper",
                 method: "POST",
                 body: { url },
             }),
         }),
-        getScrape: builder.query<ScrapeJobResponse,  void>({
-            query : ()=>({
-                url:`api/v1/jobs`,
+        getScrape: builder.query<ScrapeJobResponse,  { page?: number; pageSize?: number }>({
+            query : ({page, pageSize})=>({
+                url:`api/v1/jobs?page=${page}&page_size=${pageSize}`,
                 method: "GET",
             })
         })

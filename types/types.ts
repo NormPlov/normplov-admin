@@ -302,6 +302,26 @@ interface MetadataType {
         total_items: number;
         total_pages: number;
 }
+// get job 
+export type GetAllJobType ={
+        uuid: string; 
+        title: string; 
+        company_name: string;
+        logo: string | null; 
+        location: string | null;
+        job_type: string | null; 
+        description: string | null; 
+        requirements: string[] | null;
+        responsibilities: string[] | null; 
+        facebook_url: string | null; 
+        email: string | null; 
+        phone: string | null; 
+        website: string | null; 
+        created_at: string | null; 
+        closing_date: string | null; 
+        category: string | null; 
+}
+
 
 //       post job type
 export type JobType ={
@@ -317,9 +337,9 @@ export type JobType ={
         schedule?: string;
         salary?: string;
         closing_date?: string;
-        requirements: string[]; // Ensure it's an array
-        responsibilities: string[]; // Ensure it's an array
-        benefits: string[]; // Ensure it's an array
+        requirements: string[]; 
+        responsibilities: string[]; 
+        benefits: string[]; 
         email?: string;
         phone?: string;
         website?: string;
@@ -360,7 +380,7 @@ export type UpdateJob ={
         email: string;
         phone: string;
         website: string;
-        logo: File | null;
+        logo: string | File;
         location: string;
         facebook_url: string;
     }
@@ -372,7 +392,7 @@ export type JobsResponse = {
         date: string;
         status: string;
         payload: {
-                items: JobType[];
+                items: GetAllJobType[];
                 metadata: Metadata;
         }
 }
@@ -424,14 +444,56 @@ export type MetricsResponse = {
     
       // scrape job
 
-      export type ScrapeJobResponse = {
-        date: string;
-        status: number;
-        message: string;
-        payload: {
-          items: JobType[] ;
-          metadata: Metadata
-        };
-        
+      export interface ScrapeJobResponse {
+        date: string; 
+        status: number; 
+        message: string; // Response message
+        payload: JobPayload; // Contains job details and metadata
+      }
       
-    }
+      export interface JobPayload {
+        jobs: JobScrapeType[]; // Array of jobs
+        meta: Metadata; // Pagination metadata
+      }
+      
+      export interface JobScrapeType {
+        uuid: string; // Unique identifier for the job
+        title: string; // Job title
+        company: string; // Company name
+        location: string; // Job location
+        posted_at: string; // ISO 8601 timestamp for when the job was posted
+        description: string; // Job description
+        category: string; // Job category
+        salary: string; // Salary range
+        closing_date: string; // ISO 8601 timestamp for job application closing date
+        requirements: string[]; // Array of job requirements
+        responsibilities: string[]; // Array of job responsibilities
+        benefits: string[]; // Array of job benefits
+        email: string; // Contact email for the job
+        phone: string; // Contact phone number(s)
+        website: string; // URL of the job details or company website
+        is_active: boolean; // Whether the job is active
+        is_scraped: boolean; // Whether the job was scraped
+        is_updated: boolean; // Whether the job has been updated
+        logo: string | null; // URL of the company logo
+        facebook_url: string | null; // Facebook URL for the job or company
+        schedule: string; // Job schedule (e.g., Full-time)
+        job_type: string; // Job type (e.g., Job Opportunity)
+      }
+      
+    
+      
+// upload image
+      export type UploadImageResponse ={
+        date: string; 
+        status: number; 
+        payload: ImagePayload; 
+        message: string; 
+      }
+      
+      export type ImagePayload = {
+        file_url: string; 
+        file_size: number; 
+        file_type: string; 
+      }
+      

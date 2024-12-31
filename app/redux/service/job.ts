@@ -2,7 +2,7 @@
 import { normPlovApi } from "../api";
 import {
     JobsResponse,
-    JobDetails,
+    GetAllJobType,
     GetJobCategoryType,
     UpdateJob,
     JobType,
@@ -11,7 +11,7 @@ import {
 
 export const jobApi = normPlovApi.injectEndpoints({
     endpoints: (builder) => ({
-        postLogo: builder.mutation<JobDetails, { uuid: string, logo_url: File }>({
+        postLogo: builder.mutation<GetAllJobType, { uuid: string, logo_url: File }>({
 
             query: ({ uuid, logo_url }) => {
                 const formData = new FormData();
@@ -102,9 +102,7 @@ export const jobApi = normPlovApi.injectEndpoints({
                 formData.append("phone", job.phone || "");
                 formData.append("website", job.website || ""); 
                 formData.append("category", JSON.stringify(job.category || []));
-                if (job.logo instanceof File) {
-                    formData.append("logo", job.logo); // Upload the file
-                }
+                formData.append("logo", job.logo || "");
             
 
                 return {
@@ -116,7 +114,7 @@ export const jobApi = normPlovApi.injectEndpoints({
             invalidatesTags: ["job"],
         }),
 
-        deleteJob : builder.mutation<JobDetails, { uuid: string }>({
+        deleteJob : builder.mutation<GetAllJobType, { uuid: string }>({
             query: ({ uuid }) => ({
                 url: `api/v1/jobs/${uuid}`,
                 method: "DELETE",
