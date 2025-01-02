@@ -1,0 +1,110 @@
+{
+  "personalityMainKh": {
+    "title": "តេស្តវាយតម្លៃតាមបុគ្គលិកលក្ខណៈ",
+    "desc": "យល់ដឹងពីប្រភេទបុគ្គលិកលក្ខណៈរបស់អ្នកតាមរយះ MBTI (Myers-Briggs Type Indicator) បង្កើតឡើងដោយលោក Carl Jung",
+    "buttonText": "ចាប់ផ្តើមតេស្ត",
+    "route": "personality"
+  },
+  "introKh": {
+    "title": "តេស្តវាយតម្លៃតាម",
+    "highlight": "បុគ្គលិកលក្ខណៈ",
+    "description": "ដោយផ្អែកលើប្រភេទតេស្តនេះ អ្នកនឹងទទួលបានលទ្ធផលពីប្រភេទបុគ្គលិកលក្ខណៈរបស់អ្នកតាមរយះ MBTI (Myers-Briggs Type Indicator) បង្កើតឡើងដោយលោក Carl Jung និងការណែនាំពីអាជីពការងារ ជំនាញដែលគួរជ្រើសរើសកាន់តែប្រសើរជាងមុន។"
+  },
+  "questions": [
+    {
+      "question": "When faced with a challenging problem, I find multiple ways to approach a solution.",
+      "questionIndex": 0,
+      "category": "Q1"
+    },
+    {
+      "question": "I often prefer working alone rather than in a team.",
+      "questionIndex": 1,
+      "category": "Q2"
+    },
+    {
+      "question": "I enjoy problem-solving activities.",
+      "questionIndex": 2,
+      "category": "Q3"
+    },
+    {
+      "question": "I prefer to plan things in advance rather than leaving them to the last minute.",
+      "questionIndex": 3,
+      "category": "Q4"
+    },
+    {
+      "question": "I often analyze situations from multiple perspectives before making decisions.",
+      "questionIndex": 4,
+      "category": "Q5"
+    },
+    {
+      "question": "I like to break down complex tasks into smaller, manageable steps.",
+      "questionIndex": 5,
+      "category": "Q6"
+    },
+    {
+      "question": "I prefer to follow clear instructions rather than figuring things out on my own.",
+      "questionIndex": 6,
+      "category": "Q7"
+    },
+    {
+      "question": "I enjoy exploring creative ways to solve problems.",
+      "questionIndex": 7,
+      "category": "Q8"
+    },
+    {
+      "question": "I am comfortable adapting to changes in plans or schedules.",
+      "questionIndex": 8,
+      "category": "Q9"
+    },
+    {
+      "question": "I often evaluate the outcomes of my actions to improve in the future.",
+      "questionIndex": 9,
+      "category": "Q10"
+    },
+    {
+      "question": "I feel confident explaining complex ideas to others.",
+      "questionIndex": 10,
+      "category": "Q11"
+    },
+    {
+      "question": "I enjoy learning new skills that can help me in everyday life.",
+      "questionIndex": 11,
+      "category": "Q12"
+    },
+    {
+      "question": "I can effectively prioritize tasks based on their importance and deadlines.",
+      "questionIndex": 12,
+      "category": "Q13"
+    },
+    {
+      "question": "I actively seek feedback from others to improve my work.",
+      "questionIndex": 13,
+      "category": "Q14"
+    },
+    {
+      "question": "I can remain focused on a task even when facing distractions.",
+      "questionIndex": 14,
+      "category": "Q15"
+    },
+    {
+      "question": "I enjoy collaborating with others to achieve common goals.",
+      "questionIndex": 15,
+      "category": "Q16"
+    }
+  ],
+  
+  "Recommendation": {
+    "jobTitle": "Teacher / Trainer",
+    "jobdesc": "A Teacher/Trainer educates and inspires learners by delivering engaging lessons or training sessions tailored to their needs. They create structured plans, assess progress, and provide feedback to ensure effective skill and ...",
+    "majors": [
+      "Computer Science",
+      "Software Engineering",
+      "Information Technology"
+    ],
+    "unis": [
+      "Institute of science and technology advanced development",
+      "ITC",
+      "CADT"
+    ]
+  }
+}

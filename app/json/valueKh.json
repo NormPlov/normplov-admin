@@ -1,0 +1,140 @@
+{
+  "valueMainKh": {
+    "title": "តេស្តវាយតម្លៃតាមគុណតម្លៃ",
+    "desc": "យល់ដឹងពីគុណតម្លៃការងាររបស់អ្នកតាមរយះSchwartz Value Theory  បង្កើតឡើងដោយលោក Shalom​​ Schwartz  ",
+    "buttonText": "ចាប់ផ្តើមតេស្ត",
+    "route": "value"
+  },
+  "introKh": {
+    "title": "តេស្តវាយតម្លៃតាម​",
+    "highlight": "គុណតម្លៃ",
+    "description": "ដោយផ្អែកលើប្រភេទតេស្តនេះ អ្នកនឹងទទួលបានលទ្ធផលពីគុណតម្លៃរបស់អ្នកតាមរយះ Schwartz Value Theory បង្កើតឡើងដោយលោក Shalom​​ Schwartz  និងការណែនាំពីអាជីពការងារ ជំនាញដែលគួរជ្រើសរើសកាន់តែប្រសើរជាងមុន។"
+  },
+  "questions": [
+    {
+      "question": "When faced with a challenging problem, I find multiple ways to approach a solution.",
+      "questionIndex": 0,
+      "category": "Q1"
+    },
+    {
+      "question": "I always evaluate different perspectives before making a decision.",
+      "questionIndex": 1,
+      "category": "Q2"
+    },
+    {
+      "question": "I can easily apply mathematical concepts to everyday situations.",
+      "questionIndex": 2,
+      "category": "Q3"
+    },
+    {
+      "question": "I enjoy solving scientific problems through experimentation and research.",
+      "questionIndex": 3,
+      "category": "Q4"
+    },
+    {
+      "question": "I can adjust my study methods based on the subject or task at hand.",
+      "questionIndex": 4,
+      "category": "Q5"
+    },
+    {
+      "question": "I frequently track my progress when working on a task or project.",
+      "questionIndex": 5,
+      "category": "Q6"
+    },
+    {
+      "question": "I listen carefully to others and fully understand their point of view before responding.",
+      "questionIndex": 6,
+      "category": "Q7"
+    },
+    {
+      "question": "I can easily recognize the emotional state of others based on their actions or words.",
+      "questionIndex": 7,
+      "category": "Q8"
+    },
+    {
+      "question": "I often consider multiple factors before making an important decision.",
+      "questionIndex": 8,
+      "category": "Q9"
+    },
+    {
+      "question": "I feel comfortable teaching or guiding others when they need help learning something new.",
+      "questionIndex": 9,
+      "category": "Q10"
+    },
+    {
+      "question": "I actively seek new knowledge and skills to improve myself.",
+      "questionIndex": 10,
+      "category": "Q11"
+    },
+    {
+      "question": "I am able to organize my time effectively to meet deadlines.",
+      "questionIndex": 11,
+      "category": "Q12"
+    },
+    {
+      "question": "I am able to organize my thoughts clearly and logically in writing.",
+      "questionIndex": 12,
+      "category": "Q13"
+    },
+    {
+      "question": "I feel confident speaking in front of groups or audiences.",
+      "questionIndex": 13,
+      "category": "Q14"
+    },
+    {
+      "question": "I can understand complex reading material and summarize key points effectively.",
+      "questionIndex": 14,
+      "category": "Q15"
+    },
+    {
+      "question": "I enjoy collaborating with others to achieve common goals.",
+      "questionIndex": 15,
+      "category": "Q16"
+    },
+    {
+      "question": "I can identify and overcome obstacles that hinder progress.",
+      "questionIndex": 16,
+      "category": "Q17"
+    },
+    {
+      "question": "I am capable of resolving conflicts in a constructive manner.",
+      "questionIndex": 17,
+      "category": "Q18"
+    },
+    {
+      "question": "I adapt quickly to new environments or situations.",
+      "questionIndex": 18,
+      "category": "Q19"
+    },
+    {
+      "question": "I am confident in making decisions even under pressure.",
+      "questionIndex": 19,
+      "category": "Q20"
+    },
+    {
+      "question": "I enjoy learning about different cultures and perspectives.",
+      "questionIndex": 20,
+      "category": "Q21"
+    },
+    {
+      "question": "I regularly reflect on my actions to improve future outcomes.",
+      "questionIndex": 21,
+      "category": "Q22"
+    }
+  ],
+  
+  "Recommendation": {
+    "jobTitle": "Teacher / Trainer",
+    "jobdesc": "A Teacher/Trainer educates and inspires learners by delivering engaging lessons or training sessions tailored to their needs. They create structured plans, assess progress, and provide feedback to ensure effective skill and ...",
+    "majors": [
+      "Computer Science",
+      "Software Engineering",
+      "Information Technology"
+    ],
+    "unis": [
+      "Institute of science and technology advanced development",
+      "ITC",
+      "CADT"
+    ]
+  }
+}

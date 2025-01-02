@@ -1,6 +1,6 @@
 
 import { normPlovApi } from "../api";
-import { User, UserReponse, UserListResponse, FeedbackResponse, UpdateProfileResponse, ChangePasswordType, TestHistoryResponse } from "@/types/types";
+import { User, UserReponse, UserListResponse, FeedbackResponse, UpdateProfileResponse, ChangePasswordType, TestsResponse, MetricsResponse } from "@/types/types";
 
 
 export const userApi = normPlovApi.injectEndpoints({
@@ -34,7 +34,7 @@ export const userApi = normPlovApi.injectEndpoints({
 
         // promote feedback
         promoteFeedback: builder.mutation<FeedbackResponse, { uuid: string }>({
-            query: (uuid) => ({
+            query: ({uuid}) => ({
                 url: `api/v1/feedback/promote/${uuid}`,
                 method: 'POST'
             }),
@@ -73,7 +73,7 @@ export const userApi = normPlovApi.injectEndpoints({
             invalidatesTags:["userProfile"]
         }),
         // Post image by uuid user
-        postImage: builder.mutation<User, { uuid: string; avatar_url: File }>({
+        postImage: builder.mutation<User, { uuid: string ; avatar_url: File }>({
             query: ({ uuid, avatar_url }) => {
                 const formData = new FormData();
                 // 'file' follow your backend if backend is file put file if backend image put image 
@@ -92,14 +92,14 @@ export const userApi = normPlovApi.injectEndpoints({
         UpdateUserInfo: builder.mutation<UpdateProfileResponse, { uuid: string; user: UpdateProfileResponse }>({
             query: ({ uuid, user }) => ({
                 url: `api/v1/user/profile/update/${uuid}`, 
-                method: "PATCH", // Use PUT for updates
+                method: "PUT", 
                 body: {
                     username: user.username,
                     address: user.address,
                     phone_number: user.phone_number,
                     bio: user.bio,
                     gender: user.gender,
-                    date_of_birth: user.date_of_birth, // Ensure this is correctly formatted as an ISO string
+                    date_of_birth: user.date_of_birth,
                 },
             }),
             invalidatesTags:["userProfile"]
@@ -120,14 +120,21 @@ export const userApi = normPlovApi.injectEndpoints({
         }),
 
         // list test history
-        getTestHistory: builder.query<TestHistoryResponse, { page: number; pageSize: number }>({
+        getTestHistory: builder.query<TestsResponse, { page: number; pageSize: number }>({
             query: ({ page, pageSize }) => ({
               url: `api/v1/test/all-tests?page=${page}&page_size=${pageSize}`,
               method: 'GET',
             }),
             providesTags: ["userProfile"], 
           }),
-          
+
+        // statitics
+        getStatistics: builder.query<MetricsResponse, void>({
+            query: () => ({
+                url: `api/v1/admin/metrics`,
+                method: 'GET',
+            })
+        })
 
     }),
 });
@@ -145,4 +152,5 @@ export const {
     usePostImageMutation,
     useChangePasswordMutation,
     useGetTestHistoryQuery,
+    useGetStatisticsQuery
 } = userApi;

@@ -1,0 +1,101 @@
+{
+  "interestMainKh": {
+    "title": "តេស្តវាយតម្លៃតាម​ចំណាប់អារម្មណ៍",
+    "desc": "យល់ដឹងពីចំណាំអារម្មណ៍របស់អ្នកតាមរយះ Holland Theory បង្កើតឡើងដោយលោក John Holland ",
+    "buttonText": "ចាប់ផ្តើមតេស្ត",
+    "route": "interest"
+  },
+  "introKh": {
+    "title": "តេស្តវាយតម្លៃតាម",
+    "highlight": "ចំណាប់អារម្មណ៍",
+    "description": "ដោយផ្អែកលើប្រភេទតេស្តនេះ អ្នកនឹងទទួលបានលទ្ធផលពីចំណាំអារម្មណ៍របស់អ្នកតាមរយះ Holland Theory​ បង្កើតឡើងដោយលោក John Holland  និងការណែនាំពីអាជីពការងារ ជំនាញដែលគួរជ្រើសរើសកាន់តែប្រសើរជាងមុន។"
+  },
+  "questions": [
+    {
+      "question": "I enjoy working with tools or machinery to solve problems.",
+      "questionIndex": 0,
+      "category": "q1"
+    },
+    {
+      "question": "I prefer doing hands-on tasks rather than working with abstract ideas.",
+      "questionIndex": 1,
+      "category": "q2"
+    },
+    {
+      "question": "I like solving complex problems that require deep thinking and research.",
+      "questionIndex": 2,
+      "category": "q3"
+    },
+    {
+      "question": "I am more interested in analyzing data and conducting experiments than in working with people.",
+      "questionIndex": 3,
+      "category": "q4"
+    },
+    {
+      "question": "I enjoy expressing myself through artistic activities like painting, writing, or music.",
+      "questionIndex": 4,
+      "category": "q5"
+    },
+    {
+      "question": "I prefer creating something new or original, like designing a website or writing a story.",
+      "questionIndex": 5,
+      "category": "q6"
+    },
+    {
+      "question": " I enjoy helping others and providing emotional support when needed.",
+      "questionIndex": 6,
+      "category": "q7"
+    },
+    {
+      "question": "I like being around people and prefer to work in a group rather than alone.",
+      "questionIndex": 7,
+      "category": "q8"
+    },
+    {
+      "question": "I enjoy persuading others to take action or to try new ideas.",
+      "questionIndex": 8,
+      "category": "q9"
+    },
+    {
+      "question": "I like taking on leadership roles and making decisions that affect others.",
+      "questionIndex": 9,
+      "category": "q10"
+    },
+    {
+      "question": "I prefer following rules and working in a structured environment.",
+      "questionIndex": 10,
+      "category": "q11"
+    },
+    {
+      "question": "I enjoy working with numbers, organizing data, and managing systems.",
+      "questionIndex": 11,
+      "category": "q12"
+    }
+  ],
+  "Recommendation": {
+    "jobTitle": "Teacher / Trainer",
+    "jobdesc": "A Teacher/Trainer educates and inspires learners by delivering engaging lessons or training sessions tailored to their needs. They create structured plans, assess progress, and provide feedback to ensure effective skill and ...",
+    "majors": [
+      "Computer Science",
+      "Software Engineering",
+      "Information Technology"
+    ],
+    "unis": [
+      "Institute of science and technology advanced development",
+      "ITC",
+      "CADT"
+    ]
+  },
+  "result": {
+    "interestCard": [
+      {
+        "title": "Artistic",
+        "desc": "Creative and expressive individuals who enjoy working in artistic fields. "
+      },
+      {
+        "title": "Enterprising",
+        "desc": "Ambitious, energetic individuals who enjoy leading, persuading, and taking risks"
+      }
+    ]
+  }
+}

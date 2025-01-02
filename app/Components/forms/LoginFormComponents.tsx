@@ -154,7 +154,7 @@ export default function Login() {
                                         component="section"
                                         className="text-sm text-red-500" />
                                 </div>
-                                <div className="space-y-2 text-textprimary">
+                                <div className="space-y-2 text-textprimary mb-4">
                                     <label htmlFor="password">Password
                                         <span className="text-red-500 px-1.5">*</span>
                                     </label>
@@ -175,9 +175,9 @@ export default function Login() {
                                             onClick={handleShowPassword}
                                         >
                                             {showPassword ? (
-                                                <IoEyeOff className="h-4 w-4 text-gray-500" />
+                                                 <IoEyeSharp className="h-4 w-4 text-gray-500" />
                                             ) : (
-                                                <IoEyeSharp className="h-4 w-4 text-gray-500" />
+                                                <IoEyeOff className="h-4 w-4 text-gray-500" />
                                             )}
                                         </Button>
                                     </div>
@@ -185,14 +185,14 @@ export default function Login() {
                                         name="password"
                                         component="section"
                                         className="text-sm text-red-500" />
-                                    <div className="text-right">
+                                    {/* <div className="text-right">
                                         <Button variant="link" className="p-0 text-primary text-sm">
                                             Forget Password?
                                         </Button>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <Button
-                                    className="w-full rounded-full bg-primary hover:bg-emerald-500"
+                                    className="w-full rounded-full bg-primary hover:bg-emerald-500 "
                                     type="submit"
                                     disabled={loading} // Prevent multiple submissions
                                 >

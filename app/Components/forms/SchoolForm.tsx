@@ -111,9 +111,10 @@ export default function SchoolForm() {
                 if (values[key]) {
                   formData.append(key, values[key]);
                 }
-              } else {
-                formData.append(key, values[key]);
               }
+              // else {
+              //   formData.append(key, values[key]);
+              // }
             });
             formData.append("type", schoolType || "");
             console.log(

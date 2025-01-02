@@ -1,0 +1,33 @@
+.circle-container {
+    position: relative;
+    display: inline-block;
+    width: 60px;  /* Adjusted size */
+    height: 60px; /* Adjusted size */
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.circle {
+    transform: rotate(-90deg); /* Rotate to start the circle from the top */
+}
+
+.circle-background {
+    fill: none;
+    stroke: #e6e6e6; /* Light gray background circle */
+}
+
+.circle-progress {
+    fill: none;
+    stroke: #0BBB8A; /* Green color for progress */
+    transition: stroke-dashoffset 0.35s;
+}
+
+.circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;  /* Adjust font size to fit the smaller circle */
+    font-weight: bold;
+    color: #000000;
+}

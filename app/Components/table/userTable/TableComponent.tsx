@@ -95,9 +95,11 @@ export default function UserTable() {
   // Filter logic
   const filteredUsers =
     data?.payload?.users?.filter((user) => {
+      const normalizeString = (str: string) =>
+        str.replace(/\s+/g, "").toLowerCase();
       const matchesSearch =
-        user.username.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase());
+        user.username.toLowerCase().includes(normalizeString(search)) ||
+        user.email.toLowerCase().includes(normalizeString(search));
       const matchesFilter =
         filter === "all" ||
         (filter === "active" && user.is_active) ||
@@ -143,11 +145,11 @@ export default function UserTable() {
   };
 
   return (
-    <div className="h-screen p-6 text-textprimary rounded-md">
+    <div className="h-screen p-6 rounded-md">
       <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="text-3xl font-normal text-secondary">All Users</div>
+          <div className="text-3xl font-semibold text-secondary">All Users</div>
           <div className="flex items-center gap-4">
             <div className="relative">
               <IoIosSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-800 rounded-md" />
@@ -181,7 +183,6 @@ export default function UserTable() {
                 <TableHead>Avatar</TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Gender</TableHead>
-                <TableHead>Date of Birth</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Action</TableHead>
@@ -190,13 +191,13 @@ export default function UserTable() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={6}>
                     <Skeleton className="h-8 w-full" />
                   </TableCell>
                 </TableRow>
               ) : filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-gray-500">
+                  <TableCell colSpan={6} className="text-center text-gray-500">
                     No data available
                   </TableCell>
                 </TableRow>
@@ -209,20 +210,23 @@ export default function UserTable() {
                           src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${user.avatar}`}
                           alt={user?.username || "User"}
                         />
-                        <AvatarFallback>
+                        <AvatarFallback className="text-gray-700">
                           {user.username?.[0]?.toUpperCase() || "?"}
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell className="font-medium">
-                      {user.username}
+                    <TableCell className="text-gray-700 text-medium">
+                      {user.username || "N/A"}
                     </TableCell>
-                    <TableCell>{user.gender || "N/A"}</TableCell>
-                    <TableCell>{user.date_of_birth || "N/A"}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell className="text-gray-600 ">
+                      {user.gender || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-gray-600">
+                      {user.email}
+                    </TableCell>
                     <TableCell>
                       <div
-                        className={`font-normal rounded-full text-center text-sm px-2 border ${
+                        className={`font-normal rounded-full text-center text-sm px-1 border ${
                           user.is_active
                             ? "bg-green-200 text-green-900 border-green-500"
                             : "bg-red-100 text-red-500 border-red-400"
@@ -240,7 +244,7 @@ export default function UserTable() {
                                 variant="ghost"
                                 onClick={() => handleViewProfileClick(user)}
                               >
-                                <FaEye className="text-textprimary" />
+                                <FaEye className="text-gray-700" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>View Profile</TooltipContent>
@@ -276,7 +280,7 @@ export default function UserTable() {
         {/* Pagination Section */}
         <div className="flex justify-between items-center mt-4">
           {/* Showing data */}
-          <div className="text-sm font-medium">
+          <div className="text-sm font-medium text-gray-500">
             Showing data{" "}
             {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
             {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
@@ -286,7 +290,9 @@ export default function UserTable() {
           <div className="flex gap-4">
             {/* Rows Per Page */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Rows per page:</span>
+              <span className="text-sm font-medium text-gray-900">
+                Rows per page:
+              </span>
               <Select
                 value={`${itemsPerPage}`}
                 onValueChange={handleItemsPerPageChange}
@@ -322,7 +328,7 @@ export default function UserTable() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <span className="text-sm">
+              <span className="text-sm font-medium text-gray-900">
                 Page {currentPage} of {totalPages}
               </span>
 
