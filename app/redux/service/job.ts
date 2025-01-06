@@ -25,41 +25,7 @@ export const jobApi = normPlovApi.injectEndpoints({
 
             }
         }),
-        postJob: builder.mutation<JobType, { job: PostJob }>({
-            query: ({ job }) => {
-                const formData = new FormData();
-                const logo = job.logo
-        
-                // Append fields to FormData
-                formData.append("title", job.title);
-                formData.append("company", job.company);
-                formData.append("logo", logo); // Append logo only if it exists
-                formData.append("facebook_url", job.facebook_url || "");
-                formData.append("location", job.location || "");
-                formData.append("posted_at", job.posted_at || new Date().toISOString());
-                formData.append("description", JSON.stringify(job.description || [])); // Convert array to JSON
-                formData.append("job_type", job.job_type || "");
-                formData.append("schedule", job.schedule || "");
-                formData.append("salary", job.salary || "");
-                formData.append("closing_date", job.closing_date || "");
-                formData.append("requirements", JSON.stringify(job.requirements || [])); // Convert array to JSON
-                formData.append("responsibilities", JSON.stringify(job.responsibilities || [])); // Convert array to JSON
-                formData.append("benefits", JSON.stringify(job.benefits || [])); // Convert array to JSON
-                formData.append("email", job.email || "");
-                formData.append("phone", job.phone || "");
-                formData.append("website", job.website || ""); 
-                formData.append("category", JSON.stringify(job.category || [])); // Convert array to JSON
-        
-                return {
-                    url: "api/v1/jobs", // Replace with your actual endpoint
-                    method: "POST",
-                    body: formData,
-                };
-            },
-            invalidatesTags:["job"]
-        }),
-        
-
+       
         getJob: builder.query<JobsResponse, { page?: number; pageSize?: number }>({
             query: ({ page = 1, pageSize = 10 }) => ({
                 url: `api/v1/jobs/admin/all-jobs?page=${page}&page-size=${pageSize}`,
@@ -78,50 +44,69 @@ export const jobApi = normPlovApi.injectEndpoints({
             providesTags: ["job"]
         }),
 
-        updateJob: builder.mutation<
-            JobType,
-            { uuid: string; job: UpdateJob;  }
-        >({
-            query: ({ uuid, job }) => {
-                const formData = new FormData();
-        
-                // Append fields to FormData
-                formData.append("title", job.title);
-                formData.append("company", job.company);
-                formData.append("facebook_url", job.facebook_url || "");
-                formData.append("location", job.location || "");
-                // formData.append("posted_at", job.posted_at || new Date().toISOString());
-                formData.append("description", JSON.stringify(job.description || [])); // Convert array to JSON
-                formData.append("job_type", job.job_type || "");
-                // formData.append("schedule", job.schedule || "");
-                formData.append("salary", job.salary || "");
-                formData.append("closing_date", job.closing_date || "");
-                formData.append("requirements", JSON.stringify(job.requirements || [])); // Convert array to JSON
-                formData.append("responsibilities", JSON.stringify(job.responsibilities || []));
-                formData.append("email", job.email || "");
-                formData.append("phone", job.phone || "");
-                formData.append("website", job.website || ""); 
-                formData.append("category", JSON.stringify(job.category || []));
-                formData.append("logo", job.logo || "");
-            
-
-                return {
-                    url: `api/v1/jobs/${uuid}`,
-                    method: "PATCH",
-                    body: formData,
-                };
-            },
+        updateJob: builder.mutation<JobType, { uuid: string; update: UpdateJob }>({
+            query: ({ uuid, update }) => ({
+                url: `api/v1/jobs/${uuid}`,
+                method: "PATCH",
+                body: {
+                    title: update.title,
+                    company: update.company,
+                    description: update.description,
+                    requirements: update.requirements,
+                    responsibilities: update.responsibilities,
+                    benefits: update.benefits,
+                    category: update.category,
+                    location: update.location,
+                    salary: update.salary,
+                    job_type: update.job_type,
+                    facebook_url: update.facebook_url,
+                    email: update.email,
+                    phone: update.phone,
+                    website: update.website,
+                    logo: update.logo,
+                    posted_at: update.posted_at,
+                    closing_date: update.closing_date,
+                    schedule: update.schedule,
+                },
+            }),
             invalidatesTags: ["job"],
         }),
 
-        deleteJob : builder.mutation<GetAllJobType, { uuid: string }>({
+
+        deleteJob: builder.mutation<GetAllJobType, { uuid: string }>({
             query: ({ uuid }) => ({
                 url: `api/v1/jobs/${uuid}`,
                 method: "DELETE",
             }),
-            invalidatesTags:["job"]
-        })
+            invalidatesTags: ["job"]
+        }),
 
+        postJob: builder.mutation<GetAllJobType, {postJob: PostJob}>({
+            query: ({postJob})=>({
+                url: `api/v1/jobs`,
+                method: 'POST',
+                body: {
+                    title: postJob.title,
+                    company: postJob.company,
+                    description: postJob.description,
+                    requirements: postJob.requirements,
+                    responsibilities: postJob.responsibilities,
+                    benefits: postJob.benefits,
+                    category: postJob.category,
+                    location: postJob.location,
+                    salary: postJob.salary,
+                    job_type: postJob.job_type,
+                    facebook_url: postJob.facebook_url,
+                    email: postJob.email,
+                    phone: postJob.phone,
+                    website: postJob.website,
+                    logo: postJob.logo,
+                    posted_at: postJob.posted_at,
+                    closing_date: postJob.closing_date,
+                    schedule: postJob.schedule,
+                }
+            })
+        })
 
 
     }),

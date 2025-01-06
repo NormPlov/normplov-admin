@@ -1,197 +1,197 @@
 
 export type User = {
-        uuid: string,
-        username: string,
-        email: string,
-        avatar: string | null,
-        address: string,
-        phone_number: string,
-        bio: string,
-        gender: string,
-        date_of_birth: string | null,
-        roles: string,
-        is_deleted: boolean,
-        is_active: boolean,
-        is_verified: boolean,
-        is_blocked: boolean,
-        registered_at: Date | null
+  uuid: string,
+  username: string,
+  email: string,
+  avatar: string | null,
+  address: string,
+  phone_number: string,
+  bio: string,
+  gender: string,
+  date_of_birth: string | null,
+  roles: string,
+  is_deleted: boolean,
+  is_active: boolean,
+  is_verified: boolean,
+  is_blocked: boolean,
+  registered_at: Date | null
 }
 // Login Type
 export type LoginType = {
-        email: string;
-        password: string;
+  email: string;
+  password: string;
 };
 // Update Profile type
 export type UpdateProfilesTypes = {
-        username: string;
-        address: string;
-        gender: string;
-        date_of_birth: string | null;
-        old_password: string;
-        new_password: string;
-        confirm_new_password: string;
-        bio: string;
-        avatar: string
-        phone_number: string;
+  username: string;
+  address: string;
+  gender: string;
+  date_of_birth: string | null;
+  old_password: string;
+  new_password: string;
+  confirm_new_password: string;
+  bio: string;
+  avatar: string
+  phone_number: string;
 }
 
 export type UpdateProfilePayload = {
-        username: string;
-        gender: string;
-        dob?: Date | null;
-        oldPassword?: string;
-        newPassword?: string;
-        confirmPassword?: string;
-        bio: string;
+  username: string;
+  gender: string;
+  dob?: Date | null;
+  oldPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  bio: string;
 };
 
 export type UniversityType = {
-        uuid: string;
-        logo_url: string;
-        cover: string;
-        en_name: string;
-        kh_name: string;
-        address: string;
-        email?: string;
-        phone: string;
-        website?: string;
-        location?: string;
-        map_url?: string;
-        summary?: string;
-        vision?: string;
-        mission?: string;
+  uuid: string;
+  logo_url: string;
+  cover: string;
+  en_name: string;
+  kh_name: string;
+  address: string;
+  email?: string;
+  phone: string;
+  website?: string;
+  location?: string;
+  map_url?: string;
+  summary?: string;
+  vision?: string;
+  mission?: string;
 };
 
 export interface SchoolsType extends UniversityType {
-        id: string;
-        type?: string;
+  id: string;
+  type?: string;
 }
 
 export type PaginationMetadata = {
-        pageSize: number;
-        total: number;
-        page: number;
-        size: number;
+  pageSize: number;
+  total: number;
+  page: number;
+  size: number;
 };
 
 export type UniversitiesResponse = {
-        date: Date;
-        status: number;
-        payload: {
-                schools?: SchoolsType[];
-                metadata?: PaginationMetadata;
-        };
+  date: Date;
+  status: number;
+  payload: {
+    schools?: SchoolsType[];
+    metadata?: PaginationMetadata;
+  };
 };
 
 // update profile response 
 export type UpdateProfileResponse = {
-        username: string;
-        phone_number: string;
-        address: string;
-        gender: string;
-        date_of_birth: string | null;
-        bio: string;
+  username: string;
+  phone_number: string;
+  address: string;
+  gender: string;
+  date_of_birth: string | null;
+  bio: string;
 }
 
 export interface Metadata {
-        page: number;
-        page_size: number;
-        total_items: number;
-        total_pages: number;
+  page: number;
+  page_size: number;
+  total_items: number;
+  total_pages: number;
 }
 
 //     Userlist Type
 export interface UserListResponse {
-        date: string;
-        status: number;
-        payload: {
-                metadata: Metadata;
-                users: User[];
-        };
-        message: string;
+  date: string;
+  status: number;
+  payload: {
+    metadata: Metadata;
+    users: User[];
+  };
+  message: string;
 }
 export type UserReponse = {
-        payload: {
-                uuid: string | undefined,
-                username: string,
-                email: string,
-                avatar: string | null,
-                address: string,
-                phone_number: string,
-                bio: string,
-                gender: string,
-                date_of_birth: string | null,
-                roles: string,
-                is_deleted: boolean,
-                is_active: boolean,
-                is_verified: boolean,
-                is_blocked: boolean,
-                registered_at: Date | null
-        }
+  payload: {
+    uuid: string | undefined,
+    username: string,
+    email: string,
+    avatar: string | null,
+    address: string,
+    phone_number: string,
+    bio: string,
+    gender: string,
+    date_of_birth: string | null,
+    roles: string,
+    is_deleted: boolean,
+    is_active: boolean,
+    is_verified: boolean,
+    is_blocked: boolean,
+    registered_at: Date | null
+  }
 }
 
 // user feedback
 
 export type Feedback = {
-        feedback_uuid: string;
-        username: string;
-        email: string;
-        avatar: string;
-        feedback: string;
-        created_at: string;
-        is_deleted: boolean;
-        is_promoted: boolean;
+  feedback_uuid: string;
+  username: string;
+  email: string;
+  avatar: string;
+  feedback: string;
+  created_at: string;
+  is_deleted: boolean;
+  is_promoted: boolean;
 }
 
 
 
 export type FeedbackResponse = {
-        payload: {
-                items: Feedback[];
-                metadata: Metadata;
-        }
+  payload: {
+    items: Feedback[];
+    metadata: Metadata;
+  }
 
 };
 
 // change password
 export type ChangePasswordType = {
-        old_password: string;
-        new_password: string;
-        confirm_new_password: string;
+  old_password: string;
+  new_password: string;
+  confirm_new_password: string;
 }
 
 // Block user modal
 export type BlockUserModalProps = {
-        onConfirm: () => void;
-        onCancel: () => void;
-        actionType: "block" | "unblock";
+  onConfirm: () => void;
+  onCancel: () => void;
+  actionType: "block" | "unblock";
 }
 
 
 
 // Root Response Type
 export type TestsResponse = {
-        date: string;
-        status: number;
-        payload: {
-                tests: TestType[];
-                metadata: MetadataType;
-        };
-        message: string;
+  date: string;
+  status: number;
+  payload: {
+    tests: TestType[];
+    metadata: MetadataType;
+  };
+  message: string;
 }
 
 // Test Type
 interface TestType {
-        test_uuid: string;
-        test_name: string;
-        assessment_type_name: AssessmentTypeName;
-        user_avatar: string;
-        user_name: string;
-        user_email: string;
-        response_data: ResponseDataType[];
-        is_draft: boolean;
-        is_completed: boolean;
-        created_at: string;
+  test_uuid: string;
+  test_name: string;
+  assessment_type_name: AssessmentTypeName;
+  user_avatar: string;
+  user_name: string;
+  user_email: string;
+  response_data: ResponseDataType[];
+  is_draft: boolean;
+  is_completed: boolean;
+  created_at: string;
 }
 
 // Assessment Type Name (Union of all possible values)
@@ -199,301 +199,345 @@ type AssessmentTypeName = "Personality" | "Learning Style" | "Values" | "Interes
 
 // Response Data Type (for any assessment type)
 interface ResponseDataType {
-        user_uuid: string;
-        test_uuid: string;
-        test_name: string;
-        personality_type?: PersonalityType; // For Personality Assessment
-        learning_style?: string; // For Learning Style Assessment
-        probability?: number; // For Learning Style Assessment
-        details?: LearningStyleDetailsType; // For Learning Style
-        chart?: ChartDataType; // For Learning Style
-        dimensions?: DimensionType[]; // Shared for Personality and Learning Style
-        traits?: TraitsType; // For Personality
-        strengths?: string[]; // For Personality
-        weaknesses?: string[]; // For Personality
-        recommended_techniques?: RecommendedTechniqueType[]; // For Learning Style
-        related_careers?: CareerType[]; // Shared for assessments with careers
-        skills_grouped: SkillType;
-        strong_careers: CareerType[];
-        category_percentages: CategoryPercentagesType | {};
+  user_uuid: string;
+  test_uuid: string;
+  test_name: string;
+  personality_type?: PersonalityType; // For Personality Assessment
+  learning_style?: string; // For Learning Style Assessment
+  probability?: number; // For Learning Style Assessment
+  details?: LearningStyleDetailsType; // For Learning Style
+  chart?: ChartDataType; // For Learning Style
+  dimensions?: DimensionType[]; // Shared for Personality and Learning Style
+  traits?: TraitsType; // For Personality
+  strengths?: string[]; // For Personality
+  weaknesses?: string[]; // For Personality
+  recommended_techniques?: RecommendedTechniqueType[]; // For Learning Style
+  related_careers?: CareerType[]; // Shared for assessments with careers
+  skills_grouped: SkillType;
+  strong_careers: CareerType[];
+  category_percentages: CategoryPercentagesType | {};
 }
 
 // Skil Assessment Type 
 export type SkillType = {
-        Strong: GroundSkill[]
-        Average: GroundSkill[]
-        Weak: GroundSkill[]
+  Strong: GroundSkill[]
+  Average: GroundSkill[]
+  Weak: GroundSkill[]
 }
 
 //    Ground Skill
 export type GroundSkill = {
-        skill: string;
-        description: string;
+  skill: string;
+  description: string;
 }
 
 export type CareerType = {
-        career_name: string;
-        description: string;
-        majors: majorsType[]
+  career_name: string;
+  description: string;
+  majors: majorsType[]
 }
 // majors type
 export type majorsType = {
-        major_name: string;
-        schools: string[]
+  major_name: string;
+  schools: string[]
 }
 // category_percentages
 export type CategoryPercentagesType = {
-        Cognitive_Skills: number;
-        Interpersonal_Skills: number;
-        Self_Management_Skills: number;
-        Communication_Skills: number;
-        // [key: string]: number; // Index signature
+  Cognitive_Skills: number;
+  Interpersonal_Skills: number;
+  Self_Management_Skills: number;
+  Communication_Skills: number;
+  // [key: string]: number; // Index signature
 };
 
 
 // Personality Type
 interface PersonalityType {
-        name: string;
-        title: string;
-        description: string;
+  name: string;
+  title: string;
+  description: string;
 }
 
 // Learning Style Details
 interface LearningStyleDetailsType {
-        Visual_Score: number;
-        Auditory_Score: number;
-        ReadWrite_Score: number;
-        Kinesthetic_Score: number;
+  Visual_Score: number;
+  Auditory_Score: number;
+  ReadWrite_Score: number;
+  Kinesthetic_Score: number;
 }
 
 // Chart Data
 interface ChartDataType {
-        labels: string[];
-        values: number[];
+  labels: string[];
+  values: number[];
 }
 
 // Dimensions Type
 interface DimensionType {
-        dimension_name: string;
-        dimension_description?: string; // Optional for Learning Style
-        score?: number; // For Personality
-        level?: number; // For Learning Style
+  dimension_name: string;
+  dimension_description?: string; // Optional for Learning Style
+  score?: number; // For Personality
+  level?: number; // For Learning Style
 }
 
 // Traits Type
 interface TraitsType {
-        positive: string[];
-        negative: string[];
+  positive: string[];
+  negative: string[];
 }
 
 // Recommended Techniques
 interface RecommendedTechniqueType {
-        technique_name: string;
-        category: string;
-        description: string;
-        image_url: string | null;
+  technique_name: string;
+  category: string;
+  description: string;
+  image_url: string | null;
 }
 
 
 // Pagination Metadata
 interface MetadataType {
-        page: number;
-        page_size: number;
-        total_items: number;
-        total_pages: number;
+  page: number;
+  page_size: number;
+  total_items: number;
+  total_pages: number;
 }
 // get job 
-export type GetAllJobType ={
-        uuid: string; 
-        title: string; 
-        company_name: string;
-        logo: string | null; 
-        location: string | null;
-        job_type: string | null; 
-        description: string | null; 
-        requirements: string[] | null;
-        responsibilities: string[] | null; 
-        facebook_url: string | null; 
-        email: string | null; 
-        phone: string | null; 
-        website: string | null; 
-        created_at: string | null; 
-        closing_date: string | null; 
-        category: string | null; 
+export type GetAllJobType = {
+  uuid: string;
+  title: string;
+  company_name: string;
+  logo: string | null;
+  location: string | null;
+  job_type: string | null;
+  description: string | null;
+  requirements: string[] | null;
+  responsibilities: string[] | null;
+  facebook_url: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  created_at: string | null;
+  closing_date: string | null;
+  category: string | null;
+  schedule: string;
+  salary: string | null;
+  benefits: string[];
+  is_scraped: boolean;
+  
 }
 
 
 //       post job type
-export type JobType ={
-        uuid:string;
-        category: string[];
-        title: string;
-        company: string;
-        facebook_url?: string;
-        location?: string;
-        posted_at: string;
-        description?: string;
-        job_type?: string;
-        schedule?: string;
-        salary?: string;
-        closing_date?: string;
-        requirements: string[]; 
-        responsibilities: string[]; 
-        benefits: string[]; 
-        email?: string;
-        phone?: string;
-        website?: string;
-        is_active: boolean;
-        logo: File
-    }
-    export type PostJob = {
-        category: string [];
-        title: string;
-        company: string;
-        logo: File; // Representing the uploaded file
-        facebook_url: string;
-        location: string;
-        posted_at: string; // ISO Date-Time string format
-        description: string [];
-        job_type: string;
-        schedule: string;
-        salary: string;
-        closing_date: string; // ISO Date-Time string format
-        requirements: string [];
-        responsibilities: string [];
-        benefits: string [];
-        email: string;
-        phone: string;
-        website: string;
-    }
-    
-export type UpdateJob ={
-        company: string;
-        title: string;
-        category: string[]; // Ensure it's defined as an array of strings
-        job_type: string;
-        salary: string;
-        closing_date: string;
-        description: string;
-        responsibilities: string[]; // Should be an array of strings
-        requirements: string[]; 
-        email: string;
-        phone: string;
-        website: string;
-        logo: string | File;
-        location: string;
-        facebook_url: string;
-    }
+export type JobType = {
+  uuid: string;
+  category: string[];
+  title: string;
+  company: string;
+  facebook_url?: string;
+  location?: string;
+  posted_at: string;
+  description?: string;
+  job_type?: string;
+  schedule?: string;
+  salary?: string;
+  closing_date?: string;
+  requirements: string[];
+  responsibilities: string[];
+  benefits: string[];
+  email?: string;
+  phone?: string;
+  website?: string;
+  is_active: boolean;
+  logo: File;
+  
+}
+export type PostJob = {
+  category: string;
+  title: string;
+  company: string;
+  logo: string | File |null ; // Representing the uploaded file
+  facebook_url: string;
+  location: string;
+  posted_at: string; // ISO Date-Time string format
+  description: string;
+  job_type: string;
+  schedule: string;
+  salary: string;
+  closing_date: string | null; // ISO Date-Time string format
+  requirements: string[] | string;
+  responsibilities: string[] | string;
+  benefits: string[] | string;
+  email: string;
+  phone: string[] | string;
+  website: string;
+  is_active: true;
+}
+
+export type UpdateJob = {
+  title?: string; 
+  company?: string; 
+  logo: string | File; 
+  facebook_url?: string| null; 
+  location?: string | null; 
+  posted_at?: string | null| undefined; 
+  description?: string; 
+  job_type?: string | null ; 
+  schedule?: string; 
+  salary?: string; 
+  closing_date?: string |null | undefined; 
+  requirements?: string[]; 
+  responsibilities?: string[]; 
+  benefits?: string[]; 
+  email?: string | null; 
+  phone?: string [] ; 
+  website?: string | null; 
+  category?: string ;
+
+}
 
 
 //     Jobs api response
 export type JobsResponse = {
-        message: string;
-        date: string;
-        status: string;
-        payload: {
-                items: GetAllJobType[];
-                metadata: Metadata;
-        }
+  message: string;
+  date: string;
+  status: string;
+  payload: {
+    items: GetAllJobType[];
+    metadata: Metadata;
+  }
 }
 
 //    
 export type JobDetailsProps = {
-        uuid: string;
+  uuid: string;
 }
 
 // get job category type
 export type GetJobCategoryType = {
-        payload: {
-                categories: string[];
-        }
+  payload: {
+    categories: string[];
+  }
 }
 
 
 // statitics
 export type MetricsResponse = {
-        date: string;
-        status: number;
-        payload: {
-            total_users: number;
-            total_feedbacks: number;
-            total_tests: number;
-            total_active_users: number;
-            pie_chart_data: Array<{
-                type: string;
-                percentage: number;
-            }>;
-            bar_chart_jobs_data: {
-                [month: string]: Array<{
-                    label: string;
-                    count: number;
-                }>;
-            };
-            bar_chart_assessments_data: Array<{
-                assessment_type: string;
-                count: number;
-            }>;
-            line_chart_data: Array<{
-                month: string;
-                "2023": number;
-                "2024": number;
-            }>;
-        };
-        message: string;
+  date: string;
+  status: number;
+  payload: {
+    total_users: number;
+    total_feedbacks: number;
+    total_tests: number;
+    total_active_users: number;
+    pie_chart_data: Array<{
+      type: string;
+      percentage: number;
+    }>;
+    bar_chart_jobs_data: {
+      [month: string]: Array<{
+        label: string;
+        count: number;
+      }>;
     };
-    
-      // scrape job
+    bar_chart_assessments_data: Array<{
+      assessment_type: string;
+      count: number;
+    }>;
+    line_chart_data: Array<{
+      month: string;
+      "2023": number;
+      "2024": number;
+    }>;
+  };
+  message: string;
+};
 
-      export interface ScrapeJobResponse {
-        date: string; 
-        status: number; 
-        message: string; // Response message
-        payload: JobPayload; // Contains job details and metadata
-      }
-      
-      export interface JobPayload {
-        jobs: JobScrapeType[]; // Array of jobs
-        meta: Metadata; // Pagination metadata
-      }
-      
-      export interface JobScrapeType {
-        uuid: string; // Unique identifier for the job
-        title: string; // Job title
-        company: string; // Company name
-        location: string; // Job location
-        posted_at: string; // ISO 8601 timestamp for when the job was posted
-        description: string; // Job description
-        category: string; // Job category
-        salary: string; // Salary range
-        closing_date: string; // ISO 8601 timestamp for job application closing date
-        requirements: string[]; // Array of job requirements
-        responsibilities: string[]; // Array of job responsibilities
-        benefits: string[]; // Array of job benefits
-        email: string; // Contact email for the job
-        phone: string; // Contact phone number(s)
-        website: string; // URL of the job details or company website
-        is_active: boolean; // Whether the job is active
-        is_scraped: boolean; // Whether the job was scraped
-        is_updated: boolean; // Whether the job has been updated
-        logo: string | null; // URL of the company logo
-        facebook_url: string | null; // Facebook URL for the job or company
-        schedule: string; // Job schedule (e.g., Full-time)
-        job_type: string; // Job type (e.g., Job Opportunity)
-      }
-      
-    
-      
+// scrape job
+
+export type ScrapeJobResponse ={
+  date: string;
+  status: number;
+  message: string; // Response message
+  payload: {
+    jobs:JobScrapeType[];
+    meta:Metadata;
+  }; 
+}
+
+export type JobPayload ={
+  jobs: JobScrapeType[]; // Array of jobs
+  meta: Metadata; // Pagination metadata
+}
+
+export type JobScrapeType ={
+  uuid: string ; 
+  title: string; // Job title
+  company: string; // Company name
+  location: string; // Job location
+  posted_at: string; // ISO 8601 timestamp for when the job was posted
+  description: string; // Job description
+  category: string; // Job category
+  salary: string; // Salary range
+  closing_date: string; // ISO 8601 timestamp for job application closing date
+  requirements: string[]; // Array of job requirements
+  responsibilities: string[]; // Array of job responsibilities
+  benefits: string[]; // Array of job benefits
+  email: string; // Contact email for the job
+  phone: string; // Contact phone number(s)
+  website: string; // URL of the job details or company website
+  is_active: boolean; // Whether the job is active
+  is_scraped: boolean; 
+  is_updated: boolean; 
+  logo: string | null; 
+  facebook_url: string | null; 
+  schedule: string; 
+  job_type: string; 
+}
+
+
+
 // upload image
-      export type UploadImageResponse ={
-        date: string; 
-        status: number; 
-        payload: ImagePayload; 
-        message: string; 
-      }
-      
-      export type ImagePayload = {
-        file_url: string; 
-        file_size: number; 
-        file_type: string; 
-      }
-      
+export type UploadImageResponse = {
+  date: string;
+  status: number;
+  payload: ImagePayload;
+  message: string;
+}
+
+export type ImagePayload = {
+  file_url: string;
+  file_size: number;
+  file_type: string;
+}
+
+// scrape detail
+export type JobDetailsResponse= {
+  date: string; 
+  status: number; 
+  message: string; 
+  payload: {
+    uuid: string; 
+    title: string; 
+    company: string; 
+    location: string; 
+    posted_at: string; 
+    description: string; 
+    category: string;
+    salary: string; 
+    closing_date: string; 
+    requirements: string[]; 
+    responsibilities: string[]; 
+    benefits: string[]; 
+    email: string; 
+    phone: string; 
+    website: string; 
+    is_active: boolean; 
+    is_scraped: boolean; 
+    is_updated: boolean; 
+    logo: string | null; 
+    facebook_url: string | null; 
+    schedule: string;
+    job_type: string; 
+  };
+}

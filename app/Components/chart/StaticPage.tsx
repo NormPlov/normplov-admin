@@ -6,11 +6,14 @@ import UserRegistrationComparisonChart from './LineCharComponent'
 import PieChart from './PieChart'
 import QuizTestChart from './BarChat'
 import TrendingJobChartComponent from './TrendingJobBarChart'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const StaticPage = () => {
     const { data, isLoading } = useGetStatisticsQuery()
     if (isLoading) {
-        return <div>Loading...</div>
+        (
+            <Skeleton className='mx-10 w-full h-24 rounded-xl'/>
+        )
     }
 
     return (

@@ -8,9 +8,7 @@ import Image from 'next/image';
 import { FaUpload } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 import {
-    useGetJobQuery,
     useGetJobCategoryQuery,
-    useUpdateJobMutation
 } from '@/app/redux/service/job';
 import { JobDetailsProps, UpdateJob, UploadImageResponse } from '@/types/types';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -20,6 +18,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ClosingDate } from '../../calendar/ClosingDate';
 import { useUploadImageMutation } from '@/app/redux/service/media';
+import {
+    useUpdateScrapeJobMutation,
+    useScrapeDetailsQuery
+} from '@/app/redux/service/scrape';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
@@ -52,8 +54,6 @@ const validationSchema = Yup.object({
 });
 
 
-const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
-
 const FILE_SIZE = 1024 * 1024 * 5; // Max file size 5 MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 
@@ -61,28 +61,22 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [, setImageFile] = useState<File | null>(null);
-    const [currentPage,] = useState(1);
-    const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
 
     const router = useRouter();
 
     // Fetch job data
-    const { data: jobs, isLoading } = useGetJobQuery({
-        page: currentPage,
-        pageSize: itemsPerPage,
+    const { data: jobs, isLoading } = useScrapeDetailsQuery({ uuid });
 
-    });
-
-    const { data: jobCategory, isFetching } = useGetJobCategoryQuery()
+    const { data: jobCategory } = useGetJobCategoryQuery()
     // update job 
-    const [updateJob] = useUpdateJobMutation()
+    const [updateScrapeJob] = useUpdateScrapeJobMutation();
 
     // upload image 
     const [uploadImage] = useUploadImageMutation()
 
-    if (isLoading || isFetching) {
+    if (isLoading) {
         return (
-          <div className="flex flex-col space-y-3 mx-10">
+            <div className="flex flex-col space-y-3 mx-10">
              <div className="space-y-4 flex justify-between mt-8">
               <Skeleton className="h-8 w-96 animate-pulse" />
               <Skeleton className="h-8 w-28 animate-pulse" />
@@ -94,10 +88,11 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             </div>
           </div>
         );
-      }
-      
+    }
+
     // Find the job with the matching UUID
-    const job = jobs?.payload?.items.find((item) => item.uuid === uuid);
+    const job = jobs?.payload
+    console.log("data scrape: ", job)
 
     if (!job) {
         return <div className="p-6 text-center text-red-500">Job not found.</div>;
@@ -107,7 +102,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     if (!jobCategory) {
         return <div className="p-6 text-center text-red-500">Job category not found.</div>
     }
-
 
     const handleDrop = (
         e: React.DragEvent<HTMLDivElement>,
@@ -129,7 +123,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
 
     const initialValues: UpdateJob = {
-        company: job.company_name || "",
+        company: job.company || "",
         title: job.title || "",
         logo: job.logo || "",
         facebook_url: job.facebook_url || null,
@@ -137,7 +131,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         description: job.description || "",
         job_type: job.job_type || null,
         salary: job.salary || "",
-        posted_at: job.created_at || "",
+        posted_at: job.posted_at || "",
         closing_date: job.closing_date || null,
         requirements: Array.isArray(job.requirements) ? job.requirements : [],
         responsibilities: Array.isArray(job.responsibilities) ? job.responsibilities : [],
@@ -149,20 +143,24 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         benefits: Array.isArray(job.benefits) ? job.benefits : [],
     };
 
-
     const handleUploadImage = async (file: File) => {
-        console.log("data file", file)
+        console.log("data file", file);
         try {
             const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
-            toast.success("Upload Logo successfully!")
-            return res.payload.file_url;
+            toast.success("Upload Logo successfully!");
+    
+            // Prepend the API URL to the response URL
+            const fullUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API}${res.payload.file_url}`;
+            console.log("Full URL:", fullUrl);
+    
+            return fullUrl;
         } catch (error) {
-            console.log("Error upload image:", error)
+            console.log("Error upload image:", error);
             toast.error("Failed to upload the image. Please try again.");
             return null;
         }
     };
-
+    
     console.log("update job ")
 
     const handleUpdateJob = async (values: UpdateJob) => {
@@ -175,6 +173,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                 const uploadedLogoUrl = await handleUploadImage(values.logo);
                 if (uploadedLogoUrl) {
                     logoUrl = uploadedLogoUrl;
+                    console.log("url: ", uploadedLogoUrl);
                 } else {
                     toast.error("Failed to upload logo. Please try again.");
                     return;
@@ -191,9 +190,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         console.error("Invalid date format:", date);
                         return null; // Handle invalid date
                     }
-                    return parsedDate.toISOString().split(".")[0]; // Return ISO format
+                    return parsedDate.toISOString().split(".")[0];
                 } else if (date instanceof Date) {
-                    return date.toISOString().split(".")[0]; // Convert Date object to ISO format
+                    return date.toISOString().split(".")[0];
                 }
                 return null;
             };
@@ -202,11 +201,13 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             const closingDateISO = formatDateToISO(values.closing_date);
             const postedAtISO = formatDateToISO(values.posted_at);
 
-            // Convert category to a comma-separated string
+            // Ensure `category` is a string
             const formatCategory =
                 Array.isArray(values.category) && values.category.length > 0
                     ? values.category.join(", ")
-                    : values.category || "";
+                    : typeof values.category === "string"
+                        ? values.category
+                        : "";
 
             // Ensure `phone` is always an array of strings
             const formatPhone = (phone: string | string[] | undefined): string[] => {
@@ -233,21 +234,20 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             };
 
             // Call updateJob mutation
-            await updateJob({ uuid, update })
+            await updateScrapeJob({ uuid, update })
                 .unwrap()
                 .then((response) => {
                     console.log("Job updated successfully:", response);
                     toast.success("Job updated successfully!");
-                });
 
-            router.push("/jobs");
+                });
+                toast.success("Job updated successfully!");
+            router.push("/scrape");
         } catch (error) {
             console.error("Error updating job:", error);
             toast.error("Failed to update the job. Please try again.");
         }
     };
-
-
 
     return (
         <Formik
@@ -280,7 +280,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         <Field
                             id="company"
                             name="company"
-                            placeholder={job.company_name}
+                            placeholder={job.company}
                             type="input"
                             className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md px-6 py-1.5`}
                         />
@@ -300,17 +300,15 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     >
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                             <Image
-                                src={
-                                    selectedImage ||
-                                    "/assets/placeholder.jpg"
-                                    
-                                }
-                                alt={job.title || "Job Logo"}
-                                className="object-contain rounded-md w-full h-full"
+                                src={selectedImage  || "/assets/placeholder.jpg"}
+
+                                alt="Logo preview"
                                 width={1000}
                                 height={1000}
+                                className="object-contain w-full h-full rounded-lg"
                             />
                         </div>
+
 
                         <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
                             <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
@@ -321,15 +319,15 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
                         <Input
                             type="file"
-                            accept="image/png, image/jpeg, image/jpg"
+                            accept={SUPPORTED_FORMATS.join(",")}
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                    setFieldValue('logo', file);
+                                    setFieldValue("logo", file);
                                     setSelectedImage(URL.createObjectURL(file));
                                 }
                             }}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            className="absolute inset-0 opacity-0 cursor-pointer"
                         />
                     </div>
                     <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
@@ -667,3 +665,4 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 };
 
 export default UpdateJobForm;
+

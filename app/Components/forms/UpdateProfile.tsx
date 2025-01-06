@@ -18,6 +18,7 @@ import { DatePickerDemo } from "../calendar/DatePickerDemo";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const FILE_SIZE = 1024 * 1024 * 5;
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
@@ -25,7 +26,7 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 const validationSchema = Yup.object().shape({
     date_of_birth: Yup.date().nullable()
         .max(new Date(), "User must be at least 13 years old."),
-       
+
     bio: Yup.string(),
     old_password: Yup.string(),
     new_password: Yup.string()
@@ -63,30 +64,55 @@ const UpdateProfile = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
 
-    const { data: users } = useGetMeQuery();
+    const { data: users, isLoading } = useGetMeQuery();
     const userData = users?.payload;
 
     const [changePassword] = useChangePasswordMutation();
     const [updateUserInfo] = useUpdateUserInfoMutation();
     const [postUserImage] = usePostImageMutation();
 
-    console.log("uuid", userData?.uuid);
-    console.log("Before function handle button")
+    if (isLoading) {
+        return (
+            <div className="p-4 space-y-4 mx-8">
+                {/* Profile Header */}
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-48" /> {/* Profile Setting Title */}
+                    <Skeleton className="h-32 w-full rounded-lg" /> {/* Background Banner */}
+                </div>
+
+                {/* Profile Picture and Details */}
+                <div className="flex flex-col space-y-4 justify-start ">
+                    <Skeleton className="h-24 w-24 rounded-full mx-10" />
+                    <Skeleton className="h-4 w-32 mx-5" />
+                    <Skeleton className="h-4 w-48 " />
+                </div>
+                {/* Edit Button */}
+                <div className="flex justify-end">
+                    <Skeleton className="h-8 w-24 rounded-md" />
+                </div>
+                {/* Form Fields */}
+                <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            </div>
+        )
+    }
 
     const handleSubmit = async (values: UpdateProfilesTypes) => {
         console.log("IN function handle button");
         if (!userData?.uuid) return;
-    
+
         try {
             // Handle image upload
             if (imageFile) {
                 await postUserImage({ uuid: userData.uuid, avatar_url: imageFile }).unwrap();
                 toast.success("Profile image updated successfully.");
             }
-    
+
             // Handle profile info update
             const updatedInfo: Partial<UpdateProfilesTypes> = {};
-    
+
             if (values.address && values.address !== userData?.address) {
                 updatedInfo.address = values.address;
             }
@@ -105,21 +131,21 @@ const UpdateProfile = () => {
             if (values.username && values.username !== userData?.username) {
                 updatedInfo.username = values.username;
             }
-    
+
             // Ensure only defined fields are sent
             const cleanUpdatedInfo = Object.fromEntries(
-                Object.entries(updatedInfo).filter(([ value]) => value !== undefined)
+                Object.entries(updatedInfo).filter(([value]) => value !== undefined)
             ) as UpdateProfilesTypes;
-    
+
             if (Object.keys(cleanUpdatedInfo).length > 0) {
                 await updateUserInfo({ uuid: userData?.uuid, user: cleanUpdatedInfo }).unwrap();
                 toast.success("Profile info updated successfully.");
             }
-    
+
             // Handle password change
             const hasPasswordToUpdate =
                 values.old_password && values.new_password && values.confirm_new_password;
-    
+
             if (hasPasswordToUpdate) {
                 await changePassword({
                     changePassword: {
@@ -130,7 +156,7 @@ const UpdateProfile = () => {
                 }).unwrap();
                 toast.success("Password changed successfully.");
             }
-    
+
             // If nothing was updated
             if (!imageFile && Object.keys(cleanUpdatedInfo).length === 0 && !hasPasswordToUpdate) {
                 toast.error("No updates were provided.");
@@ -140,8 +166,8 @@ const UpdateProfile = () => {
             toast.error("Error updating profile. Please try again.");
         }
     };
-    
-    
+
+
     return (
         <Formik
             initialValues={{
@@ -225,8 +251,8 @@ const UpdateProfile = () => {
                                     <ErrorMessage name="username" component="div" className="text-sm text-red-500" />
                                 </div>
 
-                                 {/* Gender Select Field */}
-                                 <div className="space-y-2">
+                                {/* Gender Select Field */}
+                                <div className="space-y-2">
                                     <label htmlFor="gender" className="text-textprimary">
                                         Gender
                                     </label>
@@ -334,20 +360,20 @@ const UpdateProfile = () => {
                                     <ErrorMessage name="address" component="div" className="text-sm text-red-500" />
                                 </div>
                                 <div className="space-y-2">
-                                <label htmlFor="phone_number" className="text-textprimary">
-                                    Phone Number
-                                </label>
-                                <Field
-                                    as={Input}
-                                    id="phone_number"
-                                    name="phone_number"
-                                    placeholder={userData?.phone_number }
-                                    className="text-gray-500 border border-gray-200 focus:ring-primary bg-white w-full p-4 rounded-md text-sm"
-                                    rows={4} // You can adjust the number of rows as needed
-                                />
-                                <ErrorMessage name="phone_number" component="div" className="text-sm text-red-500" />
-                            </div>
-                               
+                                    <label htmlFor="phone_number" className="text-textprimary">
+                                        Phone Number
+                                    </label>
+                                    <Field
+                                        as={Input}
+                                        id="phone_number"
+                                        name="phone_number"
+                                        placeholder={userData?.phone_number}
+                                        className="text-gray-500 border border-gray-200 focus:ring-primary bg-white w-full p-4 rounded-md text-sm"
+                                        rows={4} // You can adjust the number of rows as needed
+                                    />
+                                    <ErrorMessage name="phone_number" component="div" className="text-sm text-red-500" />
+                                </div>
+
                             </div>
 
                             <div className="space-y-2">
@@ -364,7 +390,7 @@ const UpdateProfile = () => {
                                 />
                                 <ErrorMessage name="bio" component="div" className="text-sm text-red-500" />
                             </div>
-                          
+
 
                         </div>
 
@@ -374,7 +400,7 @@ const UpdateProfile = () => {
                             </Button>
                         </div>
                     </div>
-                   
+
                 </Form>
             )}
         </Formik>

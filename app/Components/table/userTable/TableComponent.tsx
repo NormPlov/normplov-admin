@@ -48,6 +48,36 @@ export default function UserTable() {
     page: currentPage,
     pageSize: itemsPerPage,
   });
+  
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-6">
+        {/* <Skeleton className="h-10 w-56 rounded-lg mx-10 mt-8" />  */}
+        <div className="flex justify-between items-center mt-8">
+          <Skeleton className="h-10 w-44 rounded-lg mx-10 mt-8" />
+          <Skeleton className="h-10 w-64 rounded-lg mr-10" />
+        </div>
+        {/* Table Section */}
+        <div className="space-y-2 mx-10 bg-gray-100 rounded-md p-4">
+          {/* Table Header */}
+          <div className="grid grid-cols-5 py-2 ">
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+
+          {/* Table Rows */}
+
+          <div className="grid grid-cols-5 items-center py-4 border-b ">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <Skeleton className="h-8 w-[900px] rounded-md" />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   /// Pagination metadata
   const totalPages = data?.payload?.metadata?.total_pages || 0;

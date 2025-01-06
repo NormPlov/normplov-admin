@@ -53,10 +53,41 @@ export default function JobListTableComponent() {
     pageSize: itemsPerPage,
   });
 
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-6">
+        {/* <Skeleton className="h-10 w-56 rounded-lg mx-10 mt-8" />  */}
+        <div className="flex justify-between items-center mt-8">
+          <Skeleton className="h-10 w-44 rounded-lg mx-10 mt-8" />
+          <Skeleton className="h-10 w-64 rounded-lg mr-10" />
+        </div>
+        {/* Table Section */}
+        <div className="space-y-2 mx-10 bg-gray-100 rounded-md p-4">
+          {/* Table Header */}
+          <div className="grid grid-cols-5 py-2 ">
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+
+          {/* Table Rows */}
+
+          <div className="grid grid-cols-5 items-center py-4 border-b ">
+            <Skeleton className="h-16 w-16 rounded-md" />
+            <Skeleton className="h-8 w-[900px] rounded-md" />
+          </div>
+        </div>
+      </div>
+
+    )
+  }
   // Data handling
   const jobs = data?.payload?.items || [];
   const totalPages = data?.payload?.metadata?.total_pages || 0;
   const totalItems = data?.payload?.metadata?.total_items || 0;
+  console.log("job table :", jobs)
 
   const filteredJobs =
     jobs.filter((job) => {
@@ -65,7 +96,7 @@ export default function JobListTableComponent() {
       const matchesJobs =
         job.company_name.toLowerCase().includes(normalizeString(search)) ||
         job.title.toLowerCase().includes(normalizeString(search));
-      
+
       return matchesJobs;
     }) || [];
 
@@ -124,7 +155,7 @@ export default function JobListTableComponent() {
                 className="w-64 pl-10 py-2 border rounded-md focus:border-yellow-500 focus:ring-yellow-500"
               />
             </div>
-            
+
             <Button
               onClick={() => router.push("/jobs/addJob")}
               className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1"
@@ -167,7 +198,13 @@ export default function JobListTableComponent() {
                     <TableCell>
                       <Avatar className="rounded-md w-16 h-16">
                         <AvatarImage
-                          src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`}
+                          src={
+                            job.logo
+                              ? job.logo.startsWith("http") // Check if the URL starts with 'http' or 'https'
+                                ? job.logo // Use the original full URL
+                                : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend base URL if 'http' is missing
+                              : "/assets/placeholder.jpg" // Fallback to placeholder if no logo
+                          }
                           alt={job.title || "Job Logo"}
                           className="object-cover rounded-md w-full h-full"
                         />

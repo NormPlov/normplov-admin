@@ -1,60 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
-import { useGetJobQuery } from "@/app/redux/service/job";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { JobDetailsProps } from "@/types/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { useScrapeDetailsQuery } from "@/app/redux/service/scrape";
 
-const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
-const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
-  const [currentPage,] = useState(1);
-  const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
 
   const router = useRouter();
 
   // Fetch job data
-  const { data, isLoading } = useGetJobQuery({
-    page: currentPage,
-    pageSize: itemsPerPage,
-  });
+  const { data, isLoading } = useScrapeDetailsQuery({ uuid });
+  const job = data?.payload
+  console.log("job scrape detail:", job);
+  console.log("uuid", uuid)
 
   if (isLoading) {
     return (
       <div className="flex flex-col space-y-6 mx-10 animate-pulse">
-      {/* Top Section */}
-      <div className="flex justify-between items-start gap-8 mt-8">
-        <Skeleton className="h-32 w-40 rounded-xl" /> {/* Placeholder for Image */}
-        <div className="flex flex-col space-y-3 w-full">
-          <Skeleton className="h-8 w-3/4 rounded-lg" /> {/* Placeholder for Title */}
-          <Skeleton className="h-6 w-1/4 rounded-lg" /> {/* Placeholder for Subtitle */}
+        {/* Top Section */}
+        <div className="flex justify-between items-start gap-8 mt-8">
+          <Skeleton className="h-32 w-32 rounded-xl" /> {/* Placeholder for Image */}
+          <div className="flex flex-col space-y-3 w-full">
+            <Skeleton className="h-8 w-3/4 rounded-lg" /> {/* Placeholder for Title */}
+            <Skeleton className="h-6 w-1/4 rounded-lg" /> {/* Placeholder for Subtitle */}
+          </div>
+          <Skeleton className="h-10 w-28 rounded-lg" /> {/* Placeholder for Button */}
         </div>
-        <Skeleton className="h-10 w-28 rounded-lg" /> {/* Placeholder for Button */}
+
+        {/* Middle Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Skeleton className="h-8 w-44" /> {/* Placeholder for Job Industry */}
+          <Skeleton className="h-8 w-44" /> {/* Placeholder for Salary */}
+          <Skeleton className="h-8 w-44" /> {/* Placeholder for Job Type */}
+          <Skeleton className="h-8 w-44" /> {/* Placeholder for Schedule */}
+        </div>
+
+        {/* Bottom Section */}
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-1/3 rounded-lg" /> {/* Placeholder for Section Title */}
+          <Skeleton className="h-20 w-full rounded-lg" /> {/* Placeholder for Description */}
+        </div>
       </div>
-    
-      {/* Middle Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Skeleton className="h-8 w-44" /> {/* Placeholder for Job Industry */}
-        <Skeleton className="h-8 w-44" /> {/* Placeholder for Salary */}
-        <Skeleton className="h-8 w-44" /> {/* Placeholder for Job Type */}
-        <Skeleton className="h-8 w-44" /> {/* Placeholder for Schedule */}
-      </div>
-    
-      {/* Bottom Section */}
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-1/3 rounded-lg" /> {/* Placeholder for Section Title */}
-        <Skeleton className="h-20 w-full rounded-lg" /> {/* Placeholder for Description */}
-      </div>
-    </div>
-    
+
     );
   }
 
-  // Find the job with the matching UUID
-  const job = data?.payload?.items.find((item) => item?.uuid === uuid);
   console.log("uuid: ", uuid);
 
   if (!job) {
@@ -78,12 +73,9 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         <Avatar className="rounded-md w-32 h-32">
           <AvatarImage
             src={
-              job.logo
-                ? job.logo.startsWith("http")
-                  ? job.logo
-                  : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`
-                : "/assets/placeholder.jpg"
-
+              job.is_scraped
+                ? job.logo ?? "/assets/placeholder.jpg"
+                : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo || "/assets/placeholder.jpg"} `
             }
             alt={job.title || "Job Logo"}
             className="object-cover rounded-md w-full h-full"
@@ -97,7 +89,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
           <h1 className="text-3xl font-semibold text-primary">
             {job.title || "N/A"}
           </h1>
-          <p className="text-gray-500 font-medium">{job.company_name || "N/A"}</p>
+          <p className="text-gray-500 font-medium">{job.company || "N/A"}</p>
         </div>
         <div className="ml-auto">
           <Link
@@ -142,7 +134,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
       </div>
 
       {/* Job Responsibilities */}
-      <div className="bg-[#ffdede]/40 rounded-md p-4 mb-12 mt-12 mx-4 relative">
+      <div className="bg-[#fce3e3]/50 rounded-md p-4 mb-12 mt-12 mx-4 relative">
         <h2 className="absolute top-[-20px] left-4 bg-accent text-white px-6 py-2 rounded-md font-medium">Job Responsibility</h2>
         <ul className="list-disc pl-5 space-y-2 text-textprimary mt-5">
           {Array.isArray(job.responsibilities) && job.responsibilities.length > 0 ? (
@@ -155,7 +147,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         </ul>
       </div>
       {/* Job requriement */}
-      <div className="bg-yellow-100/30 rounded-md p-4 mb-12 mt-12 mx-4 relative">
+      <div className="bg-yellow-50/80 rounded-md p-4 mb-12 mt-12 mx-4 relative">
         <h2 className="absolute top-[-20px] left-4 bg-yellow-400 text-white px-6 py-2 rounded-md font-medium">Job Requirments</h2>
         <ul className="list-disc pl-5 space-y-2 text-textprimary mt-5">
           {Array.isArray(job.requirements) && job.requirements.length > 0 ? (
@@ -169,7 +161,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
       </div>
 
       {/* Contact Information */}
-      <div className="bg-orange-200/20 rounded-md p-4 mb-6 mx-4 relative">
+      <div className="bg-orange-100 rounded-md p-4 mb-6 mx-4 relative">
         <h2 className="absolute top-[-20px] left-4 bg-secondary text-white px-6 py-2 rounded-md font-medium">
           Contact Information
         </h2>
@@ -236,4 +228,4 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
   );
 };
 
-export default JobDetailsComponent;
+export default JobDetailsScrapeComponent;

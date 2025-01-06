@@ -20,6 +20,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function SidebarComponent() {
   const router = useRouter()
@@ -109,22 +110,22 @@ export function SidebarComponent() {
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+          <div className="bg-white p-7 rounded-lg shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-2">Confirm Logout</h2>
-            <p className="mb-4">Are you sure you want to log out?</p>
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-5 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            <p className="mb-7">Are you sure you want to log out?</p>
+            <div className="flex justify-end gap-3">
+              <Button
+                className="px-6 py-2 bg-gray-400/80 rounded hover:bg-gray-400"
                 onClick={() => setShowLogoutConfirm(false)}
               >
                 No
-              </button>
-              <button
-                className="px-5 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              </Button>
+              <Button
+                className="px-7 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                 onClick={handleLogout}
               >
                 Yes
-              </button>
+              </Button>
             </div>
           </div>
         </div>

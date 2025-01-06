@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/app/redux/service/user";
+import { Skeleton } from "@/components/ui/skeleton";
 // import Loading from "@/app/Loading";
 
 
@@ -21,7 +22,31 @@ const ProfileSetting = () => {
 
     if (isLoading) {
         return (
-            <div className="w-10/12 h-screen flex justify-center items-center text-primary">Loading...</div>
+            <div className="p-4 space-y-4 mx-8">
+                {/* Profile Header */}
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-48" /> {/* Profile Setting Title */}
+                    <Skeleton className="h-32 w-full rounded-lg" /> {/* Background Banner */}
+                </div>
+
+                {/* Profile Picture and Details */}
+                <div className="flex flex-col space-y-4 justify-start ">
+                    <Skeleton className="h-24 w-24 rounded-full mx-10" />
+                    <Skeleton className="h-4 w-32 mx-5" />
+                    <Skeleton className="h-4 w-48 " />
+                </div>
+                {/* Edit Button */}
+                <div className="flex justify-end">
+                    <Skeleton className="h-8 w-24 rounded-md" />
+                </div>
+                {/* Form Fields */}
+                <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+
+
+            </div>
         );
     }
 
@@ -42,11 +67,11 @@ const ProfileSetting = () => {
                     <div className="absolute -bottom-32 left-20">
                         <div className="relative border border-1 bg-[#fdfdfd] w-40 h-40 rounded-full ">
                             <Image
-                                src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}` || "/assets/placeholderProfile.png"} 
+                                src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}` || "/assets/placeholderProfile.png"}
                                 alt="Profile picture"
                                 width={1000}
                                 height={1000}
-                                className="w-40 h-40 rounded-full border-4 border-white"
+                                className="w-40 h-40 rounded-full border-4 border-white object-cover"
                             />
                             <button
                                 onClick={handleUpdateProfile}

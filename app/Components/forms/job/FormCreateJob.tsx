@@ -10,16 +10,17 @@ import { useGetJobCategoryQuery, usePostJobMutation } from '@/app/redux/service/
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {  PostJob } from '@/types/types';
+import { PostJob, UploadImageResponse } from '@/types/types';
 import { PostedDate } from '../../calendar/Component';
 import { ClosingDate } from '../../calendar/ClosingDate';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUploadImageMutation } from '@/app/redux/service/media';
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
 const validationSchema = Yup.object({
-  category: Yup.string().min(1, 'At least one category is required').required(),
+  category: Yup.string().required('Category is required'),
   title: Yup.string().required('Position is required'),
   company: Yup.string().required('Company Name is required'),
   logo: Yup.mixed().required('Logo is required'),
@@ -40,36 +41,45 @@ const validationSchema = Yup.object({
         return value > posted_at;
       }
     ),
-  requirements: Yup.string().required('Requirements are required'),
-  responsibilities: Yup.string().required('Responsibilities are required'),
-  benefits: Yup.string().required('Benefits are required'),
+  responsibilities: Yup.string()
+    .required('Responsibilities are required')
+    .test('is-valid-list', 'Responsibilities must be separated by commas', (value) => !!value),
+  benefits: Yup.string()
+    .required('Benefits are required')
+    .test('is-valid-list', 'Benefits must be separated by commas', (value) => !!value),
+  requirements: Yup.string()
+    .required('Requirements are required')
+    .test('is-valid-list', 'Requirements must be separated by commas', (value) => !!value),
   email: Yup.string().email('Must be a valid email').required('Email is required'),
-  phone: Yup.string().required('Phone is required'),
+  phone: Yup.string()
+  .required('Phone number are required')
+  .test('is-valid-list', 'Phone number must be separated by commas', (value) => !!value),
   website: Yup.string().url('Must be a valid URL').required("Resource is required"),
 });
 
-
-const initialValues = {
+const initialValues: PostJob = {
   title: '',
   company: '',
   job_type: '',
-  category: [],
+  category: '',
   salary: '',
   closing_date: '',
-  description: [],
-  responsibilities: [],
-  requirements: [],
+  description: '', 
+  responsibilities: [], 
+  requirements: [], 
   email: '',
-  phone: '',
+  phone: [],
   location: '',
-  logo: File,
+  logo: null, 
   posted_at: new Date().toISOString(),
-  benefits: [],
-  facebook_url: "",
-  schedule: "",
-  website: "",
-
+  benefits: [], 
+  facebook_url: '',
+  schedule: '',
+  website: '',
+  is_active: true,
 };
+
+
 
 const FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
@@ -81,77 +91,110 @@ const AddJobForm = () => {
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
- const handleDrop = (
-        e: React.DragEvent<HTMLDivElement>,
-        setFieldValue: (field: string, value: File | null) => void
-    ): void => {
-        e.preventDefault();
+  // upload image 
+  const [uploadImage] = useUploadImageMutation()
 
-        const file = e.dataTransfer.files[0];
-        if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
-            const previewUrl = URL.createObjectURL(file);
-            setSelectedImage(previewUrl);
-            // setImageFile(file);
-            setFieldValue("logo", file); // Set the File object correctly
-        } else {
-            toast.error("Invalid file. Please upload a valid image file.");
-        }
-    };
+  console.log("Before function call");
 
-  console.log("Before function call")
-
-  const handleSubmit = async (values: typeof initialValues, { resetForm }: { resetForm: () => void }) => {
-    console.log('Form Values on Submit:', values);
+  const handleUploadImage = async (file: File) => {
+    console.log("data file", file);
     try {
-      // Ensure logo is a valid File object
-      if (!(values.logo instanceof File)) {
-        console.log('Logo must be a valid file.');
-        return;
+      const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
+      console.log("res", res);
+      console.log("url:", res.payload.file_url);
+      toast.success("Upload Logo successfully!");
+      return res.payload.file_url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload the image. Please try again.");
+      return null;
+    }
+  };
+  
+  const handleSubmit = async (values: PostJob) => {
+    try {
+      // Process form values
+      const processedValues = {
+        responsibilities: Array.isArray(values.responsibilities)
+          ? values.responsibilities
+          : values.responsibilities.split(",").map((item) => item.trim()),
+        benefits: Array.isArray(values.benefits)
+          ? values.benefits
+          : values.benefits.split(",").map((item) => item.trim()),
+        requirements: Array.isArray(values.requirements)
+          ? values.requirements
+          : values.requirements.split(",").map((item) => item.trim()),
+        phone: Array.isArray(values.phone)
+          ? values.phone
+          : values.phone.split(",").map((item) => item.trim()),
+        logo: values.logo,
+      };
+  
+      // Handle logo upload
+      let logoUrl = processedValues.logo;
+      if (processedValues.logo instanceof File) {
+        const uploadedLogoUrl = await handleUploadImage(processedValues.logo);
+        if (uploadedLogoUrl) {
+          logoUrl = uploadedLogoUrl;
+        } else {
+          toast.error("Failed to upload logo. Please try again.");
+          return;
+        }
       }
-
-      // Prepare job data according to UpdateJob type
+  
+      // Prepare final job data
       const jobData: PostJob = {
+        ...processedValues,
+        logo: logoUrl,
+        posted_at: values.posted_at
+          ? new Date(values.posted_at).toISOString().split(".")[0]
+          : new Date().toISOString().split(".")[0], // Default to now if not provided
+        closing_date: values.closing_date
+          ? new Date(values.closing_date).toISOString().split(".")[0]
+          : null,
         category: values.category,
         title: values.title,
         company: values.company,
-        logo: values.logo, // Include the valid File object for logo
-        facebook_url: values.facebook_url || '',
+        facebook_url: values.facebook_url,
         location: values.location,
-        posted_at: new Date(values.posted_at).toISOString().split(".")[0], // Ensure ISO format for dates
-        description: values.description || [],
+        description: values.description,
         job_type: values.job_type,
-        schedule: values.schedule || '',
+        schedule: values.schedule,
         salary: values.salary,
-        closing_date: new Date(values.closing_date).toISOString().split(".")[0], // Ensure ISO format for dates
-        requirements: values.requirements,
-        responsibilities: values.responsibilities,
-        benefits: values.benefits,
         email: values.email,
-        phone: values.phone,
-        website: values.website || '',
+        website: values.website,
+        is_active: true
       };
-
-      postJob({ job: jobData })
-        .unwrap()
-        .then(() => {
-          console.log("Job successfully created!");
-        })
-        .catch((error) => {
-          console.error("Error adding job:", error);
-          alert("Failed to add job. Please try again.");
-        });
-
-      // Success 
-      toast.success("Job created successfully!")
-      resetForm(); // Reset the form
-      setSelectedImage(null); // Clear the selected image preview
+  
+      // Post the job data
+      await postJob({ postJob: jobData }).unwrap();
+      toast.success("Job successfully created!");
+  
+      // Clear the selected image preview
+      setSelectedImage(null);
     } catch (error) {
-      console.error('Error adding job:', error);
-      toast.error('Failed to add job. Please try again.');
+      console.error("Error submitting job:", error);
+      toast.error("Failed to add job. Please try again.");
     }
   };
-
-
+  
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    setFieldValue: (field: string, value: File | null) => void
+  ): void => {
+    e.preventDefault();
+  
+    const file = e.dataTransfer.files[0];
+    if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
+      const previewUrl = URL.createObjectURL(file);
+      setSelectedImage(previewUrl);
+      setFieldValue("logo", file); // Set the File object correctly
+      toast.success("File uploaded successfully.");
+    } else {
+      toast.error("Invalid file. Please upload a valid image file.");
+    }
+  };
+  
   return (
     <Formik
       initialValues={initialValues}
@@ -210,10 +253,10 @@ const AddJobForm = () => {
             </div>
 
             <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
-             <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
-             <FaUpload className="text-gray-400 text-lg" />
-             <span className="text-gray-400 text-md font-medium">Upload Image</span>
-             </div>
+              <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                <FaUpload className="text-gray-400 text-lg" />
+                <span className="text-gray-400 text-md font-medium">Upload Image</span>
+              </div>
             </div>
 
             <Input
@@ -245,7 +288,7 @@ const AddJobForm = () => {
               >
                 <Select
                   name="category"
-                  onValueChange={(value) => setFieldValue('category', value)} 
+                  onValueChange={(value) => setFieldValue('category', value)}
                 >
                   <SelectTrigger id="category" className="w-full">
                     <SelectValue placeholder="Select Job Category" />
@@ -272,7 +315,7 @@ const AddJobForm = () => {
               <Field
                 id="title"
                 name="title"
-                placeholder="Python Developer"
+                placeholder="e.g Python Developer"
                 type="text"
                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
               />
@@ -320,7 +363,7 @@ const AddJobForm = () => {
               <Field
                 id="schedule"
                 name="schedule"
-                placeholder="Monday to Friday, 9 AM to 5 PM"
+                placeholder="e.g. Monday to Friday, 9 AM to 5 PM"
                 type="text"
                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
               />
@@ -362,7 +405,7 @@ const AddJobForm = () => {
               as={Input}
               id="salary"
               name="salary"
-              placeholder="1000-1200"
+              placeholder="e.g $1000-$1200"
               className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
             />
             <ErrorMessage name="salary" component="p" className="text-red-500 text-sm mt-1" />
@@ -376,7 +419,7 @@ const AddJobForm = () => {
               as="textarea"
               id="description"
               name="description"
-              placeholder="We are looking for a skilled software engineer."
+              placeholder="e.g We are looking for a skilled software engineer."
               className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
             >
 
@@ -393,7 +436,7 @@ const AddJobForm = () => {
               as="textarea"
               id="responsibilities"
               name="responsibilities"
-              placeholder="Develop and maintain web applications"
+              placeholder="e.g Develop and maintain web applications"
               className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
             />
             <ErrorMessage name="responsibilities" component="p" className="text-red-500 text-sm mt-1" />
@@ -407,7 +450,7 @@ const AddJobForm = () => {
               as="textarea"
               id="benefits"
               name="benefits"
-              placeholder="Health insurance"
+              placeholder="e.g Health insurance"
               className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
             />
             <ErrorMessage name="benefits" component="p" className="text-red-500 text-sm mt-1" />
@@ -421,7 +464,7 @@ const AddJobForm = () => {
               as="textarea"
               id="requirements"
               name="requirements"
-              placeholder="Bachelor's degree in Computer Science"
+              placeholder="e.g Bachelor's degree in Computer Science"
               className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
             />
             <ErrorMessage name="requirements" component="p" className="text-red-500 text-sm mt-1" />
@@ -468,7 +511,7 @@ const AddJobForm = () => {
                 as="input"
                 id="location"
                 name="location"
-                placeholder="Phom Penh, Cambodia"
+                placeholder="e.g Phom Penh, Cambodia"
                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
               />
               <ErrorMessage name="location" component="p" className="text-red-500 text-sm mt-1" />
@@ -482,7 +525,7 @@ const AddJobForm = () => {
                 as="input"
                 id="phone"
                 name="phone"
-                placeholder="012 34 56 789"
+                placeholder="e.g 012 34 56 789"
                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
               >
               </Field>
@@ -500,7 +543,7 @@ const AddJobForm = () => {
               as="input"
               id="website"
               name="website"
-              placeholder="www.normplov.edu.kh"
+              placeholder="e.g https://www.normplov.edu.kh"
               className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
             />
             <ErrorMessage name="website" component="p" className="text-red-500 text-sm mt-1" />
@@ -514,7 +557,13 @@ const AddJobForm = () => {
               Submit
             </Button>
           </div>
-          
+          {/* Debug output */}
+          {/* <div className="mt-8 p-4 bg-gray-100 rounded">
+            <h3 className="text-lg font-semibold mb-2">
+              Form Values (Debug):
+            </h3>
+            <pre>{JSON.stringify(values, null, 2)}</pre>
+          </div> */}
         </Form>
       )}
     </Formik>
@@ -522,7 +571,3 @@ const AddJobForm = () => {
 };
 
 export default AddJobForm;
-
-
-
-

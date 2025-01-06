@@ -36,6 +36,35 @@ export default function TableUserFeedback() {
     pageSize: itemsPerPage,
   });
 
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-6">
+        {/* <Skeleton className="h-10 w-56 rounded-lg mx-10 mt-8" />  */}
+        <div className="flex justify-between items-center mt-8">
+          <Skeleton className="h-10 w-44 rounded-lg mx-10 mt-8" />
+          <Skeleton className="h-10 w-64 rounded-lg mr-10" />
+        </div>
+        {/* Table Section */}
+        <div className="space-y-2 mx-10 bg-gray-100 rounded-md p-4">
+          {/* Table Header */}
+          <div className="grid grid-cols-5 py-2 ">
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+
+          {/* Table Rows */}
+
+          <div className="grid grid-cols-5 items-center py-4 border-b ">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <Skeleton className="h-8 w-[900px] rounded-md" />
+          </div>
+        </div>
+      </div>
+    )
+  }
   // Pagination metadata
   const totalPages = data?.payload?.metadata?.total_pages || 0;
   const totalItems = data?.payload?.metadata?.total_items || 0;
@@ -57,7 +86,7 @@ export default function TableUserFeedback() {
   // Filter logic
   const filteredUsers =
     data?.payload?.items?.filter((item) => {
-      const normalizeString = (str:string) => str.replace(/\s+/g, "").toLowerCase();
+      const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
 
       const matchesSearch =
         item.username.toLowerCase().includes(normalizeString(search)) ||
@@ -69,30 +98,30 @@ export default function TableUserFeedback() {
       return matchesSearch && matchesFilter;
     }) || [];
 
-    // Toastify Config
-    const toastConfig: ToastOptions = {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    };
-    
-    // Handle promote feedback
-    const handlePromote = async (uuid: string) => {
-      console.log("uuid feedback", uuid);
-    
-      try {
-        await promote({ uuid }).unwrap();
-        toast.success("Promote feedback successfully", toastConfig);
-      } catch (error) {
-        console.error("Error promoting feedback:", error);
-        toast.error("Failed to promote feedback.", toastConfig);
-      }
-    };
-    
+  // Toastify Config
+  const toastConfig: ToastOptions = {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
+
+  // Handle promote feedback
+  const handlePromote = async (uuid: string) => {
+    console.log("uuid feedback", uuid);
+
+    try {
+      await promote({ uuid }).unwrap();
+      toast.success("Promote feedback successfully", toastConfig);
+    } catch (error) {
+      console.error("Error promoting feedback:", error);
+      toast.error("Failed to promote feedback.", toastConfig);
+    }
+  };
+
 
   return (
     <div className="h-screen p-6 rounded-md">
@@ -191,7 +220,7 @@ export default function TableUserFeedback() {
                       </button>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={()=>handlePromote(item?.feedback_uuid)} className="bg-primary hover:bg-green-700 rounded-md py-1">Promote</Button>
+                      <Button onClick={() => handlePromote(item?.feedback_uuid)} className="bg-primary hover:bg-green-700 rounded-md py-1">Promote</Button>
                     </TableCell>
                   </TableRow>
                 ))
@@ -243,7 +272,7 @@ export default function TableUserFeedback() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <span className="text-sm font-medium">  
+              <span className="text-sm font-medium">
                 Page {currentPage} of {totalPages}
               </span>
 

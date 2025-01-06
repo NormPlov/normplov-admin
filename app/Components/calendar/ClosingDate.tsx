@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 
 type DatePickerDemoProps = {
-    selectedDate: string | null | undefined; // Closing date
+    selectedDate: string | null | undefined ; // Closing date
     onDateChange: (date: string | undefined) => void; // Callback for closing date
     postedAt?: string | null | undefined; // Posted at date for validation
 };
