@@ -43,11 +43,9 @@ export function UniversityListing() {
   const [schoolType] = useState<string | undefined>();
 
   const { data, refetch } = useUniversityQuery({
-  const { data, refetch } = useUniversityQuery({
     page: currentPage,
     size: pageSize,
   });
-
   useEffect(() => {
     refetch();
   }, [currentPage, pageSize, searchQuery, schoolType, refetch]);

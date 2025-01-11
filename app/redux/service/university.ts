@@ -48,6 +48,58 @@ export const universityApi = normPlovApi.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    // getAllFaculties: builder.query({
+    //   query: (uuid) => ({
+    //     url: `api/v1/faculties`,
+    //     method: "GET",
+    //   }),
+    // }),
+    // getAllMajors: builder.query({
+    //   query: (uuid) => ({
+    //     url: `api/v1/majors`,
+    //     method: "GET",
+    //   }),
+    // }),
+    createFaculty: builder.mutation({
+      query: (faculty) => ({
+        url: "api/v1/faculties",
+        method: "POST",
+        body: faculty,
+      }),
+    }),
+    createMajor: builder.mutation({
+      query: (major) => ({
+        url: "api/v1/majors",
+        method: "POST",
+        body: major,
+      }),
+    }),
+    updateFaculty: builder.mutation({
+      query: ({ id, ...faculty }) => ({
+        url: `faculties/${id}`,
+        method: "PUT",
+        body: faculty,
+      }),
+    }),
+    deleteFaculty: builder.mutation({
+      query: (id) => ({
+        url: `faculties/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    updateMajor: builder.mutation({
+      query: ({ id, ...major }) => ({
+        url: `majors/${id}`,
+        method: "PUT",
+        body: major,
+      }),
+    }),
+    deleteMajor: builder.mutation({
+      query: (id) => ({
+        url: `majors/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -57,4 +109,10 @@ export const {
   useCreateUniversityMutation,
   useEditUniversityMutation,
   useDeleteUniversityMutation,
+  useCreateFacultyMutation,
+  useCreateMajorMutation,
+  useUpdateFacultyMutation,
+  useDeleteFacultyMutation,
+  useUpdateMajorMutation,
+  useDeleteMajorMutation,
 } = universityApi;

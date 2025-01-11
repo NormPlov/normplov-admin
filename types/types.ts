@@ -1,21 +1,20 @@
-
 export type User = {
-  uuid: string,
-  username: string,
-  email: string,
-  avatar: string | null,
-  address: string,
-  phone_number: string,
-  bio: string,
-  gender: string,
-  date_of_birth: string | null,
-  roles: string,
-  is_deleted: boolean,
-  is_active: boolean,
-  is_verified: boolean,
-  is_blocked: boolean,
-  registered_at: Date | null
-}
+  uuid: string;
+  username: string;
+  email: string;
+  avatar: string | null;
+  address: string;
+  phone_number: string;
+  bio: string;
+  gender: string;
+  date_of_birth: string | null;
+  roles: string;
+  is_deleted: boolean;
+  is_active: boolean;
+  is_verified: boolean;
+  is_blocked: boolean;
+  registered_at: Date | null;
+};
 // Login Type
 export type LoginType = {
   email: string;
@@ -31,9 +30,9 @@ export type UpdateProfilesTypes = {
   new_password: string;
   confirm_new_password: string;
   bio: string;
-  avatar: string
+  avatar: string;
   phone_number: string;
-}
+};
 
 export type UpdateProfilePayload = {
   username: string;
@@ -79,18 +78,19 @@ export type PaginationMetadata = {
   total: number;
   page: number;
   size: number;
+  total_items: number;
 };
 
 export type UniversitiesResponse = {
   date: Date;
   status: number;
   payload: {
-          schools?: SchoolsType[];
-          metadata?: PaginationMetadata;
+    schools?: SchoolsType[];
+    metadata?: PaginationMetadata;
   };
 };
 
-// update profile response 
+// update profile response
 export type UpdateProfileResponse = {
   username: string;
   phone_number: string;
@@ -98,7 +98,7 @@ export type UpdateProfileResponse = {
   gender: string;
   date_of_birth: string | null;
   bio: string;
-}
+};
 
 export interface Metadata {
   page: number;
@@ -112,30 +112,30 @@ export interface UserListResponse {
   date: string;
   status: number;
   payload: {
-          metadata: Metadata;
-          users: User[];
+    metadata: Metadata;
+    users: User[];
   };
   message: string;
 }
 export type UserReponse = {
   payload: {
-          uuid: string | undefined,
-          username: string,
-          email: string,
-          avatar: string | null,
-          address: string,
-          phone_number: string,
-          bio: string,
-          gender: string,
-          date_of_birth: string | null,
-          roles: string,
-          is_deleted: boolean,
-          is_active: boolean,
-          is_verified: boolean,
-          is_blocked: boolean,
-          registered_at: Date | null
-  }
-}
+    uuid: string | undefined;
+    username: string;
+    email: string;
+    avatar: string | null;
+    address: string;
+    phone_number: string;
+    bio: string;
+    gender: string;
+    date_of_birth: string | null;
+    roles: string;
+    is_deleted: boolean;
+    is_active: boolean;
+    is_verified: boolean;
+    is_blocked: boolean;
+    registered_at: Date | null;
+  };
+};
 
 // user feedback
 
@@ -148,16 +148,13 @@ export type Feedback = {
   created_at: string;
   is_deleted: boolean;
   is_promoted: boolean;
-}
-
-
+};
 
 export type FeedbackResponse = {
   payload: {
-          items: Feedback[];
-          metadata: Metadata;
-  }
-
+    items: Feedback[];
+    metadata: Metadata;
+  };
 };
 
 // change password
@@ -165,27 +162,25 @@ export type ChangePasswordType = {
   old_password: string;
   new_password: string;
   confirm_new_password: string;
-}
+};
 
 // Block user modal
 export type BlockUserModalProps = {
   onConfirm: () => void;
   onCancel: () => void;
   actionType: "block" | "unblock";
-}
-
-
+};
 
 // Root Response Type
 export type TestsResponse = {
   date: string;
   status: number;
   payload: {
-          tests: TestType[];
-          metadata: MetadataType;
+    tests: TestType[];
+    metadata: MetadataType;
   };
   message: string;
-}
+};
 
 // Test Type
 interface TestType {
@@ -202,7 +197,12 @@ interface TestType {
 }
 
 // Assessment Type Name (Union of all possible values)
-type AssessmentTypeName = "Personality" | "Learning Style" | "Values" | "Interests" | "Skills";
+type AssessmentTypeName =
+  | "Personality"
+  | "Learning Style"
+  | "Values"
+  | "Interests"
+  | "Skills";
 
 // Response Data Type (for any assessment type)
 interface ResponseDataType {
@@ -225,29 +225,29 @@ interface ResponseDataType {
   category_percentages: CategoryPercentagesType | {};
 }
 
-// Skil Assessment Type 
+// Skil Assessment Type
 export type SkillType = {
-  Strong: GroundSkill[]
-  Average: GroundSkill[]
-  Weak: GroundSkill[]
-}
+  Strong: GroundSkill[];
+  Average: GroundSkill[];
+  Weak: GroundSkill[];
+};
 
 //    Ground Skill
 export type GroundSkill = {
   skill: string;
   description: string;
-}
+};
 
 export type CareerType = {
   career_name: string;
   description: string;
-  majors: majorsType[]
-}
+  majors: majorsType[];
+};
 // majors type
 export type majorsType = {
   major_name: string;
-  schools: string[]
-}
+  schools: string[];
+};
 // category_percentages
 export type CategoryPercentagesType = {
   Cognitive_Skills: number;
@@ -256,7 +256,6 @@ export type CategoryPercentagesType = {
   Communication_Skills: number;
   // [key: string]: number; // Index signature
 };
-
 
 // Personality Type
 interface PersonalityType {
@@ -301,7 +300,6 @@ interface RecommendedTechniqueType {
   image_url: string | null;
 }
 
-
 // Pagination Metadata
 interface MetadataType {
   page: number;
@@ -309,30 +307,29 @@ interface MetadataType {
   total_items: number;
   total_pages: number;
 }
-// get job 
-export type GetAllJobType ={
-  uuid: string; 
-  title: string; 
+// get job
+export type GetAllJobType = {
+  uuid: string;
+  title: string;
   company_name: string;
-  logo: string | null; 
+  logo: string | null;
   location: string | null;
-  job_type: string | null; 
-  description: string | null; 
+  job_type: string | null;
+  description: string | null;
   requirements: string[] | null;
-  responsibilities: string[] | null; 
-  facebook_url: string | null; 
-  email: string | null; 
-  phone: string | null; 
-  website: string | null; 
-  created_at: string | null; 
-  closing_date: string | null; 
-  category: string | null; 
-}
-
+  responsibilities: string[] | null;
+  facebook_url: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  created_at: string | null;
+  closing_date: string | null;
+  category: string | null;
+};
 
 //       post job type
-export type JobType ={
-  uuid:string;
+export type JobType = {
+  uuid: string;
   category: string[];
   title: string;
   company: string;
@@ -344,37 +341,37 @@ export type JobType ={
   schedule?: string;
   salary?: string;
   closing_date?: string;
-  requirements: string[]; 
-  responsibilities: string[]; 
-  benefits: string[]; 
+  requirements: string[];
+  responsibilities: string[];
+  benefits: string[];
   email?: string;
   phone?: string;
   website?: string;
   is_active: boolean;
-  logo: File
-}
+  logo: File;
+};
 export type PostJob = {
-  category: string [];
+  category: string[];
   title: string;
   company: string;
   logo: File; // Representing the uploaded file
   facebook_url: string;
   location: string;
   posted_at: string; // ISO Date-Time string format
-  description: string [];
+  description: string[];
   job_type: string;
   schedule: string;
   salary: string;
   closing_date: string; // ISO Date-Time string format
-  requirements: string [];
-  responsibilities: string [];
-  benefits: string [];
+  requirements: string[];
+  responsibilities: string[];
+  benefits: string[];
   email: string;
   phone: string;
   website: string;
-}
+};
 
-export type UpdateJob ={
+export type UpdateJob = {
   company: string;
   title: string;
   category: string[]; // Ensure it's defined as an array of strings
@@ -383,15 +380,14 @@ export type UpdateJob ={
   closing_date: string;
   description: string;
   responsibilities: string[]; // Should be an array of strings
-  requirements: string[]; 
+  requirements: string[];
   email: string;
   phone: string;
   website: string;
   logo: string | File;
   location: string;
   facebook_url: string;
-}
-
+};
 
 //     Jobs api response
 export type JobsResponse = {
@@ -399,52 +395,51 @@ export type JobsResponse = {
   date: string;
   status: string;
   payload: {
-          items: GetAllJobType[];
-          metadata: Metadata;
-  }
-}
+    items: GetAllJobType[];
+    metadata: Metadata;
+  };
+};
 
-//    
+//
 export type JobDetailsProps = {
   uuid: string;
-}
+};
 
 // get job category type
 export type GetJobCategoryType = {
   payload: {
-          categories: string[];
-  }
-}
-
+    categories: string[];
+  };
+};
 
 // statitics
 export type MetricsResponse = {
   date: string;
   status: number;
   payload: {
-      total_users: number;
-      total_feedbacks: number;
-      total_tests: number;
-      total_active_users: number;
-      pie_chart_data: Array<{
-          type: string;
-          percentage: number;
+    total_users: number;
+    total_feedbacks: number;
+    total_tests: number;
+    total_active_users: number;
+    pie_chart_data: Array<{
+      type: string;
+      percentage: number;
+    }>;
+    bar_chart_jobs_data: {
+      [month: string]: Array<{
+        label: string;
+        count: number;
       }>;
-      bar_chart_jobs_data: {
-          [month: string]: Array<{
-              label: string;
-              count: number;
-          }>;
-      };
-      bar_chart_assessments_data: Array<{
-          assessment_type: string;
-          count: number;
-      }>;
-      line_chart_data: Array<{
-          month: string;
-          "2023": number;
-          "2024": number;
-      }>;
+    };
+    bar_chart_assessments_data: Array<{
+      assessment_type: string;
+      count: number;
+    }>;
+    line_chart_data: Array<{
+      month: string;
+      "2023": number;
+      "2024": number;
+    }>;
   };
   message: string;
 };
@@ -452,8 +447,8 @@ export type MetricsResponse = {
 // scrape job
 
 export interface ScrapeJobResponse {
-  date: string; 
-  status: number; 
+  date: string;
+  status: number;
   message: string; // Response message
   payload: JobPayload; // Contains job details and metadata
 }
@@ -488,18 +483,16 @@ export interface JobScrapeType {
   job_type: string; // Job type (e.g., Job Opportunity)
 }
 
-
-
 // upload image
-export type UploadImageResponse ={
-  date: string; 
-  status: number; 
-  payload: ImagePayload; 
-  message: string; 
-}
+export type UploadImageResponse = {
+  date: string;
+  status: number;
+  payload: ImagePayload;
+  message: string;
+};
 
 export type ImagePayload = {
-  file_url: string; 
-  file_size: number; 
-  file_type: string; 
-}
+  file_url: string;
+  file_size: number;
+  file_type: string;
+};
