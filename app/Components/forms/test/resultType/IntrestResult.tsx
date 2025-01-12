@@ -3,9 +3,13 @@ import QuizHeader from '../ComponentTest/QuizHeader';
 import { QuizInterestResultCard } from '../ComponentTest/QuizInterestResultCard';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 
+// Import json
+// import interestJson from '@/app/(user)/json/interestKh.json'
+// import { StaticImageData } from 'next/image'
 import { useParams } from 'next/navigation';
 import { useFetchAssessmentDetailsQuery } from '@/app/redux/service/result';
 import { RecommendationCard } from '../ComponentTest/RecommendationCard';
+// import Loading from '@/components/General/Loading';
 
 type ChartDataType = {
     label: string;
@@ -42,7 +46,7 @@ export const InterestResultComponent = () => {
     console.log("data from interest: ", response)
 
     if (isLoading) {
-        return <p>Loading...</p>;
+        return <div className='w-full flex justify-center items-center'>Loading...</div>;
     }
 
     if (error || !response) {
@@ -68,6 +72,12 @@ export const InterestResultComponent = () => {
 
     console.log("image:", interestCard[0].image_url)
 
+    // const { result } = interestJson;
+
+    // const images: { [key: string]: StaticImageData } = {
+    //     Artistic: creativityImage,
+    //     Enterprising: enterprising,
+    // };
 
     return (
 

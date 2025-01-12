@@ -21,6 +21,9 @@ import { Button } from '@/components/ui/button';
 import { ClosingDate } from '../../calendar/ClosingDate';
 import { useUploadImageMutation } from '@/app/redux/service/media';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ChevronDown } from 'lucide-react';
+
+
 
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
@@ -63,6 +66,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [, setImageFile] = useState<File | null>(null);
     const [currentPage,] = useState(1);
     const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+    const [dropdownOpen, setDropdownOpen] = useState(false)
 
     const router = useRouter();
 
@@ -82,20 +86,20 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
     if (isLoading || isFetching) {
         return (
-          <div className="flex flex-col space-y-3 mx-10">
-             <div className="space-y-4 flex justify-between mt-8">
-              <Skeleton className="h-8 w-96 animate-pulse" />
-              <Skeleton className="h-8 w-28 animate-pulse" />
+            <div className="flex flex-col space-y-3 mx-10">
+                <div className="space-y-4 flex justify-between mt-8">
+                    <Skeleton className="h-8 w-96 animate-pulse" />
+                    <Skeleton className="h-8 w-28 animate-pulse" />
+                </div>
+                <Skeleton className="h-[200px] w-full rounded-xl animate-pulse" />
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-full animate-pulse" />
+                    <Skeleton className="h-8 w-full animate-pulse" />
+                </div>
             </div>
-            <Skeleton className="h-[200px] w-full rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-full animate-pulse" />
-              <Skeleton className="h-8 w-full animate-pulse" />
-            </div>
-          </div>
         );
-      }
-      
+    }
+
     // Find the job with the matching UUID
     const job = jobs?.payload?.items.find((item) => item.uuid === uuid);
 
@@ -125,8 +129,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             toast.error("Invalid file. Please upload a valid image file.");
         }
     };
-
-
 
     const initialValues: UpdateJob = {
         company: job.company_name || "",
@@ -247,7 +249,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         }
     };
 
-
+    const handleImageError = () => {
+        setSelectedImage("/assets/placeholder.jpg"); // Fallback to placeholder image
+    };
 
     return (
         <Formik
@@ -282,7 +286,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             name="company"
                             placeholder={job.company_name}
                             type="input"
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md px-6 py-1.5`}
+                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md px-6 py-2`}
                         />
                         <ErrorMessage name="company" component="p" className="text-red-500 text-sm mt-1" />
                     </div>
@@ -301,15 +305,20 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                             <Image
                                 src={
-                                    selectedImage ||
-                                    "/assets/placeholder.jpg"
-                                    
+                                    selectedImage || // Use the selected image if available
+                                    (job.logo && job.logo.startsWith("http") // Check if job.logo exists and starts with "http"
+                                        ? job.logo
+                                        : job.logo
+                                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
+                                            : "/assets/placeholder.jpg") // Fallback to placeholder image
                                 }
                                 alt={job.title || "Job Logo"}
                                 className="object-contain rounded-md w-full h-full"
                                 width={1000}
                                 height={1000}
+                                onError={handleImageError}
                             />
+                           
                         </div>
 
                         <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
@@ -335,41 +344,61 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
 
                     <div className="flex justify-between w-full gap-24">
-                        {/* Job Category */}
-                        <div className="mb-2.5 w-full">
+                        {/* category */}
+                        <div className="relative mb-4 w-full">
                             <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
                                 Job Category
                             </label>
-                            <Select
-                                name="category"
-                                onValueChange={(value) => {
-                                    // If the user selects a new value, update the field
-                                    setFieldValue("category", value || job.category); // Default to old value if no new selection
-                                }}
-                            >
-                                <SelectTrigger id="category" className="w-full">
-                                    <SelectValue placeholder={job.category || values.category || "Select Job Category"} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {jobCategory?.payload?.categories?.map((type: string) => (
-                                        <SelectItem key={type} value={type}>
+                            <div className="flex items-center rounded focus-within:ring-primary  block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-5 py-1.5 text-md">
+                                <input
+                                    id="category"
+                                    name="category"
+                                    type="text"
+                                    value={values.category}
+                                    onChange={(e) => setFieldValue('category', e.target.value)}
+                                    placeholder="Type or select a category"
+                                    className="flex-grow outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setDropdownOpen((prev) => !prev)}
+                                    className=" rounded-md "
+                                >
+                                    <ChevronDown className="h-4 w-4 opacity-50" />
+                                </button>
+                            </div>
+                            {dropdownOpen && (
+                                <div
+                                    className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50"
+                                    style={{ zIndex: 50 }}
+                                >
+                                    {jobCategory.payload.categories.map((type) => (
+                                        <div
+                                            key={type}
+                                            onClick={() => {
+                                                setFieldValue('category', type);
+                                                setDropdownOpen(false);
+                                            }}
+                                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                        >
                                             {type}
-                                        </SelectItem>
+                                        </div>
                                     ))}
-                                </SelectContent>
-                            </Select>
+                                </div>
+                            )}
+
                             <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
 
                         {/* Position */}
-                        <div className="mb-2.5 w-full">
+                        <div className="w-full">
                             <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
                                 Position
                             </label>
                             <Field
                                 id="title"
                                 name="title"
-                                placeholder={job.title}
+                                placeholder={job.title || 'Enter a position'}
                                 type="text"
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
                             />
@@ -382,36 +411,41 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     <div className="flex justify-between w-full gap-24">
                         {/* Job Type */}
                         <div className="mb-2.5 w-full">
-                            <label htmlFor="job_type" className="block text-md font-normal py-2 text-primary">
+                            <label htmlFor="job_type" className="block text-md font-normal mt-1.5 py-2 text-primary">
                                 Job Type
                             </label>
                             <Field
                                 as="div"
                                 id="job_type"
                                 name="job_type"
-
                             >
                                 <Select
                                     name="job_type"
-                                    onValueChange={(value) => setFieldValue("job_type", value)}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={job.job_type || "Select Job Type"} />
+                                    onValueChange={(value) => setFieldValue("job_type", value)}
+
+                                >
+                                    <SelectTrigger className="w-full px-5 py-4 text-md">
+                                        <SelectValue
+                                            placeholder={job.job_type || "Select Job Type"}
+                                            className="text-md py-8"
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
                                             {jobTypes.map((type) => (
-                                                <SelectItem key={type} value={type}>
+                                                <SelectItem key={type} value={type} className="text-md">
                                                     {type}
                                                 </SelectItem>
                                             ))}
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
+
                             </Field>
                             <ErrorMessage name="job_type" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
                         {/* Closing date */}
-                        <div className="mb-2.5 w-full">
+                        <div className="w-full">
                             <label htmlFor="closing_date" className="block text-md font-normal text-primary py-2">
                                 Closing Date
                             </label>
@@ -434,10 +468,8 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         </div>
                     </div>
                     <div className="flex justify-between w-full gap-24">
-
-
                         {/* Salary */}
-                        <div className="mb-2.5 w-full">
+                        <div className=" w-full">
                             <label htmlFor="salary" className="block font-normal text-primary text-md py-2">
                                 Salary
                             </label>
@@ -445,13 +477,13 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as={Input}
                                 id="salary"
                                 name="salary"
-                                placeholder={job.salary}
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
+                                placeholder={job.salary || "Enter salary"}
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-3 text-md`}
                             />
                             <ErrorMessage name="salary" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
                         {/* Schedule */}
-                        <div className="mb-2.5 w-full">
+                        <div className=" w-full">
                             <label htmlFor="schedule" className="block font-normal text-primary text-md py-2">
                                 Schedule
                             </label>
@@ -459,8 +491,8 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as={Input}
                                 id="schedule"
                                 name="schedule"
-                                placeholder={job.schedule}
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
+                                placeholder={job.schedule || "Enter schedule"}
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-3 text-md`}
                             />
                             <ErrorMessage name="schedule" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
@@ -477,7 +509,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             as="textarea"
                             id="description"
                             name="description"
-                            placeholder={job.description || "N/A"}
+                            placeholder={job.description || "Enter description"}
                             className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
                         >
 
@@ -494,7 +526,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             as="textarea"
                             id="responsibilities"
                             name="responsibilities"
-                            placeholder={job.responsibilities}
+                            placeholder={job.responsibilities || "Enter responsibilities"}
                             className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
                             value={Array.isArray(values.responsibilities) ? values.responsibilities.join(", ") : ""}
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -512,7 +544,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             as="textarea"
                             id="requirements"
                             name="requirements"
-                            placeholder={job.requirements}
+                            placeholder={job.requirements || "Enter requirements"}
                             className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
                             value={(values.requirements || []).join(", ")} // Convert array to string
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -534,7 +566,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             as="textarea"
                             id="benefits"
                             name="benefits"
-                            placeholder={job.benefits}
+                            placeholder={job.benefits || "Enter benefits"}
                             className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-3`}
                             value={(values.benefits || []).join(", ")} // Convert array to string
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -558,7 +590,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="input"
                                 id="facebook_url"
                                 name="facebook_url"
-                                placeholder={job.facebook_url}
+                                placeholder={job.facebook_url || "Enter Facebook URL"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
                             />
                             <ErrorMessage name="facebook_url" component="p" className="text-red-500 text-sm mt-1" />
@@ -571,7 +603,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             <Field
                                 id="email"
                                 name="email"
-                                placeholder={job.email}
+                                placeholder={job.email || "Enter email"}
                                 type="input"
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
                             />
@@ -590,7 +622,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="input"
                                 id="location"
                                 name="location"
-                                placeholder={job.location}
+                                placeholder={job.location || "Enter location"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
                             />
                             <ErrorMessage name="location" component="p" className="text-red-500 text-sm mt-1" />
@@ -606,7 +638,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 name="phone"
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
                                 placeholder={
-                                    Array.isArray(job.phone) ? job.phone.join(", ") : job.phone
+                                    Array.isArray(job.phone) ? job.phone.join(", ") : job.phone || "Enter phone number"
                                 }
                                 value={
                                     Array.isArray(values.phone) ? values.phone.join(", ") : values.phone
@@ -634,7 +666,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             as="input"
                             id="website"
                             name="website"
-                            placeholder={job.website}
+                            placeholder={job.website || "Enter website"}
                             className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-400 px-6 py-1.5`}
                         />
                         <ErrorMessage name="website" component="p" className="text-red-500 text-sm mt-1" />

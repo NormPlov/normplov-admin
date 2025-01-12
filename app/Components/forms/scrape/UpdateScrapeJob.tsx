@@ -23,6 +23,7 @@ import {
     useScrapeDetailsQuery
 } from '@/app/redux/service/scrape';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ChevronDown } from 'lucide-react';
 
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
@@ -61,6 +62,7 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [, setImageFile] = useState<File | null>(null);
+    const [dropdownOpen, setDropdownOpen] = useState(false)
 
     const router = useRouter();
 
@@ -77,16 +79,16 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     if (isLoading) {
         return (
             <div className="flex flex-col space-y-3 mx-10">
-             <div className="space-y-4 flex justify-between mt-8">
-              <Skeleton className="h-8 w-96 animate-pulse" />
-              <Skeleton className="h-8 w-28 animate-pulse" />
+                <div className="space-y-4 flex justify-between mt-8">
+                    <Skeleton className="h-8 w-96 animate-pulse" />
+                    <Skeleton className="h-8 w-28 animate-pulse" />
+                </div>
+                <Skeleton className="h-[200px] w-full rounded-xl animate-pulse" />
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-full animate-pulse" />
+                    <Skeleton className="h-8 w-full animate-pulse" />
+                </div>
             </div>
-            <Skeleton className="h-[200px] w-full rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-full animate-pulse" />
-              <Skeleton className="h-8 w-full animate-pulse" />
-            </div>
-          </div>
         );
     }
 
@@ -148,11 +150,11 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         try {
             const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
             toast.success("Upload Logo successfully!");
-    
+
             // Prepend the API URL to the response URL
             const fullUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API}${res.payload.file_url}`;
             console.log("Full URL:", fullUrl);
-    
+
             return fullUrl;
         } catch (error) {
             console.log("Error upload image:", error);
@@ -160,7 +162,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             return null;
         }
     };
-    
+
     console.log("update job ")
 
     const handleUpdateJob = async (values: UpdateJob) => {
@@ -241,12 +243,16 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     toast.success("Job updated successfully!");
 
                 });
-                toast.success("Job updated successfully!");
+            toast.success("Job updated successfully!");
             router.push("/scrape");
         } catch (error) {
             console.error("Error updating job:", error);
             toast.error("Failed to update the job. Please try again.");
         }
+    };
+
+    const handleImageError = () => {
+        setSelectedImage("/assets/placeholder.jpg"); // Fallback to placeholder image
     };
 
     return (
@@ -300,12 +306,19 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     >
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                             <Image
-                                src={selectedImage  || "/assets/placeholder.jpg"}
-
-                                alt="Logo preview"
+                                src={
+                                    selectedImage || // Use the selected image if available
+                                    (job.logo && job.logo.startsWith("http") // Check if job.logo exists and starts with "http"
+                                        ? job.logo
+                                        : job.logo
+                                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
+                                            : "/assets/placeholder.jpg") // Fallback to placeholder image
+                                }
+                                alt={job.title || "Job Logo"}
+                                className="object-contain rounded-md w-full h-full"
                                 width={1000}
                                 height={1000}
-                                className="object-contain w-full h-full rounded-lg"
+                                onError={handleImageError}
                             />
                         </div>
 
@@ -333,41 +346,61 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
 
                     <div className="flex justify-between w-full gap-24">
-                        {/* Job Category */}
-                        <div className="mb-2.5 w-full">
+                        {/* category */}
+                        <div className="relative mb-4 w-full">
                             <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
                                 Job Category
                             </label>
-                            <Select
-                                name="category"
-                                onValueChange={(value) => {
-                                    // If the user selects a new value, update the field
-                                    setFieldValue("category", value || job.category); // Default to old value if no new selection
-                                }}
-                            >
-                                <SelectTrigger id="category" className="w-full">
-                                    <SelectValue placeholder={job.category || values.category || "Select Job Category"} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {jobCategory?.payload?.categories?.map((type: string) => (
-                                        <SelectItem key={type} value={type}>
+                            <div className="flex items-center rounded focus-within:ring-primary  block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-5 py-1.5 text-md">
+                                <input
+                                    id="category"
+                                    name="category"
+                                    type="text"
+                                    value={values.category}
+                                    onChange={(e) => setFieldValue('category', e.target.value)}
+                                    placeholder="Type or select a category"
+                                    className="flex-grow outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setDropdownOpen((prev) => !prev)}
+                                    className=" rounded-md "
+                                >
+                                    <ChevronDown className="h-4 w-4 opacity-50" />
+                                </button>
+                            </div>
+                            {dropdownOpen && (
+                                <div
+                                    className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50"
+                                    style={{ zIndex: 50 }}
+                                >
+                                    {jobCategory.payload.categories.map((type) => (
+                                        <div
+                                            key={type}
+                                            onClick={() => {
+                                                setFieldValue('category', type);
+                                                setDropdownOpen(false);
+                                            }}
+                                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                        >
                                             {type}
-                                        </SelectItem>
+                                        </div>
                                     ))}
-                                </SelectContent>
-                            </Select>
+                                </div>
+                            )}
+
                             <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
 
                         {/* Position */}
-                        <div className="mb-2.5 w-full">
+                        <div className="w-full">
                             <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
                                 Position
                             </label>
                             <Field
                                 id="title"
                                 name="title"
-                                placeholder={job.title}
+                                placeholder={job.title || 'Enter a position'}
                                 type="text"
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
                             />

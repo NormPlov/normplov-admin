@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 
 // Import Components
 import { QuizResultIntroContainer } from './ComponentTest/QuizResultIntrolContainer';
+import { PersonalityResultComponent } from './resultType/PersonalityResultComponent';
 
 
 // Import JSON data
@@ -17,6 +18,7 @@ import allTestJson from '@/app/json/allTest.json';
 import { LearningStyleResultComponent } from './resultType/LearningStyle';
 import { SkillResultComponent } from './resultType/SkillResult';
 import { InterestResultComponent } from './resultType/IntrestResult';
+import { ValueResultComponent } from './resultType/ValueResult';
 
 type IntroKh = {
     title: string;
@@ -37,10 +39,10 @@ type QuizData = {
 };
 
 const resultDataMap: Record<string, QuizData> = {
-    'personality': personalityJson,
+    'Personality': personalityJson,
     'Skills': skillJson,
-    'Interest': interestJson,
-    'value': valueJson,
+    'Interests': interestJson,
+    'Values': valueJson,
     'LearningStyle': learningStyleJson,
     'all': allTestJson
 };
@@ -66,7 +68,7 @@ export default function ResultDynamicComponent() {
     }
 
     const resultData = resultDataMap[resultType];
-
+console.log("result data:", resultData)
     // Handle invalid result types
     if (!resultData) {
         return (
@@ -81,35 +83,36 @@ export default function ResultDynamicComponent() {
 
     const renderResultContent = () => {
         switch (resultType) {
-            case 'personality':
+            case 'Personality':
                 return (
                     <div>
+                        <PersonalityResultComponent />
                     </div>
                 );
             case 'Skills':
                 return (
                     <div>
-                        <SkillResultComponent/>
-                    </div>                
-                );
-            case 'Interest':
-                return (
-                    <div>
-                        <InterestResultComponent/>
+                        <SkillResultComponent />
                     </div>
                 );
-            case 'value':
+            case 'Interests':
                 return (
                     <div>
-
+                        <InterestResultComponent />
+                    </div>
+                );
+            case 'Values':
+                return (
+                    <div>
+                        <ValueResultComponent />
                     </div>
                 );
             case 'LearningStyle':
                 return (
-                <div>
-                    <LearningStyleResultComponent />
+                    <div>
+                        <LearningStyleResultComponent />
 
-                </div>
+                    </div>
                     // 
                 );
             default:

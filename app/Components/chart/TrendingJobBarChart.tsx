@@ -33,17 +33,17 @@ const BarChartComponent = () => {
         : [];
 
     return (
-        <Card style={{ width: "100%", height: "500px", padding: "1px" }}>
+        <Card style={{ width: "100%", height: "440px", padding: "2px" }}>
             <CardHeader>
                 <CardTitle className="text-2xl font-normal text-[#00A76F]">
                     Trending Job
                 </CardTitle>
             </CardHeader>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="98%">
                 {transformedData && uniqueJobLabels.length > 0 ? (
                     <BarChart
                         data={transformedData}
-                        margin={{ top: 10, right: 10, left: 10, bottom: 80 }}
+                        margin={{ top: 8, right: 10, left: 1, bottom: 90 }}
                         barSize={50}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
@@ -56,16 +56,16 @@ const BarChartComponent = () => {
                             <Bar
                                 key={label}
                                 dataKey={label}
-                                fill={`rgba(${(index * 50) % 255}, ${(index * 200) % 255}, 200, 2)`}
+                                fill={`rgba(${(index * 50) % 255}, ${(index * 450) % 255}, 200, 20)`}
                                 radius={[5, 5, 0, 0]}
                             />
                         ))}
                     </BarChart>
                 ) : (
                     // Skeleton loader when data is not ready
-                    <div className="animate-pulse h-full flex flex-col justify-center items-center space-y-4">
-                        <Skeleton className="h-72 w-full rounded-md" /> 
-                        <Skeleton className="h-10 w-1/2 rounded-md" /> 
+                    <div className="animate-pulse h-full flex flex-col justify-center items-center space-y-3">
+                        <Skeleton className="h-64 w-full rounded-md" /> 
+                        <Skeleton className="h-5 w-1/2 rounded-md" /> 
                     </div>
                 )}
             </ResponsiveContainer>

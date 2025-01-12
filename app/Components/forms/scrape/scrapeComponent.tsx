@@ -57,6 +57,7 @@ export default function JobPreviewPage() {
     event.preventDefault();
     if (!url) {
       toast.warning("Please enter a valid URL!");
+      
       return;
     }
 
@@ -64,6 +65,7 @@ export default function JobPreviewPage() {
       const result = await scrapeJob({ url }).unwrap();
       console.log("Scraping successful:", result);
       toast.success("Job scraped successfully!");
+      setUrl("")
     } catch (error) {
       console.error("Error scraping job:", error);
       toast.error("Failed to scrape the job. Please try again.");
