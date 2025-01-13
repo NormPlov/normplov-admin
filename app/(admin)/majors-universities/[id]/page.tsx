@@ -71,7 +71,7 @@ const UniversityPage = () => {
 
   const logoUrl = university.logo_url
     ? `${process.env.NEXT_PUBLIC_NORMPLOV_API || ""}${university.logo_url}`
-    : "/placeholder.svg?height=288&width=288";
+    : "/placeholder.jpg";
 
   return (
     <div className="m-6">

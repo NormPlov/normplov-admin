@@ -117,14 +117,14 @@ export function UniversityListing() {
               <TableRow key={school.id}>
                 <TableCell>
                   <Image
-                    width={250}
-                    height={250}
+                    width={270}
+                    height={270}
                     src={
                       `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}` ||
-                      "/placeholder.svg?height=40&width=40"
+                      "/assets/placeholder.jpg"
                     }
                     alt={`${school.en_name || "University"} Logo`}
-                    className="w-10 h-10 object-cover rounded-md"
+                    className="w-16 h-16 object-cover rounded-md"
                   />
                 </TableCell>
                 <TableCell className="font-medium">
