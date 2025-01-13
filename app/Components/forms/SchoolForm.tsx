@@ -282,6 +282,7 @@ export default function SchoolForm() {
                       onValueChange={(value) =>
                         form.setFieldValue(field.name, value)
                       }
+                      
                       value={field.value}
                     >
                       <SelectTrigger className="w-full">
