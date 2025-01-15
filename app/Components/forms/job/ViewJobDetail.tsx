@@ -119,7 +119,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         </div>
         <div>
           <p className="font-medium text-secondary">Salary</p>
-          <p>{job.salary || "N/A"}</p>
+          <p>{ "N/A"}</p>
         </div>
         <div>
           <p className="font-medium text-secondary">Job Type</p>

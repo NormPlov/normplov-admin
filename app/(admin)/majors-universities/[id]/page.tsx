@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   FaEnvelope,
   FaGlobe,
@@ -33,16 +32,24 @@ import {
 } from "@/components/ui/select";
 import MajorCard from "@/app/Components/cards/MajorCard";
 import { UniversityType } from "@/types/types";
-// import { useUniversityDetailsQuery } from "@/app/redux/service/university";
+import { useUniversityDetailsQuery } from "@/app/redux/service/university";
+import { useParams } from "next/navigation";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
-const UniversityPage = () => {
-  const [university] = useState<UniversityType | null>(null);
-  const [loading] = useState(true);
-  const [error] = useState<string | null>(null);
-  const [faculty, setFaculty] = useState<string[]>([]);
-  const [newFaculty, setNewFaculty] = useState("");
-  const [selectedFaculty, setSelectedFaculty] = useState("");
-  // const [uuid] = useUniversityDetailsQuery;
+// type ErrorType = FetchBaseQueryError | SerializedError | undefined;
+
+// interface UniversityData {
+//   payload: UniversityType;
+// }
+
+const UniversityPage: React.FC = () => {
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const { data, isLoading, error } = useUniversityDetailsQuery(id || "");
+  const university = data?.payload as UniversityType | undefined;
+  const [faculty, setFaculty] = React.useState<string[]>([]);
+  const [newFaculty, setNewFaculty] = React.useState("");
+  const [selectedFaculty, setSelectedFaculty] = React.useState("");
 
   const handleAddFaculty = () => {
     if (newFaculty && !faculty.includes(newFaculty)) {
@@ -52,7 +59,7 @@ const UniversityPage = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         Loading...
@@ -60,23 +67,23 @@ const UniversityPage = () => {
     );
   }
 
-  if (error) {
+  if (error || !university) {
+    const errorMessage = "status" in (error as FetchBaseQueryError);
     return (
       <div className="flex justify-center items-center h-screen text-red-500">
-        {error}
+        {errorMessage}
       </div>
     );
   }
-
-  if (!university) {
-    return notFound();
-  }
+  const logoUrl = university.logo_url
+    ? `${process.env.NEXT_PUBLIC_NORMPLOV_API || ""}${university.logo_url}`
+    : "/placeholder.svg?height=288&width=288";
 
   return (
     <div className="m-6">
       <div className="p-4 flex gap-8 items-center border border-gray-200 rounded-md">
         <Image
-          src={university.logo_url || "/placeholder.svg?height=288&width=288"}
+          src={logoUrl}
           alt={`${university.en_name} logo`}
           width={288}
           height={288}
@@ -98,18 +105,28 @@ const UniversityPage = () => {
               <FaEnvelope /> {university.email}
             </Link>
             <Link
-              href={`university.website`}
+              href={university.website || "#"}
               className="flex items-center gap-2"
             >
-              <FaGlobe /> {university.website}
+              <FaGlobe /> {university.website || "Website not available"}
             </Link>
             <p className="flex items-center gap-2">
               <FaMapMarkerAlt /> {university.location}
             </p>
             <p className="flex items-center gap-2">
               <FaMapMarkedAlt />{" "}
-              <Link href={`university.map_url`} className="text-primary">
-                {university.map_url}
+              <Link
+                href={
+                  university.map_url
+                    ? `https://${university.map_url.replace(
+                        /^https?:\/\//,
+                        ""
+                      )}`
+                    : "#"
+                }
+                className="text-primary"
+              >
+                View on Map
               </Link>
             </p>
           </div>
@@ -117,7 +134,7 @@ const UniversityPage = () => {
       </div>
       <div>
         <h1 className="text-2xl text-textprimary font-bold py-4">Summary</h1>
-        <p className="text-justify">{university.summary}</p>
+        <p className="text-justify">{university.description}</p>
       </div>
       <div className="gap-8">
         <div>
@@ -153,8 +170,8 @@ const UniversityPage = () => {
                 </Label>
                 <Input
                   id="name"
-                  defaultValue={university.en_name}
                   className="col-span-3"
+                  placeholder="Enter Major name"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -192,6 +209,22 @@ const UniversityPage = () => {
                     </div>
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="year" className="text-right">
+                  Year
+                </Label>
+                <Input id="year" className="col-span-3" placeholder="4 years" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="degree" className="text-right">
+                  Degree
+                </Label>
+                <Input
+                  id="degree"
+                  className="col-span-3"
+                  placeholder="Bachelor"
+                />
               </div>
             </div>
             <DialogFooter>
