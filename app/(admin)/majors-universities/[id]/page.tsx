@@ -46,7 +46,7 @@ const UniversityPage: React.FC = () => {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useUniversityDetailsQuery(id || "");
-  const university = data?.payload as UniversityType | undefined;
+  const university = data as UniversityType | undefined;
   const [faculty, setFaculty] = React.useState<string[]>([]);
   const [newFaculty, setNewFaculty] = React.useState("");
   const [selectedFaculty, setSelectedFaculty] = React.useState("");
@@ -134,7 +134,7 @@ const UniversityPage: React.FC = () => {
       </div>
       <div>
         <h1 className="text-2xl text-textprimary font-bold py-4">Summary</h1>
-        <p className="text-justify">{university.description}</p>
+        <p className="text-justify"></p>
       </div>
       <div className="gap-8">
         <div>
