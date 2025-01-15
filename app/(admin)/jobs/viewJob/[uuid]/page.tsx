@@ -33,8 +33,8 @@ const Page = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-normal my-6 mx-10 text-secondary">View Job Details</h2>
-      <JobDetailsComponent uuid={validUuid} /> {/* Pass uuid as a prop */}
+      <h2 className="text-3xl font-semibold my-6 mx-10 text-secondary">View Job Details</h2>
+      <JobDetailsComponent uuid={validUuid} /> 
     </div>
   );
 };

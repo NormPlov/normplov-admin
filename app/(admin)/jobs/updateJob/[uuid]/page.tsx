@@ -36,7 +36,6 @@ const Page = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-normal my-6 mx-10 text-secondary">View Job Details</h2>
       <UpdateJobForm uuid={validUuid} /> 
     </div>
   );

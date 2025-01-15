@@ -1,0 +1,115 @@
+{
+  "learningStyleMainKh": {
+    "title": "តេស្តវាយតម្លៃតាមរបៀបសិក្សា",
+    "desc": "យល់ដឹងពីរបៀបនៃការសិក្សារបស់អ្នកតាមរយះ VARY Theory បង្កើតឡើងដោយលោក Neil Fleming ",
+    "buttonText": "ចាប់ផ្តើមតេស្ត",
+    "route": "learningStyle"
+  },
+  "introKh": {
+    "title": "តេស្តវាយតម្លៃតាម​",
+    "highlight": "របៀបសិក្សា",
+    "description": "ដោយផ្អែកលើប្រភេទតេស្តនេះ អ្នកនឹងទទួលបានលទ្ធផលពីរបៀបនៃការសិក្សារបស់អ្នកតាមរយះ VARY Theory បង្កើតឡើងដោយលោក Neil Fleming  និងការណែនាំពីអាជីពការងារ ជំនាញដែលគួរជ្រើសរើសកាន់តែប្រសើរជាងមុន។"
+  },
+  "questions": [
+    {
+      "question": "I understand information best when it is presented using diagrams, charts, or videos.",
+      "questionIndex": 0,
+      "category": "Q1_Visual"
+    },
+    {
+      "question": "Using color-coding or visual aids helps me organize and recall information.",
+      "questionIndex": 1,
+      "category": "Q2_Visual"
+    },
+    {
+      "question": "I learn more effectively when someone explains concepts to me verbally.",
+      "questionIndex": 2,
+      "category": "Q3_Auditory"
+    },
+    {
+      "question": "Group discussions or talking through ideas help me grasp concepts better.",
+      "questionIndex": 3,
+      "category": "Q4_Auditory"
+    },
+    {
+      "question": "I prefer to learn by reading detailed instructions or writing notes.",
+      "questionIndex": 4,
+      "category": "Q5_ReadWrite"
+    },
+    {
+      "question": "Writing summaries or lists helps me retain new information.",
+      "questionIndex": 5,
+      "category": "Q6_ReadWrite"
+    },
+    {
+      "question": "I learn best by doing hands-on activities or experiments.",
+      "questionIndex": 6,
+      "category": "Q7_Kinesthetic"
+    },
+    {
+      "question": "Practicing real-life examples or physically interacting with materials helps me understand better.",
+      "questionIndex": 7,
+      "category": "Q8_Kinesthetic"
+    }
+  ],
+  "Recommendation": {
+    "jobTitle": "Teacher / Trainer",
+    "jobdesc": "A Teacher/Trainer educates and inspires learners by delivering engaging lessons or training sessions tailored to their needs. They create structured plans, assess progress, and provide feedback to ensure effective skill and ...",
+    "majors": [
+      "Computer Science",
+      "Software Engineering",
+      "Information Technology"
+    ],
+    "unis": [
+      "Institute of science and technology advanced development",
+      "ITC",
+      "CADT"
+    ]
+  },
+  "result": {
+    "learningStyleTechnique": [
+      {
+        "title": "Feynman Technique",
+        "desc": "  Explain concepts out loud as if teaching someone else.",
+        "badgeText": "Understanding Complex Concepts"
+      },
+      {
+        "title": "Visualization",
+        "desc": "  Mentally imagining concepts helps solidify understanding.",
+        "badgeText": "Understanding Complex Concepts"
+      },
+      {
+        "title": "Pomodoro Technique",
+        "desc": " Work in short bursts followed by physical breaks.",
+        "badgeText": "Retention and Memory Techniques"
+      },
+      {
+        "title": "Mind Mapping",
+        "desc": " Create diagrams and flowcharts to connect ideas.",
+        "badgeText": "Understanding Complex Concepts"
+      }
+    ],
+    "learningStyleCard": [
+      {
+        "title": "Auditory Learning",
+        "desc": "Learners who process and retain information best through hearing and verbal communication. Learners who process and retain information best through hearing and verbal communication.",
+        "label": 1
+      },
+      {
+        "title": "Visual Learning",
+        "desc": "Learners who prefer to absorb and process information through images, diagrams, charts, and other visual aids.",
+        "label": 2
+      },
+      {
+        "title": "Read/Write Learning",
+        "desc": "Learners who prefer to interact with written words and rely on text-based resources to understand and process information.",
+        "label": 3
+      },
+      {
+        "title": "Kinesthetic",
+        "desc": "Learners who prefer hands-on, experiential learning and thrive when they can engage physically with the material.",
+        "label": 2
+      }
+    ]
+  }
+}

@@ -1,15 +1,18 @@
 import { normPlovApi } from "../api";
 import { FacultyResponse } from "@/types/faculty";
 
+type FacultyResponse = {
+  uuid: string;
+  name: string;
+};
+
 export const faculty = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
-    faculties: builder.query<FacultyResponse, { page: number; size: number }>({
-      query: ({ page }) => ({
-        url: `api/v1/faculties?page=${page}&size=50`,
+    faculties: builder.query<FacultyResponse, void>({
+      query: () => ({
+        url: `api/v1/faculties?`,
         method: "GET",
       }),
-      providesTags: ["faculty"],
     }),
   }),
-  // This middleware will be applied to all queries in this slice.
 });
