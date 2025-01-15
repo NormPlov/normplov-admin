@@ -233,63 +233,240 @@ type UserTestResponse ={
     };
     message: string;
   }
+// export const resultApi = normPlovApi.injectEndpoints({
+//   endpoints: (builder) => ({
+//     fetchAssessmentDetails: builder.query({
+//       // Accept both uuid and resultType in the query
+//       query: ({ testUUID }: { testUUID: string; resultType: string }) => ({
+//         url: `api/v1/admin/responses/${testUUID}`, // Dynamic query parameter
+//         method: 'GET',
+//       }),
+      
+//       transformResponse: (response: any, meta, arg) => {
+//         const responseData = response?.payload[0];
+       
+//         const resultType = arg.resultType
+//         console.log("data from api: ", responseData);
+
+//         if (!responseData) {
+//           console.error("No response data found");
+//           return [];  
+//         }
+
+//         console.log("result typee: ", arg.resultType)
+
+//         const parsedData = JSON.parse(responseData.user_response_data);
+
+//         console.log("parsed json: ", parsedData)
+       
+//         // Process data based on the provided resultType
+//         switch (resultType) {
+//           case "LearningStyle":
+//             return [{
+//               assessmentType: resultType,
+//               testUUID: parsedData.test_uuid,
+//               testName: resultType,
+//               createdAt: responseData.created_at,
+//               learningStyle: parsedData.learning_style || 'Unknown',
+//               chart: parsedData.chart || { labels: [], values: [] },
+//               dimensions: parsedData.dimensions || [],
+//               recommendedTechniques: parsedData.recommended_techniques || [],
+//               relatedCareers: parsedData.related_careers || []
+//             }] ; 
+        
+//           case "Values":
+//             return [{
+//               assessmentType: resultType,
+//               testUUID: parsedData.test_uuid,
+//               testName: resultType,
+//               createdAt: responseData.created_at,
+//               chartData: parsedData.chart_data || [],
+//               valueDetails: parsedData.value_details || [],
+//               careerRecommendations: parsedData.career_recommendations || []
+//             }];
+        
+//           case "Interests":
+//             return [{
+//               assessmentType: resultType,
+//               testUUID: parsedData.test_uuid,
+//               testName: resultType,
+//               createdAt: responseData.created_at,
+//               hollandCode: parsedData.holland_code || '',
+//               typeName: parsedData.type_name || '',
+//               description: parsedData.description || '',
+//               keyTraits: parsedData.key_traits || [],
+//               careerPath: parsedData.career_path || [],
+//               chartData: parsedData.chart_data || [],
+//               dimensionDescriptions: parsedData.dimension_descriptions || []
+//             }];
+        
+//           case "Skills":
+//             return [{
+//               assessmentType: resultType,
+//               testUUID: parsedData.test_uuid,
+//               testName: resultType,
+//               createdAt: responseData.created_at,
+//               categoryPercentages: parsedData.category_percentages || {},
+//               skillsGrouped: parsedData.skills_grouped || {},
+//               strongCareers: parsedData.strong_careers || []
+//             }] as any;
+        
+//           case "Personality":
+//             return [{
+//               assessmentType: resultType,
+//               testUUID: parsedData.test_uuid,
+//               testName: resultType,
+//               createdAt: responseData.created_at,
+//               personalityType: parsedData.personality_type || {},
+//               dimensions: parsedData.dimensions || [],
+//               traits: parsedData.traits || {},
+//               strengths: parsedData.strengths || [],
+//               weaknesses: parsedData.weaknesses || [],
+//               careerRecommendations: parsedData.career_recommendations || []
+//             }];
+        
+//           default:
+//             console.error("Unknown result type:", resultType);
+//             return [];  // Return an empty array for unknown tests
+//         }
+//       }
+//     }),
+//     getAllUserTest: builder.query<UserTestResponse, { page: number; page_size: number }>({
+//       query: ({ page = 1, page_size= 10 }) =>({
+//           url: `api/v1/test/all-tests?page=${page}&page_size=${page_size}`,
+//           method: "GET",
+//       })
+       
+//   })
+//   }),
+// });
+
+// export const { useFetchAssessmentDetailsQuery,useGetAllUserTestQuery } = resultApi;
+
+
+interface LearningStyleResponse {
+  assessmentType: "LearningStyle";
+  testUUID: string;
+  testName: string;
+  createdAt: string;
+  learningStyle: string;
+  chart: { labels: string[]; values: number[] };
+  dimensions: string[];
+  recommendedTechniques: string[];
+  relatedCareers: string[];
+}
+
+interface ValuesResponse {
+  assessmentType: "Values";
+  testUUID: string;
+  testName: string;
+  createdAt: string;
+  chartData: { label: string; value: number }[];
+  valueDetails: string[];
+  careerRecommendations: string[];
+}
+
+interface InterestsResponse {
+  assessmentType: "Interests";
+  testUUID: string;
+  testName: string;
+  createdAt: string;
+  hollandCode: string;
+  typeName: string;
+  description: string;
+  keyTraits: string[];
+  careerPath: string[];
+  chartData: { label: string; value: number }[];
+  dimensionDescriptions: string[];
+}
+
+interface SkillsResponse {
+  assessmentType: "Skills";
+  testUUID: string;
+  testName: string;
+  createdAt: string;
+  categoryPercentages: Record<string, number>;
+  skillsGrouped: Record<string, string[]>;
+  strongCareers: string[];
+}
+
+interface PersonalityResponse {
+  assessmentType: "Personality";
+  testUUID: string;
+  testName: string;
+  createdAt: string;
+  personalityType: Record<string, string>;
+  dimensions: string[];
+  traits: Record<string, string>;
+  strengths: string[];
+  weaknesses: string[];
+  careerRecommendations: string[];
+}
+
+type AssessmentResponse =
+  | LearningStyleResponse
+  | ValuesResponse
+  | InterestsResponse
+  | SkillsResponse
+  | PersonalityResponse;
+
+interface ApiResponse<T> {
+  payload: T[];
+}
+
+interface FetchAssessmentDetailsArgs {
+  testUUID: string;
+  resultType: string;
+}
+
 export const resultApi = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
-    fetchAssessmentDetails: builder.query({
-      // Accept both uuid and resultType in the query
-      query: ({ testUUID, resultType }: { testUUID: string; resultType: string }) => ({
+    fetchAssessmentDetails: builder.query<AssessmentResponse[], FetchAssessmentDetailsArgs>({
+      query: ({ testUUID }: { testUUID: string; resultType: string }) => ({
         url: `api/v1/admin/responses/${testUUID}`, // Dynamic query parameter
         method: 'GET',
       }),
-      
-      transformResponse: (response: any, meta, arg) => {
+      transformResponse: (response: ApiResponse<any>, meta, arg) => {
         const responseData = response?.payload[0];
-       
-        const resultType = arg.resultType
-        console.log("data from api: ", responseData);
+        const resultType = arg.resultType;
 
         if (!responseData) {
           console.error("No response data found");
-          return [];  
+          return [];
         }
-
-        console.log("result typee: ", arg.resultType)
 
         const parsedData = JSON.parse(responseData.user_response_data);
 
-        console.log("parsed json: ", parsedData)
-       
-        // Process data based on the provided resultType
         switch (resultType) {
           case "LearningStyle":
             return [{
-              assessmentType: resultType,
+              assessmentType: "LearningStyle",
               testUUID: parsedData.test_uuid,
-              testName: resultType,
+              testName: "LearningStyle",
               createdAt: responseData.created_at,
               learningStyle: parsedData.learning_style || 'Unknown',
               chart: parsedData.chart || { labels: [], values: [] },
               dimensions: parsedData.dimensions || [],
               recommendedTechniques: parsedData.recommended_techniques || [],
               relatedCareers: parsedData.related_careers || []
-            }] ; 
-        
+            }] as LearningStyleResponse[];
+
           case "Values":
             return [{
-              assessmentType: resultType,
+              assessmentType: "Values",
               testUUID: parsedData.test_uuid,
-              testName: resultType,
+              testName: "Values",
               createdAt: responseData.created_at,
               chartData: parsedData.chart_data || [],
               valueDetails: parsedData.value_details || [],
               careerRecommendations: parsedData.career_recommendations || []
-            }];
-        
+            }] as ValuesResponse[];
+
           case "Interests":
             return [{
-              assessmentType: resultType,
+              assessmentType: "Interests",
               testUUID: parsedData.test_uuid,
-              testName: resultType,
+              testName: "Interests",
               createdAt: responseData.created_at,
               hollandCode: parsedData.holland_code || '',
               typeName: parsedData.type_name || '',
@@ -298,24 +475,24 @@ export const resultApi = normPlovApi.injectEndpoints({
               careerPath: parsedData.career_path || [],
               chartData: parsedData.chart_data || [],
               dimensionDescriptions: parsedData.dimension_descriptions || []
-            }];
-        
+            }] as InterestsResponse[];
+
           case "Skills":
             return [{
-              assessmentType: resultType,
+              assessmentType: "Skills",
               testUUID: parsedData.test_uuid,
-              testName: resultType,
+              testName: "Skills",
               createdAt: responseData.created_at,
               categoryPercentages: parsedData.category_percentages || {},
               skillsGrouped: parsedData.skills_grouped || {},
               strongCareers: parsedData.strong_careers || []
-            }] as any;
-        
+            }] as SkillsResponse[];
+
           case "Personality":
             return [{
-              assessmentType: resultType,
+              assessmentType: "Personality",
               testUUID: parsedData.test_uuid,
-              testName: resultType,
+              testName: "Personality",
               createdAt: responseData.created_at,
               personalityType: parsedData.personality_type || {},
               dimensions: parsedData.dimensions || [],
@@ -323,22 +500,22 @@ export const resultApi = normPlovApi.injectEndpoints({
               strengths: parsedData.strengths || [],
               weaknesses: parsedData.weaknesses || [],
               careerRecommendations: parsedData.career_recommendations || []
-            }];
-        
+            }] as PersonalityResponse[];
+
           default:
             console.error("Unknown result type:", resultType);
-            return [];  // Return an empty array for unknown tests
+            return [];
         }
       }
     }),
+
     getAllUserTest: builder.query<UserTestResponse, { page: number; page_size: number }>({
-      query: ({ page = 1, page_size= 10 }) =>({
-          url: `api/v1/test/all-tests?page=${page}&page_size=${page_size}`,
-          method: "GET",
-      })
-       
-  })
+      query: ({ page = 1, page_size = 10 }) => ({
+        url: `api/v1/test/all-tests?page=${page}&page_size=${page_size}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useFetchAssessmentDetailsQuery,useGetAllUserTestQuery } = resultApi;
+export const { useFetchAssessmentDetailsQuery, useGetAllUserTestQuery } = resultApi;
