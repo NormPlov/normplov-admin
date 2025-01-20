@@ -6,4 +6,5 @@ export type MajorType = {
   degree: string;
   fee_per_year: number;
   faculty_uuid: string;
+  is_recommended: string;
 };

@@ -1,6 +1,5 @@
-import { ProvincesResponse } from "@/types/university";
 import { normPlovApi } from "../api";
-import { UniversitiesResponse, UniversityType, SchoolsResponse, UniversitiesDetailsResponse } from "@/types/types";
+import { UniversitiesResponse, UniversityType, SchoolsResponse, UniversitiesDetailsResponse, CreateUniversityType } from "@/types/types";
 
 export const universityApi = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -24,7 +23,7 @@ export const universityApi = normPlovApi.injectEndpoints({
       providesTags: ["university"],
     }),
 
-    createUniversity: builder.mutation<UniversitiesResponse, { newUniversity: UniversityType }>({
+    createUniversity: builder.mutation<UniversitiesResponse, { newUniversity: CreateUniversityType }>({
 
       query: ({ newUniversity }) => ({
         url: "api/v1/schools",
@@ -68,23 +67,16 @@ export const universityApi = normPlovApi.injectEndpoints({
     // }),
     createFaculty: builder.mutation({
       query: (faculty) => ({
-        url: "api/v1/faculties",
+        url: "api/v1/faculties/",
         method: "POST",
         body: faculty,
       }),
       invalidatesTags: ["faculty"],
     }),
-    createMajor: builder.mutation({
-      query: (major) => ({
-        url: "api/v1/majors",
-        method: "POST",
-        body: major,
-      }),
-      invalidatesTags: ["faculty"],
-    }),
+    
     updateFaculty: builder.mutation({
       query: ({ id, ...faculty }) => ({
-        url: `faculties/${id}`,
+        url: `api/v1/faculties/${id}`,
         method: "PUT",
         body: faculty,
       }),
@@ -92,26 +84,12 @@ export const universityApi = normPlovApi.injectEndpoints({
     }),
     deleteFaculty: builder.mutation({
       query: (id) => ({
-        url: `faculties/${id}`,
+        url: `/api/v1/faculties/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["faculty"],
     }),
-    updateMajor: builder.mutation({
-      query: ({ id, ...major }) => ({
-        url: `majors/${id}`,
-        method: "PUT",
-        body: major,
-      }),
-      invalidatesTags: ["faculty"],
-    }),
-    deleteMajor: builder.mutation({
-      query: (id) => ({
-        url: `majors/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["faculty"],
-    }),
+
 
 
   })
@@ -124,9 +102,6 @@ export const {
   useEditUniversityMutation,
   useDeleteUniversityMutation,
   useCreateFacultyMutation,
-  useCreateMajorMutation,
   useUpdateFacultyMutation,
   useDeleteFacultyMutation,
-  useUpdateMajorMutation,
-  useDeleteMajorMutation,
 } = universityApi;

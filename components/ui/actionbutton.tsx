@@ -36,7 +36,7 @@ export function DataTableRowActions({
   onDeleteSuccess,
 }: DataTableRowActionsProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deleteUniversity, { isLoading: isDeleting }] =
+  const [, { isLoading: isDeleting }] =
     useDeleteUniversityMutation();
 
   const handleDelete = async () => {

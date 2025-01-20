@@ -1,18 +1,18 @@
 "use client";
 
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useCreateUniversityMutation} from "@/app/redux/service/university";
+import { useCreateUniversityMutation } from "@/app/redux/service/university";
 import { useUploadImageMutation } from "@/app/redux/service/media";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { ImageUploadArea } from "../image/image-upload-area";
-import { UniversityType } from "@/types/types";
+import { CreateUniversityType } from "@/types/types";
 import { ToastContainer } from "react-toastify";
 
 const SchoolSchema = Yup.object().shape({
@@ -55,7 +55,7 @@ export default function SchoolForm() {
   };
 
   const handleCreateSchool = async (
-    values: UniversityType,
+    values: CreateUniversityType,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
     try {
@@ -73,7 +73,7 @@ export default function SchoolForm() {
       // Send the data to the API
       await createUniversity({ newUniversity: schoolData }).unwrap();
       toast.success("School created successfully!");
-      router.replace("/schools");
+      router.replace("/majors-universities");
     } catch (error) {
       console.error("Failed to create school:", error);
       toast.error("Failed to create school. Please try again.");
@@ -81,8 +81,8 @@ export default function SchoolForm() {
       setSubmitting(false);
     }
   };
-  
-  const initialValues: UniversityType = {
+
+  const initialValues = {
     kh_name: "",
     en_name: "",
     phone: "",
@@ -101,22 +101,22 @@ export default function SchoolForm() {
     logo: null, // Optional file value
     is_popular: false, // Default boolean value
   };
-  
+
 
   return (
     <div className="w-full mx-auto p-6">
       <div className="flex justify-between">
-      <h1 className="text-2xl font-bold mb-6 text-secondary">Create School</h1>
-       <div className="justify-end mt-6">
-      <Button
-        onClick={() => router.back()}
-        className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1 mb-6"
-      >
-        &larr; Back
-      </Button>
+        <h1 className="text-2xl font-bold mb-6 text-secondary">Create School</h1>
+        <div className="justify-end mt-6">
+          <Button
+            onClick={() => router.back()}
+            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1 mb-6"
+          >
+            &larr; Back
+          </Button>
+        </div>
       </div>
-      </div>
-     
+
       <Formik
         initialValues={initialValues}
         validationSchema={SchoolSchema}
@@ -127,7 +127,7 @@ export default function SchoolForm() {
       >
         {({ isSubmitting, setFieldValue, values }) => (
           <Form className="space-y-6">
-            <ToastContainer/>
+            <ToastContainer />
             <div className="space-y-6 mb-6">
               <ImageUploadArea
                 image={values.cover_image || "assets/placeholder.jpg"}
@@ -148,63 +148,76 @@ export default function SchoolForm() {
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
                     <Label htmlFor="kh_name">Khmer Name</Label>
-                    <Field as={Input} id="kh_name" name="kh_name" type="text" />
+                    <Field as={Input} id="kh_name" name="kh_name" type="text" placeholder="Enter khmer name" />
                     <ErrorMessage name="kh_name" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="w-full">
                     <Label htmlFor="en_name">English Name</Label>
-                    <Field as={Input} id="en_name" name="en_name" type="text" />
+                    <Field as={Input} id="en_name" name="en_name" type="text" placeholder="Enter English name"/>
                     <ErrorMessage name="en_name" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
                     <Label htmlFor="phone">Phone</Label>
-                    <Field as={Input} id="phone" name="phone" type="text" />
+                    <Field as={Input} id="phone" name="phone" type="text" placeholder="Enter phone number"/>
                     <ErrorMessage name="phone" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="w-full">
                     <Label htmlFor="email">Email</Label>
-                    <Field as={Input} id="email" name="email" type="email" />
+                    <Field as={Input} id="email" name="email" type="email" placeholder="Enter email"/>
                     <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
                     <Label htmlFor="website">Website</Label>
-                    <Field as={Input} id="website" name="website" type="url" />
+                    <Field as={Input} id="website" name="website" type="url" placeholder="Enter website url"/>
                     <ErrorMessage name="website" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="w-full">
-                    <Label htmlFor="school_type">School Type</Label>
-                    <Field name="school_type">
-                        <Select
-                        name="school_type"
-                        onValueChange={(value) => {
-                          if (value !== values.school_type) {
-                            setFieldValue('school_type', value);
-                          }
-                        }}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select School Type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="PUBLIC">Public School</SelectItem>
-                            <SelectItem value="PRIVATE">Private School</SelectItem>
-                            <SelectItem value="TVET">TVET</SelectItem>
-                          </SelectContent>
-                        </Select>
-                    </Field>
-                    <ErrorMessage name="school_type" component="div" className="text-red-500 text-sm" />
-                  </div>
+  <Label htmlFor="school_type">School Type</Label>
+  
+  <Field name="school_type">
+    {({ field, form }: FieldProps) => (
+      <Select
+        // Make sure the "value" is from the correct field
+        value={field.value}
+        // Update Formik state on change
+        onValueChange={(val) => {
+          // Only update if there's an actual change
+          if (val !== field.value) {
+            form.setFieldValue(field.name, val);
+          }
+        }}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder={field.value || "Select School Type"} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="PUBLIC">Public School</SelectItem>
+          <SelectItem value="PRIVATE">Private School</SelectItem>
+          <SelectItem value="TVET">TVET</SelectItem>
+        </SelectContent>
+      </Select>
+    )}
+  </Field>
+  
+  {/* Match the same name in ErrorMessage */}
+  <ErrorMessage name="school_type" component="div" className="text-red-500 text-sm" />
+</div>
+
                 </div>
                 <div className="flex gap-4 w-full justify-between items-center ">
-                  <div className="w-8/12">
+                  <div className="w-9/12">
                     <Label htmlFor="location">Location</Label>
-                    <Field name="location"
-                    placeholder="Enter location"
-                    >
-                    </Field>
+                    <div className="w-full">
+                      <Field name="location"
+                        placeholder="Enter location"
+                        className="border border-gray-300 py-2 rounded-md px-3 w-full"
+                      >
+                      </Field>
+                    </div>
                     <ErrorMessage name="location" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="flex items-center gap-2 mt-4">
@@ -247,6 +260,7 @@ export default function SchoolForm() {
                         id="lowest_price"
                         name="lowest_price"
                         type="number"
+                        placeholder="0"
                       />
                       <ErrorMessage
                         name="lowest_price"
@@ -261,6 +275,7 @@ export default function SchoolForm() {
                         id="highest_price"
                         name="highest_price"
                         type="number"
+                        placeholder="0"
                       />
                       <ErrorMessage
                         name="highest_price"
@@ -275,24 +290,24 @@ export default function SchoolForm() {
             </div>
             <div className="w-full">
               <Label htmlFor="map_url">Google Map URL</Label>
-              <Field as={Input} id="map_url" name="map_url" />
+              <Field as={Input} id="map_url" name="map_url" placeholder="Enter Google Map URL" />
               <ErrorMessage name="map_url" component="div" className="text-red-500 text-sm h-8" />
             </div>
             <div className="flex gap-4 w-full">
               <div className="w-full">
                 <Label htmlFor="vision">Vision</Label>
-                <Field as={Textarea} id="vision" name="vision" />
+                <Field as={Textarea} id="vision" name="vision" placeholder="Enter vision"/>
                 <ErrorMessage name="vision" component="div" className="text-red-500 text-sm h-8" />
               </div>
               <div className="w-full">
                 <Label htmlFor="mission">Mission</Label>
-                <Field as={Textarea} id="mission" name="mission" />
+                <Field as={Textarea} id="mission" name="mission" placeholder="Enter mission"/>
                 <ErrorMessage name="mission" component="div" className="text-red-500 text-sm" />
               </div>
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Field as={Textarea} id="description" name="description" />
+              <Field as={Textarea} id="description" name="description" placeholder="Enter description"/>
               <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
             </div>
             <div className="flex justify-end space-x-4">

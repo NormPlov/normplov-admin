@@ -1,5 +1,5 @@
 import { normPlovApi } from "../api";
-import { FacultyResponse } from "@/types/faculty";
+// import { FacultyResponse } from "@/types/faculty";
 
 type FacultyResponse = {
   uuid: string;

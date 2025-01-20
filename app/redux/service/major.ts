@@ -3,12 +3,14 @@ import { normPlovApi } from "../api";
 
 export const majorApi = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
-    createMajor: builder.mutation<MajorType, Partial<MajorType>>({
-      query: (major: Partial<MajorType>) => ({
-        url: `api/v1/majors`,
+    // create major
+    createMajor: builder.mutation({
+      query: (major) => ({
+        url: "api/v1/majors/",
         method: "POST",
-        body: JSON.stringify(major),
+        body: major,
       }),
+      invalidatesTags: ["faculty"],
     }),
 
     major: builder.query<MajorType, void>({
@@ -16,8 +18,29 @@ export const majorApi = normPlovApi.injectEndpoints({
         url: `api/v1/majors`,
         method: "GET",
       }),
+      providesTags:["faculty"]
+    }),
+    updateMajor: builder.mutation({
+      query: ({ id, ...major }) => ({
+        url: `api/v1/majors/${id}`,
+        method: "PATCH",
+        body: major,
+      }),
+      invalidatesTags: ["faculty"],
+    }),
+    deleteMajor: builder.mutation({
+      query: ({id}) => ({
+        url: `api/v1/majors/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["faculty"],
     }),
   }),
 });
 
-export const { useCreateMajorMutation, useMajorQuery } = majorApi;
+export const { 
+  useCreateMajorMutation,
+  useMajorQuery,
+  useUpdateMajorMutation,
+  useDeleteMajorMutation,
+ } = majorApi;

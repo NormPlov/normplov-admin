@@ -59,9 +59,9 @@ export function SidebarComponent() {
           <Image
             width={1000}
             height={1000}
-            src={``}
+            src={`/assets/Logo Only.png`}
             alt=""
-            className="w-10 h-10 my-4 rounded-full object-cover bg-primary"
+            className="w-12 h-12 my-4 rounded-full object-cover"
           />
           <SidebarContent>
             {items.map((item, index) => {

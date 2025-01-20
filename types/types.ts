@@ -43,7 +43,28 @@ export type UpdateProfilePayload = {
   confirmPassword?: string;
   bio: string;
 };
-// create and update school 
+// create school
+export type CreateUniversityType = {
+  kh_name:string;
+  en_name: string;
+  school_type: string | "PUBLIC" | "PRIVATE" | "TVET"; // Enum-like structure for school types
+  popular_major: string;
+  location: string;
+  phone: string;
+  lowest_price: number;
+  highest_price: number;
+  map_url: string;
+  email: string;
+  website: string;
+  description: string;
+  mission: string;
+  vision: string;
+  logo:  File |null| string; // URL to the logo
+  cover_image:  File |null| string; // URL to the cover image
+  is_popular: boolean;
+
+};
+//  update school 
 export type UniversityType = {
     
     kh_name:string;
@@ -60,7 +81,7 @@ export type UniversityType = {
     description: string;
     mission: string;
     vision: string;
-    logo:  File |null| string; // URL to the logo
+    logo_url:  File |null| string; // URL to the logo
     cover_image:  File |null| string; // URL to the cover image
     is_popular: boolean;
   
@@ -115,6 +136,7 @@ export type School = {
   updated_at: string;
   map_url: string;
   faculties: string[];
+  is_recommended: boolean;
 };
 
 export type SchoolsResponse = {

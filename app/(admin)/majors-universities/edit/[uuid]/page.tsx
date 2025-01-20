@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Formik, Form, Field, FieldProps, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import {
   useEditUniversityMutation,
@@ -24,26 +23,29 @@ import {
 import { ImageUploadArea } from "@/app/Components/image/image-upload-area";
 import { UniversityType, UploadImageResponse } from "@/types/types";
 import { useUploadImageMutation } from "@/app/redux/service/media";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React from "react";
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
 
 const SchoolSchema = Yup.object().shape({
-  kh_name: Yup.string().required("Required"),
-  en_name: Yup.string().required("Required"),
-  phone: Yup.string().required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
-  website: Yup.string().url("Invalid URL").required("Required"),
-  popular_major: Yup.string().required("Required"),
-  lowest_price: Yup.number().positive("Must be positive").required("Required"),
-  highest_price: Yup.number().positive("Must be positive").required("Required"),
-  location: Yup.string().required("Required"),
-  map_url: Yup.string().required("Required"),
-  vision: Yup.string().required("Required"),
-  mission: Yup.string().required("Required"),
-  description: Yup.string().required("Required"),
+  kh_name: Yup.string(),
+  en_name: Yup.string(),
+  phone: Yup.string(),
+  email: Yup.string().email("Invalid email"),
+  website: Yup.string().url("Invalid URL"),
+  popular_major: Yup.string(),
+  lowest_price: Yup.number().positive("Must be positive"),
+  highest_price: Yup.number().positive("Must be positive"),
+  location: Yup.string(),
+  map_url: Yup.string(),
+  vision: Yup.string(),
+  mission: Yup.string(),
+  description: Yup.string(),
   cover_image: Yup.mixed().nullable(),
-  logo: Yup.mixed().required("Required"),
-  school_type: Yup.string().required("Required"),
+  logo_url: Yup.mixed(),
+  school_type: Yup.string(),
 });
 
 export default function EditUniversityPage({
@@ -55,9 +57,9 @@ export default function EditUniversityPage({
   const { data, isLoading, isError, error, refetch } = useUniversityDetailsQuery(params.uuid);
   const [editUniversity, { isLoading: isUpdating }] =
     useEditUniversityMutation();
-  const [submissionError, setSubmissionError] = useState<string | null>(null);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [logoImage, setLogoImage] = useState<File | null>(null);
+  const [, setSubmissionError] = useState<string | null>(null);
+  // const [coverImage, setCoverImage] = useState<File | null>(null);
+  // const [logoImage, setLogoImage] = useState<File | null>(null);
   const [uploadImage] = useUploadImageMutation()
 
   const university = data?.payload
@@ -115,7 +117,7 @@ export default function EditUniversityPage({
     description: university.description || "",
     school_type: university.type || "",
     cover_image: university.cover_image || null || File,
-    logo: university.logo_url || null || File,
+    logo_url: university.logo_url || null || File,
     location: university.location || "",
     is_popular: false
   }
@@ -144,12 +146,12 @@ export default function EditUniversityPage({
           setSubmissionError(null);
 
           try {
-            let logoUrl: string | null = typeof values.logo === "string" ? values.logo : university.logo_url; // Default to the existing logo URL
+            let logoUrl: string | null = typeof values.logo_url === "string" ? values.logo_url : university.logo_url; // Default to the existing logo URL
             let coverImageUrl: string | null = typeof values.cover_image === "string" ? values.cover_image : university.cover_image; // Default to the existing cover image URL
 
             // Upload the logo if it's a new file
-            if (values.logo instanceof File) {
-              const uploadedLogoUrl = await handleUploadImage(values.logo);
+            if (values.logo_url instanceof File) {
+              const uploadedLogoUrl = await handleUploadImage(values.logo_url);
               if (uploadedLogoUrl) {
                 logoUrl = uploadedLogoUrl;
                 console.log("Logo uploaded successfully:", logoUrl);
@@ -173,7 +175,7 @@ export default function EditUniversityPage({
             // Prepare the data for updating the university
             const updatedUniversity: UniversityType = {
               ...values,
-              logo: logoUrl, // Use the uploaded or existing logo URL
+              logo_url: logoUrl, // Use the uploaded or existing logo URL
               cover_image: coverImageUrl, // Use the uploaded or existing cover image URL
               school_type: values.school_type || university?.type || "",
             };
@@ -182,7 +184,7 @@ export default function EditUniversityPage({
             await editUniversity({ uuid: params.uuid, data: updatedUniversity }).unwrap();
 
             toast.success("University updated successfully!");
-            // router.push("/majors-universities");
+            router.push("/majors-universities");
           } catch (err) {
             console.error("Failed to update university:", err);
             setSubmissionError("Failed to update university. Please try again.");
@@ -194,7 +196,7 @@ export default function EditUniversityPage({
 
 
       >
-        {({ isSubmitting, setFieldValue, values }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form className="space-y-6">
             <ToastContainer position="top-right" autoClose={3000} />
 
@@ -202,27 +204,27 @@ export default function EditUniversityPage({
               <div>
                 <Label htmlFor="cover_image" className="block text-md font-normal py-2 text-primary">Cover Image</Label>
 
-                  <ImageUploadArea
-                    image={university?.cover_image || "/assets/placeholder.jpg"}
-                    onImageUpload={(file) => {
-                      if (file) {
-                        setFieldValue("cover_image", file); // Update Formik value directly
-                      }
-                    }}
-                    label="Cover Image"
-                    className="w-full h-64 rounded-md border border-gray-200"
-                  />
+                <ImageUploadArea
+                  image={ university?.cover_image || "/assets/placeholder.jpg"}
+                  onImageUpload={(file) => {
+                    if (file) {
+                      setFieldValue("cover_image", file); // Update Formik value directly
+                    }
+                  }}
+                  label="Cover Image"
+                  className="w-full h-64 rounded-md border border-gray-200"
+                />
 
               </div>
               <div className="flex space-x-4">
                 <div>
-                  <Label htmlFor="logo" className="block text-md font-normal py-2 text-primary">Logo</Label>
+                  <Label htmlFor="logo_Url" className="block text-md font-normal py-2 text-primary">Logo</Label>
                   {/* <Field name="logo" > */}
                   <ImageUploadArea
-                    image={university?.logo_url || "/assets/placeholder.jpg"}
+                    image={  university?.logo_url || "/assets/placeholder.jpg"}
                     onImageUpload={(file) => {
                       if (file) {
-                        setFieldValue("logo", file);
+                        setFieldValue("logo_url", file);
                       }
                     }}
                     label="Logo"
@@ -301,24 +303,25 @@ export default function EditUniversityPage({
                     </div>
                     <div className="w-full">
                       <Label htmlFor="type" className="block text-md font-normal py-2 text-primary">School Type</Label>
+                  
                       <Field name="type">
-                        {({ field, form }: { field: any; form: any }) => (
+                        {({ field, form }: FieldProps) => (
                           <Select
-                            onValueChange={(value) =>
-                              form.setFieldValue(field.name, value)
-                            }
+                            // value from Formik
                             value={field.value}
+                            // update Formik state on change
+                            onValueChange={(val) => {
+                              if (val !== field.value) {
+                                form.setFieldValue(field.name, val);
+                              }
+                            }}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder={university.type || "Select School Type"} />
+                              <SelectValue placeholder={field.value || "Select School Type"} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="PUBLIC">
-                                Public School
-                              </SelectItem>
-                              <SelectItem value="PRIVATE">
-                                Private School
-                              </SelectItem>
+                              <SelectItem value="PUBLIC">Public School</SelectItem>
+                              <SelectItem value="PRIVATE">Private School</SelectItem>
                               <SelectItem value="TVET">TVET</SelectItem>
                             </SelectContent>
                           </Select>
@@ -383,75 +386,38 @@ export default function EditUniversityPage({
                 </div>
               </div>
               <div>
-                {/* <Label htmlFor="cover_image" className="block text-md font-normal py-2 text-primary">
-    Cover Image
-  </Label>
-  <Field name="cover_image">
-    {({ field, form }: FieldProps<File | string | null>) => {
-      // Memoize the image source to avoid unnecessary re-renders
-      const imageSource = React.useMemo(
-        () => field.value || university?.cover_image || "/assets/placeholder.jpg",
-        [field.value, university?.cover_image]
-      );
 
-      return (
-        <ImageUploadArea
-          image={imageSource}
-          onImageUpload={(file) => {
-            if (file) {
-              form.setFieldValue("cover_image", file); // Update Formik value directly
-            }
-          }}
-          label="Cover Image"
-          className="w-full h-64 rounded-md border border-gray-200"
-        />
-      );
-    }}
-  </Field>
-</div>
-
-<div className="flex space-x-4">
-  <div>
-    <Label htmlFor="logo" className="block text-md font-normal py-2 text-primary">
-      Logo
-    </Label>
-    <Field name="logo">
-      {({ field, form }: FieldProps<File | string | null>) => {
-        // Memoize the image source to avoid unnecessary re-renders
-        const imageSource = React.useMemo(
-          () => field.value || university?.logo_url || "/assets/placeholder.jpg",
-          [field.value, university?.logo_url]
-        );
-
-        return (
-          <ImageUploadArea
-            image={imageSource}
-            onImageUpload={(file) => {
-              if (file) {
-                form.setFieldValue("logo", file); // Update Formik value directly
-              }
-            }}
-            label="Logo"
-            className="w-[300px] h-[300px] rounded-md border border-gray-200"
-          />
-        );
-      }}
-    </Field>
-  </div> */}
               </div>
 
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="location" className="block text-md font-normal py-2 text-primary">Location</Label>
-                <Field as={Input} id="location" name="location" type="text" placeholder={university.location || "Enter Location"} />
-                <ErrorMessage
-                  name="location"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-            </div>
+            <div className="flex gap-4 w-full justify-between items-center ">
+                  <div className="w-9/12">
+                    <Label htmlFor="location">Location</Label>
+                    <div className="w-full">
+                      <Field name="location"
+                        placeholder="Enter location"
+                        className="border border-gray-300 py-2 rounded-md px-3 w-full"
+                      >
+                      </Field>
+                    </div>
+                    <ErrorMessage name="location" component="div" className="text-red-500 text-sm" />
+                  </div>
+                  <div className="flex items-center gap-2 mt-4">
+                    <Field
+                      type="checkbox"
+                      id="is_popular"
+                      name="is_popular"
+                      className="h-5 w-5 text-primary focus:ring-primary border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-sm">
+                      <Field name="is_popular">
+                        {({ field }: { field: { value: boolean } }) =>
+                          field.value ? "Popular School" : "School Not Popular"
+                        }
+                      </Field>
+                    </span>
+                  </div>
+                </div>
             <div>
               <Label htmlFor="map_url" className="block text-md font-normal py-2 text-primary">Google Maps Link</Label>
               <Field as={Input} id="map_url" name="map_url" placeholder={university.map_url || "Enter Google Maps Link"} />
@@ -464,6 +430,13 @@ export default function EditUniversityPage({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="mission" className="block text-md font-normal py-2 text-primary">Mission</Label>
+                {/* <ReactQuill
+        id="mission"
+        value={university.mission || ""}
+        onChange={(value) => setFieldValue("mission", value)} // Formik's setFieldValue
+        placeholder="Enter your mission here"
+        className="mb-2"
+      /> */}
                 <Field as={Textarea} id="mission" name="mission" placeholder={university.mission || "Enter your mission here"} />
                 <ErrorMessage
                   name="mission"
@@ -509,7 +482,7 @@ export default function EditUniversityPage({
                   : "Update University"}
               </Button>
             </div>
-            {submissionError && (
+            {/* {submissionError && (
               <div className="text-red-500 mt-4">{submissionError}</div>
             )}
             <div className="mt-8 p-4 bg-gray-100 rounded">
@@ -517,7 +490,7 @@ export default function EditUniversityPage({
                 Form Values (Debug):
               </h3>
               <pre>{JSON.stringify(values, null, 2)}</pre>
-            </div>
+            </div> */}
           </Form>
         )}
       </Formik>

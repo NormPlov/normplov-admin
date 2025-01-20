@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Search,
   ChevronLeft,
@@ -28,12 +27,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { School} from "@/types/types";
+import { School } from "@/types/types";
 import { useUniversityQuery } from "../redux/service/university";
 import DropdownPopup from "./popup/ModalAction";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import { useDeleteUniversityMutation } from "../redux/service/university";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast, ToastContainer } from "react-toastify";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -41,7 +42,7 @@ export function UniversityListing() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [searchQuery] = useState("");
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [schoolType] = useState<string | undefined>();
   const router = useRouter()
@@ -80,9 +81,9 @@ export function UniversityListing() {
 
     const matchFilter =
       filter === "all" ||
-      (filter === "PRIVATE" && school.type === "PRIVATE") ||
-      (filter === "PUBLIC" && school.type === "PUBLIC") ||
-      (filter === "TVET" && school.type === "TVET");
+      (filter === "PRIVATE" && school?.type === "PRIVATE") ||
+      (filter === "PUBLIC" && school?.type === "PUBLIC") ||
+      (filter === "TVET" && school?.type === "TVET");
 
     return matchesSearch && matchFilter;
   }) || [];
@@ -90,7 +91,7 @@ export function UniversityListing() {
 
   const universities = data?.payload?.schools || [];
 
-  console.log("university:",universities);
+  console.log("university:", universities);
 
   const handleDeleteClick = (university: School) => {
     setUniversityToDelete(university);
@@ -100,20 +101,21 @@ export function UniversityListing() {
   const handleDeleteConfirm = async () => {
     if (universityToDelete) {
       try {
-        console.log("uuid university:",universityToDelete.uuid)
+        console.log("uuid university:", universityToDelete.uuid)
         await deleteUniversity({ uuid: universityToDelete.uuid }).unwrap();
         setDeleteModalOpen(false);
-        setUniversityToDelete(null); 
+        setUniversityToDelete(null);
       } catch (error) {
         console.error("Error deleting university:", error);
       }
     }
   };
-  
+
 
   return (
     <main className="p-4">
       <div className="flex items-center justify-between mb-6">
+        <ToastContainer/>
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
           <div className="relative w-[370px]">
@@ -144,7 +146,7 @@ export function UniversityListing() {
         </div>
       </div>
 
-      <div className="rounded-md border border-gray-200 text-textprimary t">
+      <div className="rounded-md border border-gray-200 text-textprimary ">
         <Table>
           <TableHeader>
             <TableRow>
@@ -156,75 +158,50 @@ export function UniversityListing() {
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
-          {/* <TableBody>
-            {filteredUniversities.map((school: SchoolsType) => (
-              <TableRow key={school.id}>
-                <TableCell>
-                  <Image
-                    width={270}
-                    height={270}
-                    src={
-                      `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}` ||
-                      "/assets/placeholder.jpg"
-                    }
-                    alt={`${school.en_name || "University"} Logo`}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  {school.en_name || "N/A"}
-                </TableCell>
-                <TableCell>{school.location || "N/A"}</TableCell>
-                <TableCell className="text-left">
-                  {school.popular_major || "N/A"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {school.type || "N/A"}
-                </TableCell>
-                <TableCell className="text-center">
-                  <DataTableRowActions
-                    row={school as UniversityType}
-                    onDeleteSuccess={handleDeleteSuccess}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody> */}
           <TableBody>
             {filteredUniversities.map((school: School) => (
-              <TableRow key={school.uuid}>
+              <TableRow key={school?.uuid}>
                 <TableCell>
-                  <Image
-                    width={270}
-                    height={270}
-                    src={
-                      school.logo_url
-                        ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}`
-                        : "/assets/placeholder.jpg"
-                    }
-                    alt={`${school.en_name || "University"} Logo`}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
+                  <Avatar className="w-18 h-18">
+                    <AvatarImage
+                      width={1000}
+                      height={1000}
+                      src={
+                        !school?.logo_url
+                          ? "/assets/placeholder.jpg"
+                          : school.logo_url.startsWith("http")
+                            ? school.logo_url
+                            : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}`
+                      }
+
+                      alt={`${school?.en_name || "University"} Logo`}
+                      className="w-full h-full object-container "
+                    />
+                    <AvatarFallback className="text-gray-700">
+                      {school?.en_name?.[0]?.toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
                 </TableCell>
-                <TableCell className="font-medium">{school.en_name || "N/A"}</TableCell>
-                <TableCell>{school.location || "N/A"}</TableCell>
+                <TableCell className="font-medium">{school?.en_name || "N/A"}</TableCell>
+                <TableCell>{school?.location || "N/A"}</TableCell>
                 <TableCell className="text-left">
-                  {school.popular_major || "N/A"}
+                  {school?.popular_major || "N/A"}
                 </TableCell>
-                <TableCell className="text-right">{school.type || "N/A"}</TableCell>
-                {/* <TableCell className="text-center">
-                  <DataTableRowActions
-                    row={school}
-                    onDeleteSuccess={handleDeleteSuccess}
-                  />
-                </TableCell> */}
+                <TableCell className="text-right">{school?.type || "N/A"}</TableCell>
+
                 <TableCell className="text-gray-700">
-                <DropdownPopup
-                    onView={() => router.push(`/majors-universities/${school.uuid}`)}
-                    onEdit={() => router.push(`/majors-universities/edit/${school.uuid}`)}
-                    onDelete={() => handleDeleteClick(school)}
+                  <DropdownPopup
+                    onView={() => router.push(`/majors-universities/${school?.uuid}`)}
+                    onEdit={() => router.push(`/majors-universities/edit/${school?.uuid}`)}
+                    onDelete={() => {
+                      if (school?.is_recommended) {
+                        toast.error("This school is recommended and cannot be deleted!");
+                      } else {
+                        handleDeleteClick(school);
+                      }
+                    }}
                   />
-                    </TableCell>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
