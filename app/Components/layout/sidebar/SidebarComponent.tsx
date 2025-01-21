@@ -60,9 +60,9 @@ export function SidebarComponent() {
           <Image
             width={1000}
             height={1000}
-            src={``}
+            src={`/assets/Logo Only.png`}
             alt=""
-            className="w-8 h-8 my-4 rounded-full object-cover bg-primary"
+            className="w-12 h-12 my-4 rounded-full object-cover"
           />
           <SidebarContent>
             {items.map((item, index) => {
@@ -72,7 +72,7 @@ export function SidebarComponent() {
                     <SidebarMenuItem className="py-1.5 hover:bg-red-100 rounded-md text-red-500 cursor-pointer list-none">
                       <SidebarMenuButton tooltip={item.title}>
                         {item.icons && (
-                          <item.icons className="w-12 h-12 text-red-500" />
+                          <item.icons className="w-16 h-16 text-red-500" />
                         )}
                         <span className="text-[16px] text-red-500">
                           {item.title}
@@ -86,7 +86,7 @@ export function SidebarComponent() {
                   <Link key={index} href={item.path} className="list-none">
                     <SidebarMenuItem className="py-1.5 hover:bg-[#def1ec] rounded-md">
                       <SidebarMenuButton tooltip={item.title}>
-                        {item.icons && <item.icons className="w-12 h-12" />}
+                        {item.icons && <item.icons className="w-16 h-16" />}
                         <span className="text-[16px]">{item.title}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -112,10 +112,10 @@ export function SidebarComponent() {
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
           <div className="bg-white p-7 rounded-lg shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-2">Confirm Logout</h2>
-            <p className="mb-7">Are you sure you want to log out?</p>
-            <div className="flex justify-end gap-3">
+            <p className="mb-4">Are you sure you want to log out?</p>
+            <div className="flex justify-end gap-4">
               <Button
-                className="px-6 py-2 bg-gray-400/80 rounded hover:bg-gray-400"
+                className="px-5 py-2 bg-gray-200 rounded hover:bg-gray-400"
                 onClick={() => setShowLogoutConfirm(false)}
               >
                 No

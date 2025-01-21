@@ -203,8 +203,7 @@ export default function Login() {
                     </Formik>
                 </div>
             </div>
-           
-            {/* } */}
+   
         </main>
     );
 }

@@ -23,7 +23,10 @@ export function ImageUpload({ onImageUpload, label }: ImageUploadProps) {
       };
       reader.readAsDataURL(file);
     }
+    console.log("File", file);
   };
+
+  // console.log
 
   return (
     <div className="space-y-2">
@@ -43,8 +46,10 @@ export function ImageUpload({ onImageUpload, label }: ImageUploadProps) {
       </div>
       {preview && (
         <div className="mt-2">
-          <Image width={1000} height={1000}
-            src={preview}
+          <Image
+            width={1000}
+            height={1000}
+            src={`${preview}`}
             alt="Preview"
             className="max-w-full h-auto max-h-48 rounded"
           />

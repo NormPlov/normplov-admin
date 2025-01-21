@@ -4,7 +4,7 @@ import { normPlovApi } from "../api";
 
 export const media = normPlovApi.injectEndpoints({
     endpoints: (builder) => ({
-        uploadImage: builder.mutation<UploadImageResponse, {  url: File }>({
+        uploadImage: builder.mutation<UploadImageResponse, {  url: File|string }>({
                    query: ({ url }) => {
                        const formData = new FormData();
                        // 'file' follow your backend if backend is file put file if backend image put image 

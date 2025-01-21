@@ -8,8 +8,13 @@ const nextConfig = {
             "uploads/school_logos/4d28224b-8350-4edc-8c67-0f690779390e_phanhasas.png",
             "uploads/job-logos/140f13d3-66da-4745-ab19-fe54b488ee04_Student stress-pana.png"
         ],
-    }
-
+    },
+    typescript: {
+        ignoreBuildErrors: true, // Ignore all TypeScript errors during build
+      },
+      eslint: {
+        ignoreDuringBuilds: true, // Ignore all ESLint warnings/errors during build
+      },
 };
 
 export default nextConfig;

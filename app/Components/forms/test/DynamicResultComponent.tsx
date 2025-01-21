@@ -19,6 +19,7 @@ import { LearningStyleResultComponent } from './resultType/LearningStyle';
 import { SkillResultComponent } from './resultType/SkillResult';
 import { InterestResultComponent } from './resultType/IntrestResult';
 import { ValueResultComponent } from './resultType/ValueResult';
+import { AllResultComponent } from './resultType/AllResultComponent';
 
 type IntroKh = {
     title: string;
@@ -44,7 +45,7 @@ const resultDataMap: Record<string, QuizData> = {
     'Interests': interestJson,
     'Values': valueJson,
     'LearningStyle': learningStyleJson,
-    'all': allTestJson
+    'AllTests': allTestJson
 };
 
 export default function ResultDynamicComponent() {
@@ -68,7 +69,7 @@ export default function ResultDynamicComponent() {
     }
 
     const resultData = resultDataMap[resultType];
-console.log("result data:", resultData)
+    console.log("result data:", resultData)
     // Handle invalid result types
     if (!resultData) {
         return (
@@ -113,8 +114,13 @@ console.log("result data:", resultData)
                         <LearningStyleResultComponent />
 
                     </div>
-                    // 
+                    
                 );
+            case 'AllTests':
+                return (
+                    <AllResultComponent />
+                )
+
             default:
                 return <p>Unknown result type</p>;
         }
