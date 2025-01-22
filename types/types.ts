@@ -135,7 +135,29 @@ export type School = {
   created_at: string;
   updated_at: string;
   map_url: string;
-  faculties: string[];
+  faculties: Faculty[];
+  is_recommended: boolean;
+};
+
+type Faculty = {
+  uuid: string;
+  name: string;
+  description: string;
+  majors: Majors;
+};
+
+type Majors = {
+  items: Major[];
+  metadata: Metadata;
+};
+
+type Major = {
+  uuid: string;
+  name: string;
+  description: string;
+  fee_per_year: number;
+  duration_years: number;
+  degree: "BACHELOR" | "MASTER" | "PHD"; // Adjust if there are more degree types
   is_recommended: boolean;
 };
 
@@ -447,6 +469,10 @@ export type UpdateJob = {
   logo: string | File;
   location: string;
   facebook_url: string;
+  benefits: string[];
+  posted_at: string;
+  schedule:string;
+
 };
 
 //     Jobs api response

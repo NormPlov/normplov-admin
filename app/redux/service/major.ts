@@ -10,7 +10,7 @@ export const majorApi = normPlovApi.injectEndpoints({
         method: "POST",
         body: major,
       }),
-      invalidatesTags: ["faculty"],
+      invalidatesTags: ["major"],
     }),
 
     major: builder.query<MajorType, void>({
@@ -18,7 +18,7 @@ export const majorApi = normPlovApi.injectEndpoints({
         url: `api/v1/majors`,
         method: "GET",
       }),
-      providesTags:["faculty"]
+      providesTags:["major"]
     }),
     updateMajor: builder.mutation({
       query: ({ id, ...major }) => ({
@@ -26,14 +26,14 @@ export const majorApi = normPlovApi.injectEndpoints({
         method: "PATCH",
         body: major,
       }),
-      invalidatesTags: ["faculty"],
+      invalidatesTags: ["major"],
     }),
     deleteMajor: builder.mutation({
       query: ({id}) => ({
         url: `api/v1/majors/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["faculty"],
+      invalidatesTags: ["major"],
     }),
   }),
 });

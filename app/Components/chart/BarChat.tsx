@@ -33,7 +33,7 @@ export default function QuizTestChart() {
     // Custom legend renderer
     const renderLegend = () => {
         return (
-            <div className="flex space-x-3 ml-4 mt-4">
+            <div className="flex space-x-3 ml-4 mt-4 ">
                 {Object.keys(colors).map((type) => (
                     <li key={type} className="flex items-center space-x-2">
                         <div

@@ -4,6 +4,7 @@ import { NavbarComponent } from "../Components/layout/navbar/NavbarComponent";
 import { SidebarComponent } from "../Components/layout/sidebar/SidebarComponent";
 import "@/app/globals.css";
 import { suwannaphum, inter } from "../font";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: {
@@ -37,6 +38,7 @@ export default function AdminLayout({
             <div className="w-full bg-[#fdfdfd]">
               <NavbarComponent />
               {children}
+              <Toaster />
             </div>
           </div>
         </StoreProvider>

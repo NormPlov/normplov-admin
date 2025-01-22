@@ -107,7 +107,9 @@ const UpdateProfile = () => {
             // Handle image upload
             if (imageFile) {
                 await postUserImage({ uuid: userData.uuid, avatar_url: imageFile }).unwrap();
-                toast.success("Profile image updated successfully.");
+                toast.success("Profile image updated successfully.",{
+                    hideProgressBar: true
+                });
             }
 
             // Handle profile info update
@@ -139,7 +141,9 @@ const UpdateProfile = () => {
 
             if (Object.keys(cleanUpdatedInfo).length > 0) {
                 await updateUserInfo({ uuid: userData?.uuid, user: cleanUpdatedInfo }).unwrap();
-                toast.success("Profile info updated successfully.");
+                toast.success("Profile info updated successfully.",{
+                    hideProgressBar: true
+                });
             }
 
             // Handle password change
@@ -154,16 +158,22 @@ const UpdateProfile = () => {
                         confirm_new_password: values.confirm_new_password,
                     },
                 }).unwrap();
-                toast.success("Password changed successfully.");
+                toast.success("Password changed successfully.",{
+                    hideProgressBar: true
+                });
             }
 
             // If nothing was updated
             if (!imageFile && Object.keys(cleanUpdatedInfo).length === 0 && !hasPasswordToUpdate) {
-                toast.error("No updates were provided.");
+                toast.error("No updates were provided.",{
+                    hideProgressBar: true
+                });
             }
         } catch (error) {
             console.error("Error updating profile:", error);
-            toast.error("Error updating profile. Please try again.");
+            toast.error("Error updating profile. Please try again.",{
+                hideProgressBar: true
+            });
         }
     };
 

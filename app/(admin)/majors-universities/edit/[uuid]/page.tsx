@@ -66,7 +66,9 @@ export default function EditUniversityPage({
   console.log("university in edit:", university)
 
   if (isError) {
-    toast.error("Failed to load university data. Please try again.");
+    toast.error("Failed to load university data. Please try again.",{
+      hideProgressBar: true
+  });
   }
 
   if (isLoading) {
@@ -125,11 +127,15 @@ export default function EditUniversityPage({
   const handleUploadImage = async (file: File) => {
     try {
       const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
-      toast.success("Upload Logo successfully!")
+      toast.success("Upload Logo successfully!",{
+        hideProgressBar: true
+    })
       return res.payload.file_url;
     } catch (error) {
       console.log("Error upload image:", error)
-      toast.error("Failed to upload the image. Please try again.");
+      toast.error("Failed to upload the image. Please try again.",{
+        hideProgressBar: true
+    });
       return null;
     }
   };
@@ -183,12 +189,16 @@ export default function EditUniversityPage({
             // Call the mutation to update the university
             await editUniversity({ uuid: params.uuid, data: updatedUniversity }).unwrap();
 
-            toast.success("University updated successfully!");
+            toast.success("University updated successfully!",{
+              hideProgressBar: true
+          });
             router.push("/majors-universities");
           } catch (err) {
             console.error("Failed to update university:", err);
             setSubmissionError("Failed to update university. Please try again.");
-            toast.error("Failed to update university. Please try again.");
+            toast.error("Failed to update university. Please try again.",{
+              hideProgressBar: true
+          });
           } finally {
             setSubmitting(false);
           }

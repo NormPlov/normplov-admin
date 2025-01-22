@@ -34,7 +34,8 @@ import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import { useDeleteUniversityMutation } from "../redux/service/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -195,7 +196,9 @@ export function UniversityListing() {
                     onEdit={() => router.push(`/majors-universities/edit/${school?.uuid}`)}
                     onDelete={() => {
                       if (school?.is_recommended) {
-                        toast.error("This school is recommended and cannot be deleted!");
+                        toast.error("This school is recommended and cannot be deleted!",{
+                          hideProgressBar: true
+                      });
                       } else {
                         handleDeleteClick(school);
                       }

@@ -1,3 +1,4 @@
+import { SchoolDetailResponse } from "@/types/university";
 import { normPlovApi } from "../api";
 import { UniversitiesResponse, UniversityType, SchoolsResponse, UniversitiesDetailsResponse, CreateUniversityType } from "@/types/types";
 
@@ -15,7 +16,7 @@ export const universityApi = normPlovApi.injectEndpoints({
       providesTags: ["university"],
     }),
 
-    universityDetails: builder.query<UniversitiesDetailsResponse, string>({
+    universityDetails: builder.query<SchoolDetailResponse, string>({
       query: (uuid) => ({
         url: `api/v1/schools/${uuid}`,
         method: "GET",
@@ -89,8 +90,6 @@ export const universityApi = normPlovApi.injectEndpoints({
       }),
       invalidatesTags: ["faculty"],
     }),
-
-
 
   })
 });

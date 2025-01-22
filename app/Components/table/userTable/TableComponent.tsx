@@ -393,9 +393,15 @@ export default function UserTable() {
       {/* Block User Confirmation Modal */}
       {confirmModalOpen && selectedUser && (
         <BlockUserModal
-          onConfirm={handleConfirmBlock}
-          onCancel={() => setConfirmModalOpen(false)}
-          actionType={selectedUser.is_blocked ? "unblock" : "block"}
+        title={`Confirm ${selectedUser.is_blocked ? "unblock" : "block"} User`}
+        message={`Are you sure you want to ${selectedUser.is_blocked ? "unblock" : "block"} this user?`}
+        onConfirm={handleConfirmBlock}
+        onCancel={()=> setConfirmModalOpen(false)}
+        confirmText="Delete"
+        cancelText="Cancel"
+          // onConfirm={handleConfirmBlock}
+          // onCancel={() => setConfirmModalOpen(false)}
+          // actionType={selectedUser.is_blocked ? "unblock" : "block"}
         />
       )}
     </div>

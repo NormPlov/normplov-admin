@@ -126,7 +126,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             setImageFile(file);
             setFieldValue("logo", file);
         } else {
-            toast.error("Invalid file. Please upload a valid image file.");
+            toast.error("Invalid file. Please upload a valid image file.",,{
+                hideProgressBar: true
+            });
         }
     };
 
@@ -156,11 +158,15 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         console.log("data file", file)
         try {
             const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
-            toast.success("Upload Logo successfully!")
+            toast.success("Upload Logo successfully!",{
+                hideProgressBar: true
+            })
             return res.payload.file_url;
         } catch (error) {
             console.log("Error upload image:", error)
-            toast.error("Failed to upload the image. Please try again.");
+            toast.error("Failed to upload the image. Please try again.",{
+                hideProgressBar: true
+            });
             return null;
         }
     };
@@ -178,7 +184,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                 if (uploadedLogoUrl) {
                     logoUrl = uploadedLogoUrl;
                 } else {
-                    toast.error("Failed to upload logo. Please try again.");
+                    toast.error("Failed to upload logo. Please try again.",{
+                        hideProgressBar: true
+                    });
                     return;
                 }
             }
@@ -239,13 +247,17 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                 .unwrap()
                 .then((response) => {
                     console.log("Job updated successfully:", response);
-                    toast.success("Job updated successfully!");
+                    toast.success("Job updated successfully!",{
+                        hideProgressBar: true
+                    });
                 });
 
             router.push("/jobs");
         } catch (error) {
             console.error("Error updating job:", error);
-            toast.error("Failed to update the job. Please try again.");
+            toast.error("Failed to update the job. Please try again.",{
+                hideProgressBar: true
+            });
         }
     };
 
