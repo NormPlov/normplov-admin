@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import AddJobForm from '@/app/Components/forms/job/FormCreateJob'
 
 const page = () => {
