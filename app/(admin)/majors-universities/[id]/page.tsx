@@ -898,7 +898,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Faculty, Major, SchoolPayload } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast, ToastContainer } from "react-toastify";
-import Image from "next/image";
+// import Image from "next/image";
 
 const UniversityPage = () => {
     const params = useParams();
@@ -1071,16 +1071,16 @@ const UniversityPage = () => {
         );
     }
 
-    const coverImageSrc = useMemo(() => {
-        if (university?.cover_image) {
-            // If `cover_image` exists, construct the full URL
-            return university.cover_image.startsWith("http")
-                ? university.cover_image
-                : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`;
-        }
-        // Fallback to placeholder if `cover_image` is missing
-        return "/assets/placeholder.png";
-    }, [university?.cover_image]);
+    // const coverImageSrc = useMemo(() => {
+    //     if (university?.cover_image) {
+    //         // If `cover_image` exists, construct the full URL
+    //         return university.cover_image.startsWith("http")
+    //             ? university.cover_image
+    //             : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`;
+    //     }
+    //     // Fallback to placeholder if `cover_image` is missing
+    //     return "/assets/placeholder.png";
+    // }, [university?.cover_image]);
 
 
     return (

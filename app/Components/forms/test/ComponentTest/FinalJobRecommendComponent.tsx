@@ -33,8 +33,8 @@ type Major = {
 
 export const FinalJobRecommendComponent = () => {
     const params = useParams();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(6);
+    // const [, setCurrentPage] = useState(1);
+    const [itemsPerPage, ] = useState(6);
 
     const uuidString = typeof params.uuid === 'string' ? params.uuid : '';
 
@@ -66,12 +66,12 @@ export const FinalJobRecommendComponent = () => {
     // Use the correct career data for pagination
     const recommendedCareer = response?.payload?.[0]?.user_response_data.recommendations ?? [];
     const totalPages = Math.ceil(recommendedCareer.length / itemsPerPage);
-   
+   console.log("total page",totalPages)
 
     // Pagination handler
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-    };
+    // const handlePageChange = (newPage: number) => {
+    //     setCurrentPage(newPage);
+    // };
 
    
     return (

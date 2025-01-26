@@ -74,7 +74,7 @@ type UserTestResponse = {
   };
   message: string;
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-an
+
 export const resultApi = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchAssessmentDetails: builder.query({
@@ -83,7 +83,6 @@ export const resultApi = normPlovApi.injectEndpoints({
         url: `api/v1/admin/responses/${testUUID}`, // Dynamic query parameter
         method: 'GET',
       }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-an
       
       transformResponse: (response: any, _meta, arg) => {
         const responseData = response?.payload[0];
@@ -180,7 +179,7 @@ export const resultApi = normPlovApi.injectEndpoints({
         method: "GET",
       }),
     }),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-an
+    
     getTestAllAssessment: builder.query<any, { uuid: string; }>({
       query: ({uuid}) => ({
         url: `api/v1/admin/responses/${uuid}`, 

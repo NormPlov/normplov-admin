@@ -19,43 +19,43 @@ type ChartDataType = {
   score: number;
 };
 
-type InterestCardItem = {
-  dimension_name: string;
-  description: string;
-  image_url: string;
-};
+// type InterestCardItem = {
+//   dimension_name: string;
+//   description: string;
+//   image_url: string;
+// };
 
-type RecommendedCareer = {
-  career_name: string;
-  description: string;
-  majors: Major[];
-};
+// type RecommendedCareer = {
+//   career_name: string;
+//   description: string;
+//   majors: Major[];
+// };
 
-type Major = {
-  major_name: string;
-  schools: string[];
-};
+// type Major = {
+//   major_name: string;
+//   schools: string[];
+// };
 
-type Category = {
-  category_name: string;
-  responsibilities: string[];
-};
+// type Category = {
+//   category_name: string;
+//   responsibilities: string[];
+// };
 
 // Matches the InterestsResponse type
-type InterestsResponse = {
-  assessmentType: "Interests";
-  testUUID: string;
-  testName: string;
-  createdAt: string;
-  hollandCode: string;
-  typeName: string;
-  description: string;
-  keyTraits: string[];
-  careerPath: RecommendedCareer[];
-  chartData: ChartDataType[];
-  categories: Category[];
-  dimensionDescriptions: InterestCardItem[];
-};
+// type InterestsResponse = {
+//   assessmentType: "Interests";
+//   testUUID: string;
+//   testName: string;
+//   createdAt: string;
+//   hollandCode: string;
+//   typeName: string;
+//   description: string;
+//   keyTraits: string[];
+//   careerPath: RecommendedCareer[];
+//   chartData: ChartDataType[];
+//   categories: Category[];
+//   dimensionDescriptions: InterestCardItem[];
+// };
 
 // // General Assessment Response
 // type AssessmentResponse = InterestsResponse; // Extend here for additional types if needed

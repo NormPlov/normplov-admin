@@ -45,7 +45,7 @@ export function UniversityListing() {
   const [searchQuery] = useState("");
   // const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
-  const [schoolType] = useState<string | undefined>();
+  // const [schoolType] = useState<string | undefined>();
   const router = useRouter()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [universityToDelete, setUniversityToDelete] = useState<School | null>(null)

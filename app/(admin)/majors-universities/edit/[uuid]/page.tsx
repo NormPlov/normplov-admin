@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
@@ -20,7 +20,7 @@ import {
   useEditUniversityMutation,
   useUniversityDetailsQuery,
 } from "@/app/redux/service/university";
-import { ImageUploadArea } from "@/app/Components/image/image-upload-area";
+// import { ImageUploadArea } from "@/app/Components/image/image-upload-area";
 import { UniversityType, UploadImageResponse } from "@/types/types";
 import { useUploadImageMutation } from "@/app/redux/service/media";
 import { ToastContainer, toast } from "react-toastify";
@@ -55,12 +55,12 @@ export default function EditUniversityPage({
   params: { uuid: string };
 }) {
   const router = useRouter();
-  const { data, isLoading, isError, error } = useUniversityDetailsQuery(params.uuid);
+  const { data, isLoading, isError } = useUniversityDetailsQuery(params.uuid);
   const [editUniversity, { isLoading: isUpdating }] =
     useEditUniversityMutation();
   const [, setSubmissionError] = useState<string | null>(null);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [logoImage, setLogoImage] = useState<File | null>(null);
+  // const [coverImage, setCoverImage] = useState<File | null>(null);
+  // const [logoImage, setLogoImage] = useState<File | null>(null);
   const [uploadImage] = useUploadImageMutation()
 
   const university = data?.payload
@@ -84,7 +84,7 @@ export default function EditUniversityPage({
   }
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
-    setFieldValue: (field: string, value: any) => void,
+    setFieldValue: (field: string, value) => void,
     fieldName: string
   ) => {
     e.preventDefault();

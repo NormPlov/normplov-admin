@@ -35,21 +35,21 @@ type BarProps = {
   height?: number;
   payload?: { color?: string };
 };
-type Major = {
-  major_name: string; // The name of the major
-  schools: string[];  // An array of schools offering the major
-};
-type Job = {
-  category_name: string;
-  responsibilities: string[];
-}
-type RecommendedCareer = {
-  career_name: string;
-  description: string;
-  majors: Major[]; 
-  career_uuid: string;
-  categories: Job[];
-};
+// type Major = {
+//   major_name: string; // The name of the major
+//   schools: string[];  // An array of schools offering the major
+// };
+// type Job = {
+//   category_name: string;
+//   responsibilities: string[];
+// }
+// type RecommendedCareer = {
+//   career_name: string;
+//   description: string;
+//   majors: Major[]; 
+//   career_uuid: string;
+//   categories: Job[];
+// };
 
 
 export const PersonalityResultComponent = () => {

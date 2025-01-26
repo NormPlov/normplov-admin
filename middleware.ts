@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
 
 // multiple middleware
 export const config = {
-  matcher: ["/"], // Add more routes here that you want to protect
+  matcher: ["/"], 
 //   compiler: {
 //     removeConsole: true,
 // }

@@ -12,7 +12,7 @@ import { useUploadImageMutation } from "@/app/redux/service/media";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
-import { ImageUploadArea } from "../image/image-upload-area";
+// import { ImageUploadArea } from "../image/image-upload-area";
 import { CreateUniversityType } from "@/types/types";
 import Image from "next/image";
 import { Upload } from "lucide-react";
