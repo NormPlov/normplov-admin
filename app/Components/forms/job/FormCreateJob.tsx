@@ -1719,6 +1719,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
+
 const validationSchema = Yup.object({
   category: Yup.string().min(1, 'At least one category is required').required(),
   title: Yup.string().required('Position is required'),
