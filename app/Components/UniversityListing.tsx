@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -52,13 +52,10 @@ export function UniversityListing() {
 
   const [deleteUniversity] = useDeleteUniversityMutation()
 
-  const { data, refetch } = useUniversityQuery({
+  const { data } = useUniversityQuery({
     page: currentPage,
     size: pageSize,
   });
-  useEffect(() => {
-    refetch();
-  }, [currentPage, pageSize, searchQuery, schoolType, refetch]);
 
   const totalItems = data?.payload?.metadata?.page_size || 0;
   const totalPages = Math.ceil(totalItems / pageSize);
@@ -169,7 +166,7 @@ export function UniversityListing() {
                       height={1000}
                       src={
                         !school?.logo_url
-                          ? "/assets/placeholder.jpg"
+                          ? "/assets/placeholder.png"
                           : school.logo_url.startsWith("http")
                             ? school.logo_url
                             : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}`

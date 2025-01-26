@@ -21,7 +21,7 @@ export const QuizInterestResultCard: React.FC<QuizInterestResultCardProps> = ({
       <ImageWithFallback
         src={formattedImage}
         alt={title}
-        fallbackSrc="/assets/placeholder.jpg"
+        fallbackSrc="/assets/placeholder.png"
         width={1000}
         height={1000}
         className="card-image w-3/4"

@@ -74,8 +74,8 @@ const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
           <AvatarImage
             src={
               job.is_scraped
-                ? job.logo ?? "/assets/placeholder.jpg"
-                : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo || "/assets/placeholder.jpg"} `
+                ? job.logo ?? "/assets/placeholder.png"
+                : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo || "/assets/placeholder.png"} `
             }
             alt={job.title || "Job Logo"}
             className="object-cover rounded-md w-full h-full"

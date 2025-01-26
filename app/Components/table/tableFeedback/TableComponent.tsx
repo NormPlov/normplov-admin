@@ -66,8 +66,8 @@ export default function TableUserFeedback() {
     )
   }
   // Pagination metadata
-  const totalPages = data?.payload?.metadata?.total_pages || 0;
-  const totalItems = data?.payload?.metadata?.total_items || 0;
+  const totalPages = data?.payload?.feedbacks.metadata?.total_pages || 0;
+  const totalItems = data?.payload?.feedbacks.metadata?.total_items || 0;
 
   const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(Number(value));
@@ -85,7 +85,7 @@ export default function TableUserFeedback() {
 
   // Filter logic
   const filteredUsers =
-    data?.payload?.items?.filter((item) => {
+    data?.payload?.feedbacks.items?.filter((item) => {
       const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
 
       const matchesSearch =

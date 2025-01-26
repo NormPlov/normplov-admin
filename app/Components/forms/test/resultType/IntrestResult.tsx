@@ -166,14 +166,14 @@ type InterestsResponse = {
 //         {dimensionDescriptions.map((item, index) => {
 //           const imageUrl = item.image_url
 //             ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${item.image_url}`
-//             : "/assets/placeholder.jpg";
+//             : "/assets/placeholder.png";
 
 //           return (
 //             <QuizInterestResultCard
 //               key={index}
 //               title={item.dimension_name}
 //               desc={item.description}
-//               image={imageUrl || "/assets/placeholder.jpg"}
+//               image={imageUrl || "/assets/placeholder.png"}
 //             />
 //           );
 //         })}
@@ -321,14 +321,14 @@ export const InterestResultComponent = () => {
         {dimensionDescriptions.map((item: { image_url: string; dimension_name: string; description: string; }, index: React.Key | null | undefined) => {
           const imageUrl = item.image_url
             ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${item.image_url}`
-            : "/assets/placeholder.jpg";
+            : "/assets/placeholder.png";
 
           return (
             <QuizInterestResultCard
               key={index}
               title={item.dimension_name}
               desc={item.description}
-              image={imageUrl || "/assets/placeholder.jpg"}
+              image={imageUrl || "/assets/placeholder.png"}
             />
           );
         })}

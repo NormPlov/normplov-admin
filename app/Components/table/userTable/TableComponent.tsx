@@ -397,7 +397,7 @@ export default function UserTable() {
         message={`Are you sure you want to ${selectedUser.is_blocked ? "unblock" : "block"} this user?`}
         onConfirm={handleConfirmBlock}
         onCancel={()=> setConfirmModalOpen(false)}
-        confirmText="Delete"
+        confirmText="Block"
         cancelText="Cancel"
           // onConfirm={handleConfirmBlock}
           // onCancel={() => setConfirmModalOpen(false)}

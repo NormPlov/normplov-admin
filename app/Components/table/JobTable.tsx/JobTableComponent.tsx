@@ -203,7 +203,7 @@ export default function JobListTableComponent() {
                               ? job.logo.startsWith("http") // Check if the URL starts with 'http' or 'https'
                                 ? job.logo // Use the original full URL
                                 : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend base URL if 'http' is missing
-                              : "/assets/placeholder.jpg" // Fallback to placeholder if no logo
+                              : "/assets/placeholder.png" // Fallback to placeholder if no logo
                           }
                           alt={job.title || "Job Logo"}
                           className="object-cover rounded-md w-full h-full"

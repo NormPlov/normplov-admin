@@ -234,8 +234,11 @@ export type Feedback = {
 
 export type FeedbackResponse = {
   payload: {
-    items: Feedback[];
+    feedbacks: {
+      items: Feedback[];
     metadata: Metadata;
+    }
+    
   };
 };
 
@@ -394,19 +397,24 @@ export type GetAllJobType = {
   uuid: string;
   title: string;
   company_name: string;
-  logo: string | null;
-  location: string | null;
-  job_type: string | null;
-  description: string | null;
-  requirements: string[] | null;
-  responsibilities: string[] | null;
+  logo: string;
+  location: string;
+  job_type: string;
+  posted_at: string;
+  schedule: string | null;
+  salary: string;
+  is_scraped: boolean;
+  description: string;
+  requirements: string[];
+  responsibilities: string[];
+  benefits: string[];
   facebook_url: string | null;
-  email: string | null;
-  phone: string | null;
-  website: string | null;
-  created_at: string | null;
-  closing_date: string | null;
-  category: string | null;
+  email: string;
+  phone: string[];
+  website: string;
+  created_at: string;
+  closing_date: string;
+  category: string;
 };
 
 //       post job type
@@ -456,7 +464,7 @@ export type PostJob = {
 export type UpdateJob = {
   company: string;
   title: string;
-  category: string[]; // Ensure it's defined as an array of strings
+  category: string; // Ensure it's defined as an array of strings
   job_type: string;
   salary: string;
   closing_date: string;
@@ -464,7 +472,7 @@ export type UpdateJob = {
   responsibilities: string[]; // Should be an array of strings
   requirements: string[];
   email: string;
-  phone: string;
+  phone: string[];
   website: string;
   logo: string | File;
   location: string;

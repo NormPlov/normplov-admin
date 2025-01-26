@@ -82,7 +82,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
                 ? job.logo.startsWith("http")
                   ? job.logo
                   : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`
-                : "/assets/placeholder.jpg"
+                : "/assets/placeholder.png"
 
             }
             alt={job.title || "Job Logo"}

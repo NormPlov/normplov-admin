@@ -14,6 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { ImageUploadArea } from "../image/image-upload-area";
 import { CreateUniversityType } from "@/types/types";
+import Image from "next/image";
+import { Upload } from "lucide-react";
 
 
 const SchoolSchema = Yup.object().shape({
@@ -50,9 +52,9 @@ export default function SchoolForm() {
       return response.payload.file_url;
     } catch (error) {
       console.error("Failed to upload image:", error);
-      toast.error("Failed to upload image.",{
+      toast.error("Failed to upload image.", {
         hideProgressBar: true
-    });
+      });
       return null;
     }
   };
@@ -75,20 +77,31 @@ export default function SchoolForm() {
 
       // Send the data to the API
       await createUniversity({ newUniversity: schoolData }).unwrap();
-      toast.success("School created successfully!",{
+      toast.success("School created successfully!", {
         hideProgressBar: true
-    });
+      });
       router.replace("/majors-universities");
     } catch (error) {
       console.error("Failed to create school:", error);
-      toast.error("Failed to create school. Please try again.",{
+      toast.error("Failed to create school. Please try again.", {
         hideProgressBar: true
-    });
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    setFieldValue: (field: string, value: any) => void,
+    fieldName: string
+  ) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setFieldValue(fieldName, file); // Update Formik field
+    }
+  };
   const initialValues = {
     kh_name: "",
     en_name: "",
@@ -135,22 +148,69 @@ export default function SchoolForm() {
         {({ isSubmitting, setFieldValue, values }) => (
           <Form className="space-y-6">
             <ToastContainer />
+             {/* Cover Image Upload */}
             <div className="space-y-6 mb-6">
-              <ImageUploadArea
-                image={values.cover_image || "assets/placeholder.jpg"}
-                onImageUpload={(file) => setFieldValue("cover_image", file)}
-                label="Cover Image"
-                className="bg-gray-200 flex flex-col items-center justify-center w-full h-[260px] rounded-lg overflow-hidden"
-              />
+              <div
+                className="relative border-dashed border-2 bg-gray-100 w-full h-64 rounded-lg overflow-hidden flex items-center justify-center"
+                onDrop={(e) => handleDrop(e, setFieldValue, "cover_image")}
+                onDragOver={(e) => e.preventDefault()}
+              >
+                {values.cover_image ? (
+                  <Image
+                    src={
+                      values.cover_image instanceof File
+                        ? URL.createObjectURL(values.cover_image)
+                        : values.cover_image
+                    }
+                    alt="Cover Image"
+                    className="object-cover w-full h-full"
+                    width={400}
+                    height={300}
+                  />
+                ) : (
+                  <Button className="text-white bg-primary border boder-md">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload</Button>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={(e) => setFieldValue("cover_image", e.target.files?.[0])}
+                />
+              </div>
+              <ErrorMessage name="cover_image" component="div" className="text-red-500 text-sm" />
             </div>
             <div className="flex gap-4 w-full">
-              <ImageUploadArea
-                image={values.logo || "assets/placeholder.jpg"}
-                onImageUpload={(file) => setFieldValue("logo", file)}
-                label="Logo"
-                className="bg-gray-200 h-[230px] min-w-[250px] flex flex-col items-center justify-center rounded-lg overflow-hidden"
-                imageClassName="object-contain"
-              />
+              {/* Logo Upload */}
+              <div
+                className="relative border-dashed border-2 bg-gray-100 w-96 h-64 rounded-lg overflow-hidden flex items-center justify-center"
+                onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
+                onDragOver={(e) => e.preventDefault()}
+              >
+                {values.logo ? (
+                  <Image
+                    src={
+                      values.logo instanceof File ? URL.createObjectURL(values.logo) : values.logo
+                    }
+                    alt="Logo"
+                    className="object-cover w-full h-full"
+                    width={200}
+                    height={200}
+                  />
+                ) : (
+                  <Button className="text-white bg-primary border boder-md">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload</Button>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={(e) => setFieldValue("logo", e.target.files?.[0])}
+                />
+              </div>
+              <ErrorMessage name="logo" component="div" className="text-red-500 text-sm" />
               <div className="w-full flex flex-col gap-4">
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
@@ -160,59 +220,59 @@ export default function SchoolForm() {
                   </div>
                   <div className="w-full">
                     <Label htmlFor="en_name">English Name</Label>
-                    <Field as={Input} id="en_name" name="en_name" type="text" placeholder="Enter English name"/>
+                    <Field as={Input} id="en_name" name="en_name" type="text" placeholder="Enter English name" />
                     <ErrorMessage name="en_name" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
                     <Label htmlFor="phone">Phone</Label>
-                    <Field as={Input} id="phone" name="phone" type="text" placeholder="Enter phone number"/>
+                    <Field as={Input} id="phone" name="phone" type="text" placeholder="Enter phone number" />
                     <ErrorMessage name="phone" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="w-full">
                     <Label htmlFor="email">Email</Label>
-                    <Field as={Input} id="email" name="email" type="email" placeholder="Enter email"/>
+                    <Field as={Input} id="email" name="email" type="email" placeholder="Enter email" />
                     <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
                   <div className="w-full">
                     <Label htmlFor="website">Website</Label>
-                    <Field as={Input} id="website" name="website" type="url" placeholder="Enter website url"/>
+                    <Field as={Input} id="website" name="website" type="url" placeholder="Enter website url" />
                     <ErrorMessage name="website" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="w-full">
-  <Label htmlFor="school_type">School Type</Label>
-  
-  <Field name="school_type">
-    {({ field, form }: FieldProps) => (
-      <Select
-        // Make sure the "value" is from the correct field
-        value={field.value}
-        // Update Formik state on change
-        onValueChange={(val) => {
-          // Only update if there's an actual change
-          if (val !== field.value) {
-            form.setFieldValue(field.name, val);
-          }
-        }}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder={field.value || "Select School Type"} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="PUBLIC">Public School</SelectItem>
-          <SelectItem value="PRIVATE">Private School</SelectItem>
-          <SelectItem value="TVET">TVET</SelectItem>
-        </SelectContent>
-      </Select>
-    )}
-  </Field>
-  
-  {/* Match the same name in ErrorMessage */}
-  <ErrorMessage name="school_type" component="div" className="text-red-500 text-sm" />
-</div>
+                    <Label htmlFor="school_type">School Type</Label>
+
+                    <Field name="school_type">
+                      {({ field, form }: FieldProps) => (
+                        <Select
+                          // Make sure the "value" is from the correct field
+                          value={field.value}
+                          // Update Formik state on change
+                          onValueChange={(val) => {
+                            // Only update if there's an actual change
+                            if (val !== field.value) {
+                              form.setFieldValue(field.name, val);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder={field.value || "Select School Type"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="PUBLIC">Public School</SelectItem>
+                            <SelectItem value="PRIVATE">Private School</SelectItem>
+                            <SelectItem value="TVET">TVET</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </Field>
+
+                    {/* Match the same name in ErrorMessage */}
+                    <ErrorMessage name="school_type" component="div" className="text-red-500 text-sm" />
+                  </div>
 
                 </div>
                 <div className="flex gap-4 w-full justify-between items-center ">
@@ -303,34 +363,32 @@ export default function SchoolForm() {
             <div className="flex gap-4 w-full">
               <div className="w-full">
                 <Label htmlFor="vision">Vision</Label>
-                <Field as={Textarea} id="vision" name="vision" placeholder="Enter vision"/>
+                <Field as={Textarea} id="vision" name="vision" placeholder="Enter vision" />
                 <ErrorMessage name="vision" component="div" className="text-red-500 text-sm h-8" />
               </div>
               <div className="w-full">
                 <Label htmlFor="mission">Mission</Label>
-                <Field as={Textarea} id="mission" name="mission" placeholder="Enter mission"/>
+                <Field as={Textarea} id="mission" name="mission" placeholder="Enter mission" />
                 <ErrorMessage name="mission" component="div" className="text-red-500 text-sm" />
               </div>
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Field as={Textarea} id="description" name="description" placeholder="Enter description"/>
+              <Field as={Textarea} id="description" name="description" placeholder="Enter description" />
               <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
             </div>
             <div className="flex justify-end space-x-4">
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting || isLoading} className="bg-primary">
+              
+              <Button type="submit" disabled={isSubmitting || isLoading} className="bg-primary hover:bg-green-700">
                 {isSubmitting || isLoading ? "Submitting..." : "Create"}
               </Button>
             </div>
-            <div className="mt-8 p-4 bg-gray-100 rounded">
+            {/* <div className="mt-8 p-4 bg-gray-100 rounded">
               <h3 className="text-lg font-semibold mb-2">
                 Form Values (Debug):
               </h3>
               <pre>{JSON.stringify(values, null, 2)}</pre>
-            </div>
+            </div> */}
           </Form>
         )}
       </Formik>

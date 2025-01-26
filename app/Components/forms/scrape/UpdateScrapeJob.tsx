@@ -266,7 +266,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     };
 
     const handleImageError = () => {
-        setSelectedImage("/assets/placeholder.jpg"); // Fallback to placeholder image
+        setSelectedImage("/assets/placeholder.png"); // Fallback to placeholder image
     };
 
     return (
@@ -326,7 +326,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                         ? job.logo
                                         : job.logo
                                             ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
-                                            : "/assets/placeholder.jpg") // Fallback to placeholder image
+                                            : "/assets/placeholder.png") // Fallback to placeholder image
                                 }
                                 alt={job.title || "Job Logo"}
                                 className="object-contain rounded-md w-full h-full"

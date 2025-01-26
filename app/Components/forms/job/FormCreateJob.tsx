@@ -250,7 +250,7 @@
 //           >
 //             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
 //               <Image
-//                 src={selectedImage || '/assets/placeholder.jpg'}
+//                 src={selectedImage || '/assets/placeholder.png'}
 //                 alt="Logo preview"
 //                 width={1000}
 //                 height={1000}
@@ -792,7 +792,7 @@ const AddJobForm = () => {
           >
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
               <Image
-                src={selectedImage || '/assets/placeholder.jpg'}
+                src={selectedImage || '/assets/placeholder.png'}
                 alt="Logo preview"
                 width={1000}
                 height={1000}
