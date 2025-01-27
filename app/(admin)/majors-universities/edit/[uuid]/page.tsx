@@ -537,12 +537,12 @@ export default function EditUniversityPage({
             {/* {submissionError && (
               <div className="text-red-500 mt-4">{submissionError}</div>
             )}*/}
-            <div className="mt-8 p-4 bg-gray-100 rounded">
+            {/* <div className="mt-8 p-4 bg-gray-100 rounded">
               <h3 className="text-lg font-semibold mb-2">
                 Form Values (Debug):
               </h3>
               <pre>{JSON.stringify(values, null, 2)}</pre>
-            </div>
+            </div> */}
           </Form>
         )}
       </Formik>
