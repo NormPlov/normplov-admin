@@ -315,7 +315,7 @@ const UniversityPage = () => {
         <div className="container mx-auto px-4 py-8">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
                 <ToastContainer />
-                {university?.cover_image ? (
+                {/* {university?.cover_image ? (
               <Image
                 width={1000}
                 height={1000}
@@ -331,7 +331,7 @@ const UniversityPage = () => {
               <div className="h-64 bg-gray-200 flex items-center justify-center">
                 <p className="text-gray-500">No cover image available</p>
               </div>
-            )}
+            )} */}
 
                 <div className="p-6 flex flex-col md:flex-row gap-8 items-center">
                     <Avatar className="w-64 h-64">
