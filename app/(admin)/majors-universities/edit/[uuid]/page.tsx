@@ -248,11 +248,11 @@ export default function EditUniversityPage({
                     >
                       <Image
                         src={
-                          (university.logo_url && university.logo_url.startsWith("http")
-                            ? university.logo_url
-                            : university.logo_url
-                              ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
-                              : "/assets/placeholder.jpg") // Fallback to placeholder image
+                          // (university.logo_url && university.logo_url.startsWith("http")
+                          //   ? university.logo_url
+                          //   : university.logo_url
+                           `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
+                              || "/assets/placeholder.jpg" // Fallback to placeholder image
 
                         }
                         alt="University Logo"
