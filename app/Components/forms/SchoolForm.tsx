@@ -165,7 +165,7 @@ export default function SchoolForm() {
              {/* Cover Image Upload */}
             <div className="space-y-6 mb-6">
               <div
-                className="relative border-dashed border-2 bg-gray-100 w-full h-64 rounded-lg overflow-hidden flex items-center justify-center"
+                className="relative border-dashed border-2 bg-gray-100 w-full h-72 rounded-lg overflow-hidden flex items-center justify-center"
                 onDrop={(e) => handleDrop(e, setFieldValue, "cover_image")}
                 onDragOver={(e) => e.preventDefault()}
               >
@@ -198,7 +198,7 @@ export default function SchoolForm() {
             <div className="flex gap-4 w-full">
               {/* Logo Upload */}
               <div
-                className="relative border-dashed border-2 bg-gray-100 w-96 h-64 rounded-lg overflow-hidden flex items-center justify-center"
+                className="relative border-dashed border-2 bg-gray-100 w-96 h-80 rounded-lg overflow-hidden flex items-center justify-center"
                 onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
                 onDragOver={(e) => e.preventDefault()}
               >
