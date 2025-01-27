@@ -55,6 +55,7 @@ export function UniversityListing() {
     page: currentPage,
     size: itemsPerPage,
   });
+  
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">

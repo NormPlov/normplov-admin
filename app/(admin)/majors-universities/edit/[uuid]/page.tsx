@@ -70,21 +70,21 @@ export default function EditUniversityPage({
     });
   }
 
-  if (isLoading ) {
+  if (isLoading) {
     return (
-        <div className="flex flex-col space-y-3 mx-10">
-            <div className="space-y-4 flex justify-between mt-8">
-                <Skeleton className="h-8 w-96 animate-pulse" />
-                <Skeleton className="h-8 w-28 animate-pulse" />
-            </div>
-            <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
-            <div className="space-y-2">
-                <Skeleton className="h-8 w-full animate-pulse" />
-                <Skeleton className="h-8 w-full animate-pulse" />
-            </div>
+      <div className="flex flex-col space-y-3 mx-10">
+        <div className="space-y-4 flex justify-between mt-8">
+          <Skeleton className="h-8 w-96 animate-pulse" />
+          <Skeleton className="h-8 w-28 animate-pulse" />
         </div>
+        <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-full animate-pulse" />
+          <Skeleton className="h-8 w-full animate-pulse" />
+        </div>
+      </div>
     );
-}
+  }
 
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
@@ -219,8 +219,14 @@ export default function EditUniversityPage({
                         // (university.cover_image && university.cover_image.startsWith("http")
                         //   ? university.cover_image
                         //   : university.cover_image
-                           `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
-                            ||  "/assets/placeholder.jpg"
+                        // `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
+                        // || "/assets/placeholder.jpg"
+                        !university
+                                    ?.cover_image
+                                    ? "/assets/placeholder.png"
+                                    : university.cover_image.startsWith("http")
+                                        ? university.cover_image
+                                        : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
                       }
                       alt="Cover Image"
                       className="object-cover w-full h-full"
@@ -255,8 +261,15 @@ export default function EditUniversityPage({
                           // (university.logo_url && university.logo_url.startsWith("http")
                           //   ? university.logo_url
                           //   : university.logo_url
-                           `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
-                              || "/assets/placeholder.jpg" // Fallback to placeholder image
+                          //  `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
+                          //     || "/assets/placeholder.jpg" // Fallback to placeholder image
+
+                          !university
+                            ?.logo_url
+                            ? "/assets/placeholder.png"
+                            : university.logo_url.startsWith("http")
+                              ? university.logo_url
+                              : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
 
                         }
                         alt="University Logo"

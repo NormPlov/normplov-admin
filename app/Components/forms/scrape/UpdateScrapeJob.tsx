@@ -322,10 +322,10 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             <Image
                                 src={
                                     selectedImage || // Use the selected image if available
-                                    (job.logo && job.logo.startsWith("http") // Check if job.logo exists and starts with "http"
+                                    (job.logo && job.logo.startsWith("https") 
                                         ? job.logo
                                         : job.logo
-                                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
+                                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` 
                                             : "/assets/placeholder.png") // Fallback to placeholder image
                                 }
                                 alt={job.title || "Job Logo"}
