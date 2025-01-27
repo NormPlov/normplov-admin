@@ -254,10 +254,10 @@ export default function EditUniversityPage({
                 </div>
                 <div className="flex space-x-4">
                   <div>
-                    <Label htmlFor="logo_Url" className="block text-md font-normal py-2 text-primary">Logo</Label>
+                    <Label htmlFor="logo_url" className="block text-md font-normal py-2 text-primary">Logo</Label>
                     {/* <Field name="logo" > */}
                     <div
-                      className="relative border-dashed border-2 bg-gray-100 w-96 h-80 rounded-lg overflow-hidden flex items-center justify-center"
+                      className="relative border-dashed border-2 bg-gray-100 w-96 h-80 px-4 rounded-lg overflow-hidden flex items-center justify-center"
                       onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
                       onDragOver={(e) => e.preventDefault()}
                     >
@@ -291,8 +291,6 @@ export default function EditUniversityPage({
                           <span className="text-gray-400 text-md font-medium">Upload Image</span>
                         </div>
                       </div>
-
-
                       <input
                         type="file"
                         accept="image/*"
@@ -300,7 +298,7 @@ export default function EditUniversityPage({
                         onChange={(e) => setFieldValue("logo", e.target.files?.[0])}
                       />
                     </div>
-                    <ErrorMessage name="logo" component="div" className="text-red-500 text-sm" />
+                    <ErrorMessage name="logo_url" component="div" className="text-red-500 text-sm" />
 
                     {/* </Field> */}
                   </div>
@@ -395,6 +393,7 @@ export default function EditUniversityPage({
                                 <SelectItem value="PUBLIC">Public School</SelectItem>
                                 <SelectItem value="PRIVATE">Private School</SelectItem>
                                 <SelectItem value="TVET">TVET</SelectItem>
+                                <SelectItem value="MAJORS_COURSES">MAJORS_COURSES</SelectItem>
                               </SelectContent>
                             </Select>
                           )}
