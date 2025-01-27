@@ -130,7 +130,6 @@ export default function EditUniversityPage({
     }
   };
 
-  // const initialValues = {}
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6 text-secondary">Edit University</h1>
@@ -211,21 +210,23 @@ export default function EditUniversityPage({
                     onDrop={(e) => handleDrop(e, setFieldValue, "cover_image")}
                     onDragOver={(e) => e.preventDefault()}
                   >
-                    {values.cover_image ? (
-                      <Image
-                        src={
-                         "/assets/placeholder.png"
-                        }
-                        alt="Cover Image"
-                        className="object-cover w-full h-full"
-                        width={400}
-                        height={300}
-                      />
-                    ) : (
-                      <Button className="text-white bg-primary border boder-md">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload</Button>
-                    )}
+                    <Image
+                      src={
+                        (university.cover_image && university.cover_image.startsWith("http")
+                          ? university.cover_image
+                          : university.cover_image
+                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
+                            : "/assets/placeholder.jpg")
+                      }
+                      alt="Cover Image"
+                      className="object-cover w-full h-full"
+                      width={1000}
+                      height={1000}
+                    />
+                    <Button className="text-white bg-primary border boder-md">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload</Button>
+
                     <input
                       type="file"
                       accept="image/*"
@@ -234,7 +235,7 @@ export default function EditUniversityPage({
                     />
                   </div>
                   <ErrorMessage name="cover_image" component="div" className="text-red-500 text-sm" />
-        
+
                 </div>
                 <div className="flex space-x-4">
                   <div>
@@ -245,25 +246,25 @@ export default function EditUniversityPage({
                       onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
                       onDragOver={(e) => e.preventDefault()}
                     >
-                      {/* {values.logo_url ? ( */}
-                        <Image
+                      <Image
                         src={
-                          university?.logo_url
-                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
-                            : "/assets/placeholder.png"
+                          (university.logo_url && university.logo_url.startsWith("http")
+                            ? university.logo_url
+                            : university.logo_url
+                              ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
+                              : "/assets/placeholder.jpg") // Fallback to placeholder image
+
                         }
                         alt="University Logo"
                         width={1000}
                         height={1000}
                         className="object-cover"
                       />
-                      
-                      
-                      {/* ) : ( */}
-                        <Button className="text-white bg-primary border boder-md">
-                          <Upload className="mr-2 h-4 w-4" />
-                          Upload</Button>
-                      {/* )} */}
+
+                      <Button className="text-white bg-primary border boder-md">
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload</Button>
+
                       <input
                         type="file"
                         accept="image/*"
@@ -526,15 +527,15 @@ export default function EditUniversityPage({
                 </Button>
               </div>
             </div>
-              {/* {submissionError && (
+            {/* {submissionError && (
               <div className="text-red-500 mt-4">{submissionError}</div>
             )}*/}
-              <div className="mt-8 p-4 bg-gray-100 rounded">
-                <h3 className="text-lg font-semibold mb-2">
-                  Form Values (Debug):
-                </h3>
-                <pre>{JSON.stringify(values, null, 2)}</pre>
-              </div>
+            <div className="mt-8 p-4 bg-gray-100 rounded">
+              <h3 className="text-lg font-semibold mb-2">
+                Form Values (Debug):
+              </h3>
+              <pre>{JSON.stringify(values, null, 2)}</pre>
+            </div>
           </Form>
         )}
       </Formik>
