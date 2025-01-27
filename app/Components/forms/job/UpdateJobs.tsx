@@ -91,7 +91,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     <Skeleton className="h-8 w-96 animate-pulse" />
                     <Skeleton className="h-8 w-28 animate-pulse" />
                 </div>
-                <Skeleton className="h-[200px] w-full rounded-xl animate-pulse" />
+                <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
                 <div className="space-y-2">
                     <Skeleton className="h-8 w-full animate-pulse" />
                     <Skeleton className="h-8 w-full animate-pulse" />

@@ -27,6 +27,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React from "react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 // import ReactQuill from 'react-quill';
 // import 'react-quill/dist/quill.snow.css';
 
@@ -72,16 +73,22 @@ export default function EditUniversityPage({
     });
   }
 
-  if (isLoading) {
+  if (isLoading ) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="mr-2 h-16 w-16 animate-spin" />
-        <span className="text-xl font-semibold">
-          Loading university data...
-        </span>
-      </div>
+        <div className="flex flex-col space-y-3 mx-10">
+            <div className="space-y-4 flex justify-between mt-8">
+                <Skeleton className="h-8 w-96 animate-pulse" />
+                <Skeleton className="h-8 w-28 animate-pulse" />
+            </div>
+            <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
+            <div className="space-y-2">
+                <Skeleton className="h-8 w-full animate-pulse" />
+                <Skeleton className="h-8 w-full animate-pulse" />
+            </div>
+        </div>
     );
-  }
+}
+
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
     setFieldValue: (field: string, value) => void,

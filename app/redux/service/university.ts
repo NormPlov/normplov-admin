@@ -9,7 +9,7 @@ export const universityApi = normPlovApi.injectEndpoints({
       { page: number; size: number; search?: string; type?: string }
     >({
       query: ({ page, size, search, type }) => ({
-        url: `api/v1/schools`,
+        url: `api/v1/schools?page=${page}&page_size=${size}`,
         method: "GET",
         params: { page, size, search, type },
       }),

@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { CreateUniversityType } from "@/types/types";
 import Image from "next/image";
 import { Upload } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 const SchoolSchema = Yup.object().shape({
@@ -43,8 +44,20 @@ export default function SchoolForm() {
   const router = useRouter();
 
   if (isLoading || isUploading) {
-    return <div>Loading...</div>
-  }
+    return (
+        <div className="flex flex-col space-y-3 mx-10">
+            <div className="space-y-4 flex justify-between mt-8">
+                <Skeleton className="h-8 w-96 animate-pulse" />
+                <Skeleton className="h-8 w-28 animate-pulse" />
+            </div>
+            <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
+            <div className="space-y-2">
+                <Skeleton className="h-8 w-full animate-pulse" />
+                <Skeleton className="h-8 w-full animate-pulse" />
+            </div>
+        </div>
+    );
+}
   const handleUploadImage = async (file: File | null | string): Promise<string | null> => {
     if (!file || typeof file === "string") return file as string; // Return if already a string (URL)
     try {

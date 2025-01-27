@@ -36,40 +36,71 @@ import { useDeleteUniversityMutation } from "../redux/service/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export function UniversityListing() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [searchQuery] = useState("");
-  // const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
-  // const [schoolType] = useState<string | undefined>();
+  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const router = useRouter()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [universityToDelete, setUniversityToDelete] = useState<School | null>(null)
 
   const [deleteUniversity] = useDeleteUniversityMutation()
 
-  const { data } = useUniversityQuery({
+  const { data , isLoading} = useUniversityQuery({
     page: currentPage,
-    size: pageSize,
+    size: itemsPerPage,
   });
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-6">
+        {/* <Skeleton className="h-10 w-56 rounded-lg mx-10 mt-8" />  */}
+        <div className="flex justify-between items-center mt-8">
+          <Skeleton className="h-10 w-44 rounded-lg mx-10 mt-8" />
+          <Skeleton className="h-10 w-64 rounded-lg mr-10" />
+        </div>
+        {/* Table Section */}
+        <div className="space-y-2 mx-10 bg-gray-100 rounded-md p-4">
+          {/* Table Header */}
+          <div className="grid grid-cols-5 py-2 ">
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+          </div>
 
-  const totalItems = data?.payload?.metadata?.page_size || 0;
-  const totalPages = Math.ceil(totalItems / pageSize);
+          {/* Table Rows */}
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+          <div className="grid grid-cols-5 items-center py-4 border-b ">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <Skeleton className="h-8 w-[900px] rounded-md" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+// Pagination metadata
+
+const totalPages = data?.payload?.metadata?.total_pages || 0;
+const totalItems = data?.payload?.metadata?.total_items || 0;
+
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
   };
 
-  const handlePageSizeChange = (value: string) => {
-    const newSize = Number(value);
-    setPageSize(newSize);
-    setCurrentPage(1);
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const filteredUniversities: School[] = data?.payload?.schools?.filter((school: School) => {
@@ -113,7 +144,7 @@ export function UniversityListing() {
   return (
     <main className="p-4">
       <div className="flex items-center justify-between mb-6">
-        <ToastContainer/>
+        <ToastContainer />
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
           <div className="relative w-[370px]">
@@ -193,9 +224,9 @@ export function UniversityListing() {
                     onEdit={() => router.push(`/majors-universities/edit/${school?.uuid}`)}
                     onDelete={() => {
                       if (school?.is_recommended) {
-                        toast.error("This school is recommended and cannot be deleted!",{
+                        toast.error("This school is recommended and cannot be deleted!", {
                           hideProgressBar: true
-                      });
+                        });
                       } else {
                         handleDeleteClick(school);
                       }
@@ -209,62 +240,77 @@ export function UniversityListing() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
-          <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={`${pageSize}`} />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {ITEMS_PER_PAGE_OPTIONS.map((size) => (
-                <SelectItem key={size} value={`${size}`}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Pagination Section */}
+      <div className="flex justify-between items-center mt-4">
+        {/* Showing data */}
+        <div className="text-sm font-medium text-gray-500">
+          Showing data{" "}
+          {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+          {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+          entries
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {currentPage} of {totalPages}
+
+        <div className="flex gap-4">
+          {/* Rows Per Page */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-900">
+              Rows per page:
+            </span>
+            <Select
+              value={`${itemsPerPage}`}
+              onValueChange={handleItemsPerPageChange}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={itemsPerPage} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {ITEMS_PER_PAGE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={`${size}`}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => handlePageChange(1)}
-            disabled={currentPage === 1}
-            aria-label="Go to first page"
-          >
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            aria-label="Go to previous page"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            aria-label="Go to next page"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => handlePageChange(totalPages)}
-            disabled={currentPage === totalPages}
-            aria-label="Go to last page"
-          >
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="secondary"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage <= 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={handlePreviousPage}
+              disabled={currentPage <= 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <span className="text-sm font-medium text-gray-900">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <Button
+              variant="secondary"
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage >= totalPages}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
       {isDeleteModalOpen && (
