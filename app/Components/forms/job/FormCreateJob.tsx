@@ -593,11 +593,13 @@ import { useGetJobCategoryQuery, usePostJobMutation } from '@/app/redux/service/
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {  PostJob } from '@/types/types';
+import {  PostJob, UploadImageResponse } from '@/types/types';
 import { PostedDate } from '../../calendar/Component';
 import { ClosingDate } from '../../calendar/ClosingDate';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ChevronDown } from 'lucide-react';
+import { useUploadImageMutation } from '@/app/redux/service/media';
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
@@ -643,7 +645,7 @@ const initialValues = {
   responsibilities: [],
   requirements: [],
   email: '',
-  phone: '',
+  phone: [],
   location: '',
   logo: null,
   posted_at: new Date().toISOString(),
@@ -658,11 +660,15 @@ const FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
 
 const AddJobForm = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const router = useRouter();
   const [postJob] = usePostJobMutation();
   const { data: jobCategory } = useGetJobCategoryQuery()
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // upload image 
+  const [uploadImage] = useUploadImageMutation()
 
 //  const handleDrop = (
 //         e: React.DragEvent<HTMLDivElement>,
@@ -703,64 +709,165 @@ const handleDrop = (
 };
 
 
-  console.log("Before function call")
 
-  const handleSubmit = async (values: typeof initialValues, { resetForm }: { resetForm: () => void }) => {
-    console.log('Form Values on Submit:', values);
+  console.log("Before function call");
+
+  const handleUploadImage = async (file: File) => {
+    console.log("data file", file);
     try {
-      // Ensure logo is a valid File object
-      if (!(values.logo instanceof File)) {
-        console.log('Logo must be a valid file.');
-        return;
+      const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
+      console.log("res", res);
+      console.log("url:", res.payload.file_url);
+      toast.success("Upload Logo successfully!",{
+        hideProgressBar: true
+    });
+      return res.payload.file_url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload the image. Please try again.",{
+        hideProgressBar: true
+    });
+      return null;
+    }
+  };
+  const handleSubmit = async (values: PostJob) => {
+    try {
+      // Process form values
+      const processedValues = {
+        ...values,
+        description: values.description
+        ? Array.isArray(values.description)
+          ? values.description
+          : [values.description] // Convert string to array
+        : [],
+      responsibilities: values.responsibilities
+        ? Array.isArray(values.responsibilities)
+          ? values.responsibilities
+          : [values.responsibilities]
+        : [],
+      requirements: values.requirements
+        ? Array.isArray(values.requirements)
+          ? values.requirements
+          : [values.requirements]
+        : [],
+      benefits: values.benefits
+        ? Array.isArray(values.benefits)
+          ? values.benefits
+          : [values.benefits]
+        : [],
+        phone: Array.isArray(values.phone)
+          ? values.phone
+          : values.phone.split(",").map((item) => item.trim()),
+        logo: values.logo,
+      };
+  
+      // Handle logo upload
+      let logoUrl = processedValues.logo;
+      if (processedValues.logo instanceof File) {
+        const uploadedLogoUrl = await handleUploadImage(processedValues.logo);
+        if (uploadedLogoUrl) {
+          logoUrl = uploadedLogoUrl;
+        } else {
+          toast.error("Failed to upload logo. Please try again.",{
+            hideProgressBar: true
+        });
+          return;
+        }
       }
-
-      // Prepare job data according to UpdateJob type
+  
+      // Prepare final job data
       const jobData: PostJob = {
+        ...processedValues,
+        logo: logoUrl,
+        posted_at: values.posted_at
+          ? new Date(values.posted_at).toISOString().split(".")[0]
+          : new Date().toISOString().split(".")[0], // Default to now if not provided
+        closing_date: values.closing_date
+          ? new Date(values.closing_date).toISOString().split(".")[0]
+          : null,
         category: values.category,
         title: values.title,
         company: values.company,
-        logo: values.logo, // Include the valid File object for logo
-        facebook_url: values.facebook_url || '',
+        facebook_url: values.facebook_url,
         location: values.location,
-        posted_at: new Date(values.posted_at).toISOString().split(".")[0], // Ensure ISO format for dates
-        description: values.description || [],
+        description: values.description,
         job_type: values.job_type,
-        schedule: values.schedule || '',
+        schedule: values.schedule,
         salary: values.salary,
-        closing_date: new Date(values.closing_date).toISOString().split(".")[0], // Ensure ISO format for dates
-        requirements: values.requirements,
-        responsibilities: values.responsibilities,
-        benefits: values.benefits,
         email: values.email,
-        phone: values.phone,
-        website: values.website || '',
+        website: values.website,
       };
-
-      postJob({ postJob: jobData })
-        .unwrap()
-        .then(() => {
-          console.log("Job successfully created!");
-        })
-        .catch((error) => {
-          console.error("Error adding job:", error);
-          toast.error("Job creation failed. Please try again.",{
-            hideProgressBar: true
-        });
-        });
-
-      // Success 
-      toast.success("Job created successfully!",{
-        hideProgressBar: true
-    })
-      resetForm(); // Reset the form
-      setSelectedImage(null); // Clear the selected image preview
+  
+      // Post the job data
+      await postJob({ postJob: jobData }).unwrap();
+      toast.success("Job successfully created!");
+  
+      // Clear the selected image preview
+      setSelectedImage(null);
     } catch (error) {
-      console.error('Error adding job:', error);
-      toast.error('Failed to add job. Please try again.',{
-        hideProgressBar: true
-    });
+      console.error("Error submitting job:", error);
+      toast.error("Failed to add job. Please try again.");
     }
   };
+  console.log("Before function call")
+
+  // const handleSubmit = async (values: typeof initialValues, { resetForm }: { resetForm: () => void }) => {
+  //   console.log('Form Values on Submit:', values);
+  //   try {
+  //     // Ensure logo is a valid File object
+  //     if (!(values.logo instanceof File)) {
+  //       console.log('Logo must be a valid file.');
+  //       return;
+  //     }
+
+  //     // Prepare job data according to UpdateJob type
+  //     const jobData: PostJob = {
+  //       category: values.category,
+  //       title: values.title,
+  //       company: values.company,
+  //       logo: values.logo, // Include the valid File object for logo
+  //       facebook_url: values.facebook_url || '',
+  //       location: values.location,
+  //       posted_at: new Date(values.posted_at).toISOString().split(".")[0], // Ensure ISO format for dates
+  //       description: values.description || [],
+  //       job_type: values.job_type,
+  //       schedule: values.schedule || '',
+  //       salary: values.salary,
+  //       closing_date: new Date(values.closing_date).toISOString().split(".")[0], // Ensure ISO format for dates
+  //       requirements: values.requirements,
+  //       responsibilities: values.responsibilities,
+  //       benefits: values.benefits,
+  //       email: values.email,
+  //       phone: values.phone,
+  //       website: values.website || '',
+        
+  //     };
+
+  //     postJob({ postJob: jobData })
+  //       .unwrap()
+  //       .then(() => {
+  //         console.log("Job successfully created!");
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error adding job:", error);
+  //         toast.error("Job creation failed. Please try again.",{
+  //           hideProgressBar: true
+  //       });
+  //       });
+
+  //     // Success 
+  //     toast.success("Job created successfully!",{
+  //       hideProgressBar: true
+  //   })
+  //     resetForm(); // Reset the form
+  //     setSelectedImage(null); // Clear the selected image preview
+  //   } catch (error) {
+  //     console.error('Error adding job:', error);
+  //     toast.error('Failed to add job. Please try again.',{
+  //       hideProgressBar: true
+  //   });
+  //   }
+  // };
 
 
   return (
@@ -843,55 +950,69 @@ const handleDrop = (
           <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
 
           <div className="flex justify-between w-full gap-24">
-            {/* Job Category */}
-            <div className="mb-2.5 w-full">
-              <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
-                Job Category
-              </label>
-              <Field
-                as="div"
-                id="category"
-                name="category"
+                        {/* category */}
+                        <div className="relative mb-4 w-full">
+                            <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
+                                Job Category
+                            </label>
+                            <div className="flex items-center rounded focus-within:ring-primary  block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-5 py-1.5 text-md">
+                                <input
+                                    id="category"
+                                    name="category"
+                                    type="text"
+                                    value={values.category}
+                                    onChange={(e) => setFieldValue('category', e.target.value)}
+                                    placeholder="Type or select a category"
+                                    className="flex-grow outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setDropdownOpen((prev) => !prev)}
+                                    className=" rounded-md "
+                                >
+                                    <ChevronDown className="h-4 w-4 opacity-50" />
+                                </button>
+                            </div>
+                            {dropdownOpen && (
+                                <div
+                                    className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50"
+                                    style={{ zIndex: 50 }}
+                                >
+                                    {jobCategory.payload.categories.map((type) => (
+                                        <div
+                                            key={type}
+                                            onClick={() => {
+                                                setFieldValue('category', type);
+                                                setDropdownOpen(false);
+                                            }}
+                                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                        >
+                                            {type}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
 
-              >
-                <Select
-                  name="category"
-                  onValueChange={(value) => setFieldValue('category', value)} 
-                >
-                  <SelectTrigger id="category" className="w-full">
-                    <SelectValue placeholder="Select Job Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* <SelectGroup> */}
-                    {jobCategory?.payload?.categories?.map((type: string) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                    {/* </SelectGroup> */}
-                  </SelectContent>
-                </Select>
-              </Field>
-              <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
-            </div>
+                            <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
+                        </div>
 
-            {/* Position */}
-            <div className="mb-2.5 w-full">
-              <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
-                Position
-              </label>
-              <Field
-                id="title"
-                name="title"
-                placeholder="Python Developer"
-                type="text"
-                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
-              />
-              <ErrorMessage name="title" component="p" className="text-red-500 text-sm mt-1" />
-            </div>
+                        {/* Position */}
+                        <div className="w-full">
+                            <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
+                                Position
+                            </label>
+                            <Field
+                                id="title"
+                                name="title"
+                                placeholder={'Enter a position'}
+                                type="text"
+                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
+                            />
+                            <ErrorMessage name="title" component="p" className="text-red-500 text-sm mt-1" />
+                        </div>
 
 
-          </div>
+                    </div>
           <div className="flex justify-between w-full gap-24">
             {/* Job Type */}
             <div className="mb-2.5 w-full">
