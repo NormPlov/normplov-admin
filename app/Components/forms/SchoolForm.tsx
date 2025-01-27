@@ -93,6 +93,7 @@ export default function SchoolForm() {
 
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-an
     setFieldValue: (field: string, value: any) => void,
     fieldName: string
   ) => {

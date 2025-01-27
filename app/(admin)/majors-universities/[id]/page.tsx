@@ -188,7 +188,7 @@
 //                     toast.success("Major created successfully");
 //                     setIsModalOpen(false);
 //                 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-an
 //             } catch (error:any) {
 //                 console.error("Failed to create major:", error,{
 //                     hideProgressBar: true
@@ -276,6 +276,7 @@
 //         //     hideProgressBar: true
 //         // });
 //     //             }
+// eslint-disable-next-line @typescript-eslint/no-explicit-an
 //     //         } catch (error : any) {
 //     //             console.error("Failed to delete major:", error);
 //     //             toast.error("Failed to delete major",{
@@ -314,6 +315,7 @@
 //     if (error || !university) {
 //         return (
 //             <div className="flex justify-center items-center h-screen text-red-500">
+// eslint-disable-next-line @typescript-eslint/no-explicit-an
 //                 {(error as any)?.data?.message ||
 //                     "An error occurred while fetching university details."}
 //             </div>
