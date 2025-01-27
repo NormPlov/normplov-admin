@@ -178,20 +178,33 @@ const AddJobForm = () => {
     }
   };
   
-  const handleDrop = (
-    e: React.DragEvent<HTMLDivElement>,
-    setFieldValue: (field: string, value: File | null) => void
-  ): void => {
-    e.preventDefault();
+  // const handleDrop = (
+  //   e: React.DragEvent<HTMLDivElement>,
+  //   setFieldValue: (field: string, value: File | null) => void
+  // ): void => {
+  //   e.preventDefault();
   
-    const file = e.dataTransfer.files[0];
-    if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
-      const previewUrl = URL.createObjectURL(file);
-      setSelectedImage(previewUrl);
-      setFieldValue("logo", file); // Set the File object correctly
-      toast.success("File uploaded successfully.");
-    } else {
-      toast.error("Invalid file. Please upload a valid image file.");
+  //   const file = e.dataTransfer.files[0];
+  //   if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
+  //     const previewUrl = URL.createObjectURL(file);
+  //     setSelectedImage(previewUrl);
+  //     setFieldValue("logo", file); // Set the File object correctly
+  //     toast.success("File uploaded successfully.");
+  //   } else {
+  //     toast.error("Invalid file. Please upload a valid image file.");
+  //   }
+  // };
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, setFieldValue: (field: string, value: File | null) => void) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      const file = e.dataTransfer.files[0];
+      if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
+        const previewUrl = URL.createObjectURL(file);
+        setSelectedImage(previewUrl);
+        setFieldValue('logo', file);
+      } else {
+        toast.error('Invalid file. Please upload a valid image file.', { hideProgressBar: true });
+      }
     }
   };
   
