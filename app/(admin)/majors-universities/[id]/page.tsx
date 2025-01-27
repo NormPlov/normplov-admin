@@ -900,7 +900,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Faculty, Major, SchoolPayload } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast, ToastContainer } from "react-toastify";
-// import Image from "next/image";
+import Image from "next/image";
 
 const UniversityPage = () => {
     const params = useParams();
@@ -1090,14 +1090,20 @@ const UniversityPage = () => {
             <ToastContainer />
             <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
 
-                {/* <Image
-          src={coverImageSrc}
-          alt={`${university.en_name || "University"} Cover`}
-          width={1000}
-          height={500}
-          className="w-full h-auto object-cover"
-          loading="lazy"
-        /> */}
+                <Image
+                    src={
+                        university?.cover_image
+                            ? university.cover_image.startsWith("http")
+                                ? university.cover_image // Full URL case
+                                : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}` // Relative URL case
+                            : "/assets/placeholder.png" // Fallback image
+                    }
+                    alt={`${university.en_name || "University"} Cover`}
+                    width={1000}
+                    height={500}
+                    className="w-full h-auto object-cover"
+                    loading="lazy"
+                />
                 {/* <Avatar className="w-full h-72 overflow-hidden">
     <AvatarImage
         src={
