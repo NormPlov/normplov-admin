@@ -15,12 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import {
   useEditUniversityMutation,
   useUniversityDetailsQuery,
 } from "@/app/redux/service/university";
-// import { ImageUploadArea } from "@/app/Components/image/image-upload-area";
 import { UniversityType, UploadImageResponse } from "@/types/types";
 import { useUploadImageMutation } from "@/app/redux/service/media";
 import { ToastContainer, toast } from "react-toastify";
@@ -60,8 +59,6 @@ export default function EditUniversityPage({
   const [editUniversity, { isLoading: isUpdating }] =
     useEditUniversityMutation();
   const [, setSubmissionError] = useState<string | null>(null);
-  // const [coverImage, setCoverImage] = useState<File | null>(null);
-  // const [logoImage, setLogoImage] = useState<File | null>(null);
   const [uploadImage] = useUploadImageMutation()
 
   const university = data?.payload
@@ -118,7 +115,7 @@ export default function EditUniversityPage({
     cover_image: university.cover_image || null || File,
     logo_url: university.logo_url || null || File,
     location: university.location || "",
-    is_popular: false
+    is_popular: university.is_popular || false,
   }
 
   const handleUploadImage = async (file: File) => {
@@ -203,7 +200,7 @@ export default function EditUniversityPage({
 
 
       >
-        {({ isSubmitting, setFieldValue, values }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form className="space-y-6">
             <ToastContainer position="top-right" autoClose={3000} />
 
@@ -219,18 +216,18 @@ export default function EditUniversityPage({
                   >
                     <Image
                       src={
-                        (university.cover_image && university.cover_image.startsWith("http")
-                          ? university.cover_image
-                          : university.cover_image
-                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
-                            : "/assets/placeholder.jpg")
+                        // (university.cover_image && university.cover_image.startsWith("http")
+                        //   ? university.cover_image
+                        //   : university.cover_image
+                           `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
+                            ||  "/assets/placeholder.jpg"
                       }
                       alt="Cover Image"
                       className="object-cover w-full h-full"
                       width={1000}
                       height={1000}
                     />
-                    <Button className="text-white bg-primary border boder-md">
+                    <Button className="text-white bg-primary border boder-md text-center">
                       <Upload className="mr-2 h-4 w-4" />
                       Upload</Button>
 
@@ -268,7 +265,7 @@ export default function EditUniversityPage({
                         className="object-cover"
                       />
 
-                      <Button className="text-white bg-primary border boder-md">
+                      <Button className="text-white bg-primary border boder-md text-center">
                         <Upload className="mr-2 h-4 w-4" />
                         Upload</Button>
 

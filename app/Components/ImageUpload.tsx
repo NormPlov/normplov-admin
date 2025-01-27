@@ -26,7 +26,6 @@ export function ImageUpload({ onImageUpload, label }: ImageUploadProps) {
     console.log("File", file);
   };
 
-  // console.log
 
   return (
     <div className="space-y-2">

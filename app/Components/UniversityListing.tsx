@@ -109,10 +109,11 @@ const totalItems = data?.payload?.metadata?.total_items || 0;
       .includes(searchQuery.toLowerCase());
 
     const matchFilter =
-      filter === "all" ||
+      filter === "ALL" ||
       (filter === "PRIVATE" && school?.type === "PRIVATE") ||
       (filter === "PUBLIC" && school?.type === "PUBLIC") ||
-      (filter === "TVET" && school?.type === "TVET");
+      (filter === "TVET" && school?.type === "TVET")||
+      (filter === "MAJORS_COURSES" && school?.type === "MAJORS_COURSES");
 
     return matchesSearch && matchFilter;
   }) || [];
