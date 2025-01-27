@@ -464,7 +464,7 @@ export default function EditUniversityPage({
               </div>
               <div className="flex gap-4 w-full justify-between items-center ">
                 <div className="w-9/12">
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location" className="block text-md font-normal py-2 text-primary">Location</Label>
                   <div className="w-full">
                     <Field name="location"
                       placeholder="Enter location"
