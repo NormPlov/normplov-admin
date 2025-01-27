@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload } from "lucide-react";
 import {
   useEditUniversityMutation,
   useUniversityDetailsQuery,
@@ -27,6 +26,7 @@ import "react-toastify/dist/ReactToastify.css";
 import React from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FaUpload } from "react-icons/fa6";
 // import ReactQuill from 'react-quill';
 // import 'react-quill/dist/quill.snow.css';
 
@@ -214,6 +214,7 @@ export default function EditUniversityPage({
                     onDrop={(e) => handleDrop(e, setFieldValue, "cover_image")}
                     onDragOver={(e) => e.preventDefault()}
                   >
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                     <Image
                       src={
                         // (university.cover_image && university.cover_image.startsWith("http")
@@ -222,20 +223,24 @@ export default function EditUniversityPage({
                         // `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
                         // || "/assets/placeholder.jpg"
                         !university
-                                    ?.cover_image
-                                    ? "/assets/placeholder.png"
-                                    : university.cover_image.startsWith("http")
-                                        ? university.cover_image
-                                        : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
+                          ?.cover_image
+                          ? "/assets/placeholder.png"
+                          : university.cover_image.startsWith("http")
+                            ? university.cover_image
+                            : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
                       }
                       alt="Cover Image"
                       className="object-cover w-full h-full"
                       width={1000}
                       height={1000}
                     />
-                    <Button className="text-white bg-primary border boder-md text-center">
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload</Button>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
+                      <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                        <FaUpload className="text-gray-400 text-lg" />
+                        <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                      </div>
+                    </div>
 
                     <input
                       type="file"
@@ -256,6 +261,7 @@ export default function EditUniversityPage({
                       onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
                       onDragOver={(e) => e.preventDefault()}
                     >
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                       <Image
                         src={
                           // (university.logo_url && university.logo_url.startsWith("http")
@@ -277,10 +283,15 @@ export default function EditUniversityPage({
                         height={1000}
                         className="object-cover"
                       />
+                      </div>
 
-                      <Button className="text-white bg-primary border boder-md text-center">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload</Button>
+                      <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
+                        <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                          <FaUpload className="text-gray-400 text-lg" />
+                          <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                        </div>
+                      </div>
+
 
                       <input
                         type="file"
