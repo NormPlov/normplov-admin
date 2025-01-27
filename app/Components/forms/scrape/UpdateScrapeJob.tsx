@@ -118,7 +118,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             setImageFile(file);
             setFieldValue("logo", file);
         } else {
-            toast.error("Invalid file. Please upload a valid image file.");
+            toast.error("Invalid file. Please upload a valid image file.",{
+                hideProgressBar: true
+            });
         }
     };
 
@@ -149,7 +151,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         console.log("data file", file);
         try {
             const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
-            toast.success("Upload Logo successfully!");
+            toast.success("Upload Logo successfully!",{
+                hideProgressBar: true
+            });
 
             // Prepend the API URL to the response URL
             const fullUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API}${res.payload.file_url}`;
@@ -158,7 +162,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             return fullUrl;
         } catch (error) {
             console.log("Error upload image:", error);
-            toast.error("Failed to upload the image. Please try again.");
+            toast.error("Failed to upload the image. Please try again.",{
+                hideProgressBar: true
+            });
             return null;
         }
     };
@@ -177,7 +183,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     logoUrl = uploadedLogoUrl;
                     console.log("url: ", uploadedLogoUrl);
                 } else {
-                    toast.error("Failed to upload logo. Please try again.");
+                    toast.error("Failed to upload logo. Please try again.",{
+                        hideProgressBar: true
+                    });
                     return;
                 }
             }
@@ -240,19 +248,25 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                 .unwrap()
                 .then((response) => {
                     console.log("Job updated successfully:", response);
-                    toast.success("Job updated successfully!");
+                    toast.success("Job updated successfully!",{
+                        hideProgressBar: true
+                    });
 
                 });
-            toast.success("Job updated successfully!");
+            toast.success("Job updated successfully!",{
+                hideProgressBar: true
+            });
             router.push("/scrape");
         } catch (error) {
             console.error("Error updating job:", error);
-            toast.error("Failed to update the job. Please try again.");
+            toast.error("Failed to update the job. Please try again.",{
+                hideProgressBar: true
+            });
         }
     };
 
     const handleImageError = () => {
-        setSelectedImage("/assets/placeholder.jpg"); // Fallback to placeholder image
+        setSelectedImage("/assets/placeholder.png"); // Fallback to placeholder image
     };
 
     return (
@@ -312,7 +326,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                         ? job.logo
                                         : job.logo
                                             ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
-                                            : "/assets/placeholder.jpg") // Fallback to placeholder image
+                                            : "/assets/placeholder.png") // Fallback to placeholder image
                                 }
                                 alt={job.title || "Job Logo"}
                                 className="object-contain rounded-md w-full h-full"

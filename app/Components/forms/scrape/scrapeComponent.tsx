@@ -56,7 +56,9 @@ export default function JobPreviewPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!url) {
-      toast.warning("Please enter a valid URL!");
+      toast.warning("Please enter a valid URL!",{
+        hideProgressBar: true
+      });
       
       return;
     }
@@ -64,11 +66,15 @@ export default function JobPreviewPage() {
     try {
       const result = await scrapeJob({ url }).unwrap();
       console.log("Scraping successful:", result);
-      toast.success("Job scraped successfully!");
+      toast.success("Job scraped successfully!", {
+        hideProgressBar: true,
+      });
       setUrl("")
     } catch (error) {
       console.error("Error scraping job:", error);
-      toast.error("Failed to scrape the job. Please try again.");
+      toast.error("Failed to scrape the job. Please try again.",{
+        hideProgressBar: true
+    });
     }
   };
 
@@ -159,7 +165,9 @@ export default function JobPreviewPage() {
 
   const handleDeleteConfirm = async () => {
     if (!jobToDelete) {
-      toast.error("No job selected to delete.");
+      toast.error("No job selected to delete.",{
+        hideProgressBar: true
+    });
       return; // Exit if `jobToDelete` is null
     }
 
@@ -168,10 +176,14 @@ export default function JobPreviewPage() {
       console.log("uuid delete:", jobToDelete.uuid)
       setDeleteModalOpen(false); // Close modal
       setJobToDelete(null); // Reset jobToDelete
-      toast.success("Job successfully deleted.");
+      toast.success("Job successfully deleted.",{
+        hideProgressBar: true
+    });
     } catch (error) {
       console.error("Error deleting job:", error);
-      toast.error("Failed to delete the job. Please try again.");
+      toast.error("Failed to delete the job. Please try again.",{
+        hideProgressBar: true
+    });
     }
   };
 
@@ -187,6 +199,7 @@ export default function JobPreviewPage() {
           className="w-full border rounded-md px-8 py-2 focus:ring-2 focus:ring-blue-400"
           value={url}
           onChange={handleInputChange}
+          required
         />
         <Button onClick={handleSubmit} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-600">
           {Scrapeloading ? "Scrapping..." : "Scrape"}

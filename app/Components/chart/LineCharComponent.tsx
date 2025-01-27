@@ -22,7 +22,7 @@ export default function UserRegistrationComparisonChart() {
     const lastYear = thisYear - 1;
 
     return (
-        <Card className="w-full max-w-[620px] mx-auto">
+        <Card className="w-full  mx-auto">
             <CardHeader>
                 <CardTitle className="text-2xl font-normal text-[#00A76F]">
                     User Registration Comparison ({lastYear} vs {thisYear})

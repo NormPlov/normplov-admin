@@ -1,42 +1,73 @@
-'use client'
-import React, { useState } from 'react'
-import Image, { StaticImageData } from 'next/image'
-import placeholderImage from '@/public/assets/placeholder.jpg'
+import React from "react";
 
-type props = {
-    title: string;
-    desc: string;
-    image: StaticImageData | string;
-}
+type QuizInterestResultCardProps = {
+  title: string;
+  desc: string;
+  image: string;
+};
 
-export const QuizInterestResultCard = ({ title, desc, image }: props) => {
+export const QuizInterestResultCard: React.FC<QuizInterestResultCardProps> = ({
+  title,
+  desc,
+  image,
+}) => {
+  // Dynamically prepend the base API URL if the image is not external
+  const formattedImage = image.startsWith("/")
+    ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${image}`
+    : image;
 
-    const [imgSrc, setImgSrc] = useState(image);
+  return (
+    <div className="card">
+      <ImageWithFallback
+        src={formattedImage}
+        alt={title}
+        fallbackSrc="/assets/placeholder.png"
+        width={1000}
+        height={1000}
+        className="card-image w-3/4"
+      />
+      <div className="card-content">
+        <h3 className="card-title text-primary">{title}</h3>
+        <p className="card-description text-textprimary">{desc}</p>
+      </div>
+    </div>
+  );
+};
 
-    return (
-        <div className=" w-[350px] lg:w-[400px] bg-white p-4 md:p-6 gap-4 rounded-xl">
-            {/* Text and Response Section */}
-            <div >
-                <h2 className="text-3xl font-bold mb-2 text-secondary">{title}</h2>
-                <p className="text-base text-textprimary mb-4">
-                    {desc}
-                </p>
+// Custom ImageWithFallback Component
+type ImageWithFallbackProps = {
+  src: string;
+  fallbackSrc: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+};
 
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
+  src,
+  fallbackSrc,
+  alt,
+  width,
+  height,
+  className,
+}) => {
+  const [imgSrc, setImgSrc] = React.useState(src);
 
-            </div>
-            {/* Image Section */}
-            <div className="flex-none flex justify-center items-center overflow-hidden">
-                <Image
-                    src={imgSrc}
-                    alt="Quiz Illustration"
-                    width={350}
-                    height={350}
-                    className="object-cover"
-                    onError={() => setImgSrc(placeholderImage)}
-                />
-            </div>
+  const handleImageError = () => {
+    if (imgSrc !== fallbackSrc) {
+      setImgSrc(fallbackSrc); // Set fallback image only once
+    }
+  };
 
-
-        </div>
-    )
-}
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      onError={handleImageError}
+    />
+  );
+};

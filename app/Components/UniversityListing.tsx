@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Search,
   ChevronLeft,
@@ -28,9 +27,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SchoolsType, UniversityType } from "@/types/types";
+import { School } from "@/types/types";
 import { useUniversityQuery } from "../redux/service/university";
-import { DataTableRowActions } from "@/components/ui/actionbutton";
+import DropdownPopup from "./popup/ModalAction";
+import { useRouter } from "next/navigation";
+import { FiAlertCircle } from "react-icons/fi";
+import { useDeleteUniversityMutation } from "../redux/service/university";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -38,18 +43,21 @@ export function UniversityListing() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [searchQuery] = useState("");
-  const [schoolType] = useState<string | undefined>();
+  // const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
+  // const [schoolType] = useState<string | undefined>();
+  const router = useRouter()
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [universityToDelete, setUniversityToDelete] = useState<School | null>(null)
 
-  const { data, refetch } = useUniversityQuery({
+  const [deleteUniversity] = useDeleteUniversityMutation()
+
+  const { data } = useUniversityQuery({
     page: currentPage,
     size: pageSize,
   });
 
-  useEffect(() => {
-    refetch();
-  }, [currentPage, pageSize, searchQuery, schoolType, refetch]);
-
-  const totalItems = data?.payload?.metadata?.size || 0;
+  const totalItems = data?.payload?.metadata?.page_size || 0;
   const totalPages = Math.ceil(totalItems / pageSize);
 
   const handlePageChange = (page: number) => {
@@ -64,16 +72,51 @@ export function UniversityListing() {
     setCurrentPage(1);
   };
 
+  const filteredUniversities: School[] = data?.payload?.schools?.filter((school: School) => {
+    const matchesSearch = (school?.en_name ?? "")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const matchFilter =
+      filter === "all" ||
+      (filter === "PRIVATE" && school?.type === "PRIVATE") ||
+      (filter === "PUBLIC" && school?.type === "PUBLIC") ||
+      (filter === "TVET" && school?.type === "TVET");
+
+    return matchesSearch && matchFilter;
+  }) || [];
+
+
   const universities = data?.payload?.schools || [];
 
-  console.log(universities);
+  console.log("university:", universities);
+
+  const handleDeleteClick = (university: School) => {
+    setUniversityToDelete(university);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (universityToDelete) {
+      try {
+        console.log("uuid university:", universityToDelete.uuid)
+        await deleteUniversity({ uuid: universityToDelete.uuid }).unwrap();
+        setDeleteModalOpen(false);
+        setUniversityToDelete(null);
+      } catch (error) {
+        console.error("Error deleting university:", error);
+      }
+    }
+  };
+
 
   return (
     <main className="p-4">
       <div className="flex items-center justify-between mb-6">
+        <ToastContainer/>
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
-          <div className="relative ">
+          <div className="relative w-[370px]">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search"
@@ -81,17 +124,18 @@ export function UniversityListing() {
               aria-label="Search universities"
             />
           </div>
-          <Select value={schoolType}>
+          <Select value={filter} onValueChange={(value) => setFilter(value)}>
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select School Type" />
+              <SelectValue placeholder="All" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="public">Public School</SelectItem>
-              <SelectItem value="private">Private School</SelectItem>
-              <SelectItem value="tvet">TVET</SelectItem>
+              <SelectItem value="ALL">All</SelectItem>
+              <SelectItem value="PUBLIC">Public School</SelectItem>
+              <SelectItem value="PRIVATE">Private School</SelectItem>
+              <SelectItem value="TVET">TVET</SelectItem>
             </SelectContent>
           </Select>
-          <Button asChild className="bg-primary">
+          <Button asChild className="bg-primary hover:bg-green-600">
             <Link href="majors-universities/create">
               <Plus className="mr-2 h-4 w-4" />
               Add University
@@ -100,45 +144,68 @@ export function UniversityListing() {
         </div>
       </div>
 
-      <div className="rounded-md border border-gray-200 text-textprimary">
+      <div className="rounded-md border border-gray-200 text-textprimary ">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Logo</TableHead>
               <TableHead>Universities / Institute</TableHead>
               <TableHead>Address</TableHead>
-              <TableHead className="text-right">Email</TableHead>
+              <TableHead className="text-left">Popular Major</TableHead>
+              <TableHead className="text-right">School Type</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {universities.map((school: SchoolsType) => (
-              <TableRow key={school.id}>
+            {filteredUniversities.map((school: School) => (
+              <TableRow key={school?.uuid}>
                 <TableCell>
-                  <Image
-                    width={250}
-                    height={250}
-                    src={
-                      `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}` ||
-                      "/placeholder.svg?height=40&width=40"
-                    }
-                    alt={`${school.en_name || "University"} Logo`}
-                    className="w-10 h-10 object-cover rounded-md"
+                  <Avatar className="w-18 h-18">
+                    <AvatarImage
+                      width={1000}
+                      height={1000}
+                      src={
+                        !school?.logo_url
+                          ? "/assets/placeholder.png"
+                          : school.logo_url.startsWith("http")
+                            ? school.logo_url
+                            : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${school.logo_url}`
+                      }
+
+                      alt={`${school?.en_name || "University"} Logo`}
+                      className="w-full h-full object-container "
+                    />
+                    <AvatarFallback className="text-gray-700">
+                      {school?.en_name?.[0]?.toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                </TableCell>
+                <TableCell className="font-medium">{school?.en_name || "N/A"}</TableCell>
+                <TableCell>{school?.location || "N/A"}</TableCell>
+                <TableCell className="text-left">
+                  {school?.popular_major || "N/A"}
+                </TableCell>
+                <TableCell className="text-right">{school?.type || "N/A"}</TableCell>
+
+                <TableCell className="text-gray-700">
+                  <DropdownPopup
+                    onView={() => router.push(`/majors-universities/${school?.uuid}`)}
+                    onEdit={() => router.push(`/majors-universities/edit/${school?.uuid}`)}
+                    onDelete={() => {
+                      if (school?.is_recommended) {
+                        toast.error("This school is recommended and cannot be deleted!",{
+                          hideProgressBar: true
+                      });
+                      } else {
+                        handleDeleteClick(school);
+                      }
+                    }}
                   />
-                </TableCell>
-                <TableCell className="font-medium">
-                  {school.en_name || "N/A"}
-                </TableCell>
-                <TableCell>{school.location || "N/A"}</TableCell>
-                <TableCell className="text-right">
-                  {school.email || "N/A"}
-                </TableCell>
-                <TableCell className="text-center">
-                  <DataTableRowActions row={school as UniversityType} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
+
         </Table>
       </div>
 
@@ -200,6 +267,28 @@ export function UniversityListing() {
           </Button>
         </div>
       </div>
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-[400px] text-center">
+            <FiAlertCircle className="text-red-500 text-5xl mb-4 text-center mx-auto" />
+            <p className="text-gray-700 text-lg mb-6">
+              Are you sure you want to delete this university?
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteModalOpen(false)}
+                className="border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleDeleteConfirm} className="bg-red-500 text-white hover:bg-red-600 px-6">
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

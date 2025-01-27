@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { QuizButton } from './QuizButton';
 import { ArrowRight } from 'lucide-react';
-import placeholderImage from '@/public/assets/placeholder.jpg';
+import placeholderImage from '@/public/assets/placeholder.png';
 
 type Props = {
   title: string;

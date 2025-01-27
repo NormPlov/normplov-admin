@@ -6,19 +6,45 @@ import { HiOutlineLockOpen, HiOutlineLockClosed } from "react-icons/hi";
 import { FaEye } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useGetAllUserQuery, useBlockUserMutation, useUnBlockUserMutation } from "@/app/redux/service/user";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  useGetAllUserQuery,
+  useBlockUserMutation,
+  useUnBlockUserMutation,
+} from "@/app/redux/service/user";
 import { ToastContainer, ToastOptions, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfileModal from "../../popup/PopupViewProfile";
 import { User } from "@/types/types";
 import BlockUserModal from "../../popup/ConfrimBlock";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
-
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -99,7 +125,8 @@ export default function UserTable() {
   // Filter logic
   const filteredUsers =
     data?.payload?.users?.filter((user) => {
-      const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
+      const normalizeString = (str: string) =>
+        str.replace(/\s+/g, "").toLowerCase();
       const matchesSearch =
         user.username.toLowerCase().includes(normalizeString(search)) ||
         user.email.toLowerCase().includes(normalizeString(search));
@@ -147,7 +174,6 @@ export default function UserTable() {
     }
   };
 
-
   return (
     <div className="h-screen p-6 rounded-md">
       <div className="space-y-5 w-full h-full bg-white rounded-md p-6 overflow-auto">
@@ -175,12 +201,11 @@ export default function UserTable() {
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-
           </div>
         </div>
 
         {/* Table */}
-        <div className="rounded-md border border-gray-200 rounded-md">
+        <div className="rounded-md border border-gray-200">
           <ToastContainer />
           <Table>
             <TableHeader>
@@ -220,26 +245,35 @@ export default function UserTable() {
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell className="text-gray-700 text-medium">{user.username || "N/A"}</TableCell>
-                    <TableCell className="text-gray-600 ">{user.gender || "N/A"}</TableCell>
-                    <TableCell className="text-gray-600">{user.email}</TableCell>
+                    <TableCell className="text-gray-700 text-medium">
+                      {user.username || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-gray-600 ">
+                      {user.gender || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-gray-600">
+                      {user.email}
+                    </TableCell>
                     <TableCell>
                       <div
-                        className={`font-normal rounded-full text-center text-sm px-1 border ${user.is_active
-                          ? "bg-green-200 text-green-900 border-green-500"
-                          : "bg-red-100 text-red-500 border-red-400"
-                          }`}
+                        className={`font-normal rounded-full text-center text-sm px-1 border ${
+                          user.is_active
+                            ? "bg-green-200 text-green-900 border-green-500"
+                            : "bg-red-100 text-red-500 border-red-400"
+                        }`}
                       >
                         {user.is_active ? "Active" : "Inactive"}
                       </div>
-
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" onClick={() => handleViewProfileClick(user)}>
+                              <Button
+                                variant="ghost"
+                                onClick={() => handleViewProfileClick(user)}
+                              >
                                 <FaEye className="text-gray-700" />
                               </Button>
                             </TooltipTrigger>
@@ -277,15 +311,22 @@ export default function UserTable() {
         <div className="flex justify-between items-center mt-4">
           {/* Showing data */}
           <div className="text-sm font-medium text-gray-500">
-            Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+            Showing data{" "}
+            {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+            entries
           </div>
 
           <div className="flex gap-4">
             {/* Rows Per Page */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900">Rows per page:</span>
-              <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
+              <span className="text-sm font-medium text-gray-900">
+                Rows per page:
+              </span>
+              <Select
+                value={`${itemsPerPage}`}
+                onValueChange={handleItemsPerPageChange}
+              >
                 <SelectTrigger className="h-8 w-[70px]">
                   <SelectValue placeholder={itemsPerPage} />
                 </SelectTrigger>
@@ -339,7 +380,6 @@ export default function UserTable() {
             </div>
           </div>
         </div>
-
       </div>
       {/* Profile Modal */}
       {selectedUser && (
@@ -353,13 +393,17 @@ export default function UserTable() {
       {/* Block User Confirmation Modal */}
       {confirmModalOpen && selectedUser && (
         <BlockUserModal
-          onConfirm={handleConfirmBlock}
-          onCancel={() => setConfirmModalOpen(false)}
-          actionType={selectedUser.is_blocked ? "unblock" : "block"}
+        title={`Confirm ${selectedUser.is_blocked ? "unblock" : "block"} User`}
+        message={`Are you sure you want to ${selectedUser.is_blocked ? "unblock" : "block"} this user?`}
+        onConfirm={handleConfirmBlock}
+        onCancel={()=> setConfirmModalOpen(false)}
+        confirmText="Block"
+        cancelText="Cancel"
+          // onConfirm={handleConfirmBlock}
+          // onCancel={() => setConfirmModalOpen(false)}
+          // actionType={selectedUser.is_blocked ? "unblock" : "block"}
         />
       )}
-
     </div>
   );
 }
-

@@ -33,13 +33,13 @@ const BarChartComponent = () => {
         : [];
 
     return (
-        <Card style={{ width: "100%", height: "440px", padding: "2px" }}>
+        <Card className="w-[750px] h-[440px]">
             <CardHeader>
                 <CardTitle className="text-2xl font-normal text-[#00A76F]">
                     Trending Job
                 </CardTitle>
             </CardHeader>
-            <ResponsiveContainer width="100%" height="98%">
+            <ResponsiveContainer width="98%" height="98%">
                 {transformedData && uniqueJobLabels.length > 0 ? (
                     <BarChart
                         data={transformedData}

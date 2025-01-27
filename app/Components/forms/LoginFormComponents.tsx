@@ -38,12 +38,13 @@ export default function Login() {
     // Toastify Config
     const toastConfig: ToastOptions = {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 2000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
+
     };
 
     // Handle submit
@@ -61,7 +62,14 @@ export default function Login() {
             });
 
             if (res.ok) {
-                toast.success("Login Successfully!", toastConfig);
+                toast.success("Login Successfully!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
                 const data = await res.json();
                 
                     console.log("You are admin")
@@ -78,16 +86,22 @@ export default function Login() {
                 // meaning the credential can be incorrect!
                 switch (res.status) {
                     case 401:
-                        toast.error("Incorrect Password!", toastConfig);
+                        toast.error("Incorrect Password!", { autoClose: 2000, hideProgressBar: true });
                         break;
                     case 404:
-                        toast.error("User not found!", toastConfig);
+                        toast.error("User not found!", { autoClose: 2000, hideProgressBar:true });
                         break;
                     case 403:
-                        toast.warn("You need to be an admin to access this page!", toastConfig);
+                        toast.warn("You need to be an admin to access this page!", { autoClose: 2000, hideProgressBar: true });
                         break;
                     default:
-                        toast.error("Something went wrong!", toastConfig);
+                        toast.error("Something went wrong!", { autoClose: 3000, hideProgressBar: true,
+                            style: {
+                                marginBottom: "10px", // Space between toasts
+                                borderRadius: "8px",
+                                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                            },
+                         });
                         break;
                 }
             }
@@ -102,30 +116,39 @@ export default function Login() {
 
     return (
         <main className="flex min-h-screen ">
-            <ToastContainer />
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={true} // Ensures newest toast is at the top
+                closeOnClick
+                pauseOnHover
+                draggable
+                limit={3} />
             
-            <div className="hidden flex-col w-[700px] bg-primary px-20 pt-12 lg:block relate">
-                <div className="space-y-6 text-white ">
-                    <h1 className="text-5xl font-bold">សូមស្វាគមន៍មកកាន់</h1>
-                    <h2 className="text-5xl font-bold">គេហទំព័រនាំផ្លូវ</h2>
-                    <p className="text-lg font-normal">
-                        រក្សាទុកពាក្យសម្ងាត់របស់អ្នក និងស្វែងរកព័ត៌មានផ្ទាល់ខ្លួននៅលើគេហទំព័រដែលមានសុវត្ថិភាពបំផុត។
-                    </p>
-                </div>
-                <div className="">
+            <div className="hidden flex-col bg-primary/10 px-20 pt-12 lg:block relate w-[900px]">
+                
+                <div className="mt-5">
                     <Image
-                        src={"/assets/login.png"}
+                        src={"/assets/2.png"}
                         alt="Login image"
                         width={1000}
                         height={1000}
-                        className="w-[550px] h-[478px] ml-[120px] absolute"
+                        className="px-10 "
                     />
+                </div>
+                <div className="space-y-6 text-textprimary mt-8 text-center">
+                    <h1 className="text-4xl font-bold">សូមស្វាគមន៍មកកាន់គេហទំព័រនាំផ្លូវ</h1>
+                    <h2 className="text-4xl font-bold"></h2>
+                    <p className="text-lg font-normal">
+                        រក្សាទុកពាក្យសម្ងាត់របស់អ្នក និងស្វែងរកព័ត៌មានផ្ទាល់ខ្លួននៅលើគេហទំព័រដែលមានសុវត្ថិភាពបំផុត។
+                    </p>
                 </div>
             </div>
             <div className="flex w-full flex-col justify-center px-4 lg:w-1/2 lg:px-12 ">
                 <div className="mx-auto w-full max-w-md space-y-6 ">
                     <div className="space-y-2 text-center">
-                        <h2 className="text-4xl font-bold text-primary">Login</h2>
+                        <h2 className="text-5xl font-bold text-primary">Login</h2>
                     </div>
                     <Formik 
                         initialValues={initialValues}
@@ -137,7 +160,7 @@ export default function Login() {
                     >
                         {() => (
                             <Form className="space-y-4 ">
-                                <div className="space-y-2 text-textprimary ">
+                                <div className="space-y-3 text-textprimary text-md">
                                     <label htmlFor="email">Email
                                         <span className="text-red-500 px-1.5">*</span>
                                     </label>
@@ -147,14 +170,14 @@ export default function Login() {
                                         name="email"
                                         placeholder="example@gmail.com"
                                         type="email"
-                                        className="border border-gray-200 focus:ring-primary bg-white"
+                                        className="w-full border border-gray-300 text-lg rounded-lg px-4 py-5 focus:ring-primary bg-white"
                                     />
                                     <ErrorMessage
                                         name="email"
                                         component="section"
                                         className="text-sm text-red-500" />
                                 </div>
-                                <div className="space-y-2 text-textprimary mb-4">
+                                <div className="space-y-2 text-textprimary mb-4  text-md">
                                     <label htmlFor="password">Password
                                         <span className="text-red-500 px-1.5">*</span>
                                     </label>
@@ -165,7 +188,7 @@ export default function Login() {
                                             name="password"
                                             placeholder="Admin@12345"
                                             type={showPassword ? "text" : "password"}
-                                            className=" border border-gray-200 focus:ring-primary bg-white"
+                                            className="w-full border border-gray-300 text-lg rounded-lg px-4 py-5 focus:ring-primary bg-white"
                                         />
                                         <Button
                                             variant="ghost"
@@ -175,9 +198,9 @@ export default function Login() {
                                             onClick={handleShowPassword}
                                         >
                                             {showPassword ? (
-                                                 <IoEyeSharp className="h-4 w-4 text-gray-500" />
+                                                 <IoEyeSharp className="h-5 w-5 text-gray-500" />
                                             ) : (
-                                                <IoEyeOff className="h-4 w-4 text-gray-500" />
+                                                <IoEyeOff className="h-5 w-5 text-gray-500" />
                                             )}
                                         </Button>
                                     </div>
@@ -192,7 +215,7 @@ export default function Login() {
                                     </div> */}
                                 </div>
                                 <Button
-                                    className="w-full rounded-full bg-primary hover:bg-emerald-500 "
+                                    className="w-full border border-gray-300 text-lg px-4 py-5 focus:ring-primary bg-white rounded-full bg-primary hover:bg-emerald-500 mt-5 "
                                     type="submit"
                                     disabled={loading} // Prevent multiple submissions
                                 >
@@ -203,8 +226,7 @@ export default function Login() {
                     </Formik>
                 </div>
             </div>
-           
-            {/* } */}
+   
         </main>
     );
 }
