@@ -35,22 +35,45 @@ type BarProps = {
   height?: number;
   payload?: { color?: string };
 };
-// type Major = {
-//   major_name: string; // The name of the major
-//   schools: string[];  // An array of schools offering the major
+// type PersonalityTraits = {
+//   positive: string[];
+//   negative: string[];
 // };
-// type Job = {
-//   category_name: string;
-//   responsibilities: string[];
-// }
+
+// type Personality = {
+//   name: string;
+//   title: string;
+//   description: string;
+// };
+
+// type CareerRecommendation = {
+//   career_name: string;
+//   description: string;
+//   majors: {
+//     major_name: string;
+//     schools: string[];
+//   }[];
+// };
+
+// type ApiResponse = {
+//   personalityType: Personality;
+//   dimensions: PersonalityDimension[];
+//   traits: PersonalityTraits;
+//   strengths: string[];
+//   weaknesses: string[];
+//   careerRecommendations: CareerRecommendation[];
+// }[];
+
+// type Major = {
+//   major_name: string;
+//   schools: string[];
+// };
+
 // type RecommendedCareer = {
 //   career_name: string;
 //   description: string;
-//   majors: Major[]; 
-//   career_uuid: string;
-//   categories: Job[];
+//   majors: Major[];
 // };
-
 
 export const PersonalityResultComponent = () => {
   const params = useParams();
@@ -137,6 +160,18 @@ export const PersonalityResultComponent = () => {
   );
 
   console.log("Personalities dimension", personalitiesDimension);
+  // Function to dynamically get matching dimensions
+  // const getDimensionPair = (name1: string, name2: string) => {
+  //   const dim1 =
+  //     personalitiesDimension?.find(
+  //       (d: PersonalityDimension) => d.dimension_name === name1
+  //     )?.score || 0;
+  //   const dim2 =
+  //     personalitiesDimension?.find(
+  //       (d: PersonalityDimension) => d.dimension_name === name2
+  //     )?.score || 0;
+  //   return { dim1, dim2 };
+  // };
 
   const personailitiesTrait = response?.[0]?.traits;
   console.log("PersonailitiesTrait", personailitiesTrait);
@@ -144,6 +179,15 @@ export const PersonalityResultComponent = () => {
   console.log("PersonailitiesTrait Negative", personailitiesTrait?.negative);
   console.log("Personailities Strength", response?.[0]?.strengths);
   console.log("Personailities Weakness", response?.[0]?.weaknesses);
+
+  //   if (!skillCategory) {
+  //     return <p>Loading...</p>;
+  //   }
+
+  //   const personailitiesTrait = response?.[0]?.traits["positive"]
+  //   console.log("PersonailitiesTrait", personailitiesTrait)
+  //   const averageSkill = response?.[0]?.skillsGrouped["Average"];
+  //   const weakSkill = response?.[0]?.skillsGrouped["Weak"];
 
   const recommendedCareer = response?.[0]?.careerRecommendations;
   console.log("Recommended Career: ", recommendedCareer);
@@ -372,9 +416,7 @@ export const PersonalityResultComponent = () => {
                 jobTitle={recommendation.jobTitle}
                 jobDesc={recommendation.jobDesc}
                 majors={recommendation.majors}
-                jobUuid=""
-                jobList={[]}
-                />
+              />
             ))}
           </div>
         </div>
