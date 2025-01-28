@@ -55,7 +55,6 @@ export function UniversityListing() {
     page: currentPage,
     size: itemsPerPage,
   });
-  
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
@@ -110,11 +109,10 @@ const totalItems = data?.payload?.metadata?.total_items || 0;
       .includes(searchQuery.toLowerCase());
 
     const matchFilter =
-      filter === "ALL" ||
+      filter === "all" ||
       (filter === "PRIVATE" && school?.type === "PRIVATE") ||
       (filter === "PUBLIC" && school?.type === "PUBLIC") ||
-      (filter === "TVET" && school?.type === "TVET")||
-      (filter === "MAJORS_COURSES" && school?.type === "MAJORS_COURSES");
+      (filter === "TVET" && school?.type === "TVET");
 
     return matchesSearch && matchFilter;
   }) || [];
