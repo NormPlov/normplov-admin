@@ -49,6 +49,7 @@ const SchoolSchema = Yup.object().shape({
   school_type: Yup.string(),
 });
 
+
 export default function EditUniversityPage({
   params,
 }: {
@@ -63,6 +64,12 @@ export default function EditUniversityPage({
 
   const university = data?.payload
   console.log("university in edit:", university)
+  const [coverPreview, setCoverPreview] = useState<string | null>(
+    university?.cover_image || null
+  );
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    university?.logo_url || null
+  );
 
   if (isError) {
     toast.error("Failed to load university data. Please try again.", {
@@ -86,15 +93,31 @@ export default function EditUniversityPage({
     );
   }
 
+
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
-    setFieldValue: (field: string, value) => void,
-    fieldName: string
+    setFieldValue: (field: string, value: File | null) => void,
+    fieldName: string,
+    setPreview: React.Dispatch<React.SetStateAction<string | null>>
   ) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) {
-      setFieldValue(fieldName, file); // Update Formik field
+      setFieldValue(fieldName, file);
+      setPreview(URL.createObjectURL(file)); // Generate preview URL
+    }
+  };
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: (field: string, value: File | null) => void,
+    fieldName: string,
+    setPreview: React.Dispatch<React.SetStateAction<string | null>>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFieldValue(fieldName, file);
+      setPreview(URL.createObjectURL(file)); // Generate preview URL
     }
   };
 
@@ -160,7 +183,6 @@ export default function EditUniversityPage({
               }
             }
 
-
             // Upload the cover image if it's a new file
             if (values.cover_image instanceof File) {
               const uploadedCoverImageUrl = await handleUploadImage(values.cover_image);
@@ -186,7 +208,7 @@ export default function EditUniversityPage({
             toast.success("University updated successfully!", {
               hideProgressBar: true
             });
-            router.push("/majors-universities");
+            // router.push("/majors-universities");
           } catch (err) {
             console.error("Failed to update university:", err);
             setSubmissionError("Failed to update university. Please try again.");
@@ -205,359 +227,333 @@ export default function EditUniversityPage({
             <ToastContainer position="top-right" autoClose={3000} />
 
             <div className="space-y-4">
-              <div>
                 <Label htmlFor="cover_image" className="block text-md font-normal py-2 text-primary">Cover Image</Label>
 
                 <div className="space-y-6 mb-6">
                   <div
                     className="relative border-dashed border-2 bg-gray-100 w-full h-72 rounded-lg overflow-hidden flex items-center justify-center"
-                    onDrop={(e) => handleDrop(e, setFieldValue, "cover_image")}
+                    onDrop={(e) => handleDrop(e, setFieldValue, "cover_image", setCoverPreview)}
                     onDragOver={(e) => e.preventDefault()}
                   >
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    <Image
-                      src={
-                        // (university.cover_image && university.cover_image.startsWith("http")
-                        //   ? university.cover_image
-                        //   : university.cover_image
-                        // `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
-                        // || "/assets/placeholder.jpg"
-                        !university
-                          ?.cover_image
-                          ? "/assets/placeholder.png"
-                          : university.cover_image.startsWith("http")
-                            ? university.cover_image
-                            : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
-                      }
-                      alt="Cover Image"
-                      className="object-cover w-full h-full"
-                      width={1000}
-                      height={1000}
-                    />
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
-                      <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
-                        <FaUpload className="text-gray-400 text-lg" />
-                        <span className="text-gray-400 text-md font-medium">Upload Image</span>
-                      </div>
-                    </div>
-
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                      onChange={(e) => setFieldValue("cover_image", e.target.files?.[0])}
-                    />
-                  </div>
-                  <ErrorMessage name="cover_image" component="div" className="text-red-500 text-sm" />
-
-                </div>
-                <div className="flex space-x-4">
-                  <div>
-                    <Label htmlFor="logo_url" className="block text-md font-normal py-2 text-primary">Logo</Label>
-                    {/* <Field name="logo" > */}
-                    <div
-                      className="relative border-dashed border-2 bg-gray-100 w-96 h-80 px-4 rounded-lg overflow-hidden flex items-center justify-center"
-                      onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
-                      onDragOver={(e) => e.preventDefault()}
-                    >
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                      <Image
-                        src={
-                          // (university.logo_url && university.logo_url.startsWith("http")
-                          //   ? university.logo_url
-                          //   : university.logo_url
-                          //  `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
-                          //     || "/assets/placeholder.jpg" // Fallback to placeholder image
-
-                          !university
-                            ?.logo_url
-                            ? "/assets/placeholder.png"
-                            : university.logo_url.startsWith("http")
-                              ? university.logo_url
-                              : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
-
-                        }
-                        alt="University Logo"
-                        width={1000}
-                        height={1000}
-                        className="object-cover"
-                      />
-                      </div>
-
-                      <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
-                        <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
-                          <FaUpload className="text-gray-400 text-lg" />
-                          <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                      {coverPreview ? (
+                        <Image
+                          src={coverPreview}
+                          alt="Cover Preview"
+                          layout="fill"
+                          objectFit="cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
+                          <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                            <FaUpload className="text-gray-400 text-lg" />
+                            <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       <input
                         type="file"
                         accept="image/*"
                         className="absolute inset-0 opacity-0 cursor-pointer"
-                        onChange={(e) => setFieldValue("logo", e.target.files?.[0])}
+                        onChange={(e) => setFieldValue("cover_image", e.target.files?.[0])}
                       />
                     </div>
-                    <ErrorMessage name="logo_url" component="div" className="text-red-500 text-sm" />
+                    <ErrorMessage name="cover_image" component="div" className="text-red-500 text-sm" />
 
-                    {/* </Field> */}
                   </div>
-                  <div className="flex flex-col space-y-4 w-full">
-                    <div className="flex gap-4 w-full">
-                      <div className="w-full">
-                        <Label className="block text-md font-normal py-2 text-primary" htmlFor="kh_name">Khmer Name</Label>
-                        <Field
-                          as={Input}
-                          id="kh_name"
-                          name="kh_name"
-                          placeholder={university.kh_name || "Enter Khmer Name"}
-                          type="text"
-                        />
-                        <ErrorMessage
-                          name="kh_name"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
-                      <div className="w-full">
-                        <Label className="block text-md font-normal py-2 text-primary" htmlFor="en_name">English Name</Label>
-                        <Field
-                          as={Input}
-                          id="en_name"
-                          name="en_name"
-                          placeholder={university.en_name || "Enter English Name"}
-                          type="text"
-                        />
-                        <ErrorMessage
-                          name="en_name"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-4 w-full">
-                      <div className="w-full">
-                        <Label htmlFor="phone" className="block text-md font-normal py-2 text-primary">Phone</Label>
-                        <Field as={Input} id="phone" name="phone" type="text" placeholder={university.phone || "Enter phone number"} />
-                        <ErrorMessage
-                          name="phone"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
-                      <div className="w-full">
-                        <Label htmlFor="email" className="block text-md font-normal py-2 text-primary">Email</Label>
-                        <Field as={Input} id="email" name="email" type="email" placeholder={university.email || "Enter your email"} />
-                        <ErrorMessage
-                          name="email"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-4">
-                      <div className="w-full">
-                        <Label htmlFor="website" className="block text-md font-normal py-2 text-primary">Website</Label>
-                        <Field
-                          as={Input}
-                          id="website"
-                          name="website"
-                          placeholder={university.website || "Enter website URL here..."}
-                          type="url"
-                        />
-                        <ErrorMessage
-                          name="website"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
-                      <div className="w-full">
-                        <Label htmlFor="type" className="block text-md font-normal py-2 text-primary">School Type</Label>
+                  <div className="flex space-x-4">
+                    <div>
+                      <Label htmlFor="logo_url" className="block text-md font-normal py-2 text-primary">Logo</Label>
+                      {/* <Field name="logo" > */}
+                      <div
+                        className="relative border-dashed border-2 bg-gray-100 w-96 h-80 px-4 rounded-lg overflow-hidden flex items-center justify-center"
+                        onDrop={(e) => handleDrop(e, setFieldValue, "logo_url", setLogoPreview)}
+                        onDragOver={(e) => e.preventDefault()}
+                      >
+                        {logoPreview ? (
+                          <Image
+                            src={logoPreview}
+                            alt="Logo Preview"
+                            layout="fill"
+                            objectFit="contain"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
+                            <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                              <FaUpload className="text-gray-400 text-lg" />
+                              <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                            </div>
+                          </div>
+                        )}
 
-                        <Field name="type">
-                          {({ field, form }: FieldProps) => (
-                            <Select
-                              // value from Formik
-                              value={field.value}
-                              // update Formik state on change
-                              onValueChange={(val) => {
-                                if (val !== field.value) {
-                                  form.setFieldValue(field.name, val);
-                                }
-                              }}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder={field.value || "Select School Type"} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="PUBLIC">Public School</SelectItem>
-                                <SelectItem value="PRIVATE">Private School</SelectItem>
-                                <SelectItem value="TVET">TVET</SelectItem>
-                                <SelectItem value="MAJORS_COURSES">MAJORS_COURSES</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        </Field>
-                        <ErrorMessage
-                          name="type"
-                          component="div"
-                          className="text-red-500 text-sm"
+
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                          onChange={(e) => setFieldValue("logo", e.target.files?.[0])}
                         />
                       </div>
+                      <ErrorMessage name="logo_url" component="div" className="text-red-500 text-sm" />
+
+                      {/* </Field> */}
                     </div>
-                    <div className="flex gap-4 w-full">
-                      <div className="w-full">
-                        <Label htmlFor="popular_major" className="block text-md font-normal py-2 text-primary">Popular Major</Label>
-                        <Field
-                          as={Input}
-                          id="popular_major"
-                          name="popular_major"
-                          placeholder={university.popular_major || "Enter Popular Major"}
-                          type="text"
-                        />
-                        <ErrorMessage
-                          name="popular_major"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
+                    <div className="flex flex-col space-y-4 w-full">
+                      <div className="flex gap-4 w-full">
+                        <div className="w-full">
+                          <Label className="block text-md font-normal py-2 text-primary" htmlFor="kh_name">Khmer Name</Label>
+                          <Field
+                            as={Input}
+                            id="kh_name"
+                            name="kh_name"
+                            placeholder={university.kh_name || "Enter Khmer Name"}
+                            type="text"
+                          />
+                          <ErrorMessage
+                            name="kh_name"
+                            component="div"
+                            className="text-red-500 text-sm"
+                          />
+                        </div>
+                        <div className="w-full">
+                          <Label className="block text-md font-normal py-2 text-primary" htmlFor="en_name">English Name</Label>
+                          <Field
+                            as={Input}
+                            id="en_name"
+                            name="en_name"
+                            placeholder={university.en_name || "Enter English Name"}
+                            type="text"
+                          />
+                          <ErrorMessage
+                            name="en_name"
+                            component="div"
+                            className="text-red-500 text-sm"
+                          />
+                        </div>
                       </div>
                       <div className="flex gap-4 w-full">
                         <div className="w-full">
-                          <Label htmlFor="lowest_price" className="block text-md font-normal py-2 text-primary">Lowest Price</Label>
-                          <Field
-                            as={Input}
-                            id="lowest_price"
-                            name="lowest_price"
-                            placeholder={university.lowest_price || "Enter lowest price"}
-                            type="number"
-                          />
+                          <Label htmlFor="phone" className="block text-md font-normal py-2 text-primary">Phone</Label>
+                          <Field as={Input} id="phone" name="phone" type="text" placeholder={university.phone || "Enter phone number"} />
                           <ErrorMessage
-                            name="lowest_price"
+                            name="phone"
                             component="div"
                             className="text-red-500 text-sm"
                           />
                         </div>
                         <div className="w-full">
-                          <Label htmlFor="highest_price" className="block text-md font-normal py-2 text-primary">Highest Price</Label>
-                          <Field
-                            as={Input}
-                            id="highest_price"
-                            name="highest_price"
-                            type="number"
-                            placeholder={university.highest_price || "Enter highest price"}
-                          />
+                          <Label htmlFor="email" className="block text-md font-normal py-2 text-primary">Email</Label>
+                          <Field as={Input} id="email" name="email" type="email" placeholder={university.email || "Enter your email"} />
                           <ErrorMessage
-                            name="highest_price"
+                            name="email"
                             component="div"
                             className="text-red-500 text-sm"
                           />
                         </div>
                       </div>
+                      <div className="flex gap-4">
+                        <div className="w-full">
+                          <Label htmlFor="website" className="block text-md font-normal py-2 text-primary">Website</Label>
+                          <Field
+                            as={Input}
+                            id="website"
+                            name="website"
+                            placeholder={university.website || "Enter website URL here..."}
+                            type="url"
+                          />
+                          <ErrorMessage
+                            name="website"
+                            component="div"
+                            className="text-red-500 text-sm"
+                          />
+                        </div>
+                        <div className="w-full">
+                          <Label htmlFor="type" className="block text-md font-normal py-2 text-primary">School Type</Label>
+
+                          <Field name="type">
+                            {({ field, form }: FieldProps) => (
+                              <Select
+                                // value from Formik
+                                value={field.value}
+                                // update Formik state on change
+                                onValueChange={(val) => {
+                                  if (val !== field.value) {
+                                    form.setFieldValue(field.name, val);
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder={field.value || "Select School Type"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="PUBLIC">Public School</SelectItem>
+                                  <SelectItem value="PRIVATE">Private School</SelectItem>
+                                  <SelectItem value="TVET">TVET</SelectItem>
+                                  <SelectItem value="MAJORS_COURSES">MAJORS_COURSES</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </Field>
+                          <ErrorMessage
+                            name="type"
+                            component="div"
+                            className="text-red-500 text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-4 w-full">
+                        <div className="w-full">
+                          <Label htmlFor="popular_major" className="block text-md font-normal py-2 text-primary">Popular Major</Label>
+                          <Field
+                            as={Input}
+                            id="popular_major"
+                            name="popular_major"
+                            placeholder={university.popular_major || "Enter Popular Major"}
+                            type="text"
+                          />
+                          <ErrorMessage
+                            name="popular_major"
+                            component="div"
+                            className="text-red-500 text-sm"
+                          />
+                        </div>
+                        <div className="flex gap-4 w-full">
+                          <div className="w-full">
+                            <Label htmlFor="lowest_price" className="block text-md font-normal py-2 text-primary">Lowest Price</Label>
+                            <Field
+                              as={Input}
+                              id="lowest_price"
+                              name="lowest_price"
+                              placeholder={university.lowest_price || "Enter lowest price"}
+                              type="number"
+                            />
+                            <ErrorMessage
+                              name="lowest_price"
+                              component="div"
+                              className="text-red-500 text-sm"
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Label htmlFor="highest_price" className="block text-md font-normal py-2 text-primary">Highest Price</Label>
+                            <Field
+                              as={Input}
+                              id="highest_price"
+                              name="highest_price"
+                              type="number"
+                              placeholder={university.highest_price || "Enter highest price"}
+                            />
+                            <ErrorMessage
+                              name="highest_price"
+                              component="div"
+                              className="text-red-500 text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
+                  <div>
 
                 </div>
 
-              </div>
-              <div className="flex gap-4 w-full justify-between items-center ">
-                <div className="w-9/12">
-                  <Label htmlFor="location" className="block text-md font-normal py-2 text-primary">Location</Label>
-                  <div className="w-full">
-                    <Field name="location"
-                      placeholder="Enter location"
-                      className="border border-gray-300 py-2 rounded-md px-3 w-full"
-                    >
-                    </Field>
+                </div>
+                <div className="flex gap-4 w-full justify-between items-center ">
+                  <div className="w-9/12">
+                    <Label htmlFor="location" className="block text-md font-normal py-2 text-primary">Location</Label>
+                    <div className="w-full">
+                      <Field name="location"
+                        placeholder="Enter location"
+                        className="border border-gray-300 py-2 rounded-md px-3 w-full"
+                      >
+                      </Field>
+                    </div>
+                    <ErrorMessage name="location" component="div" className="text-red-500 text-sm" />
                   </div>
-                  <ErrorMessage name="location" component="div" className="text-red-500 text-sm" />
+                  <div className="flex items-center gap-2 mt-4">
+                    <Field
+                      type="checkbox"
+                      id="is_popular"
+                      name="is_popular"
+                      className="h-5 w-5 text-primary focus:ring-primary border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-sm">
+                      <Field name="is_popular">
+                        {({ field }: { field: { value: boolean } }) =>
+                          field.value ? "Popular School" : "School Not Popular"
+                        }
+                      </Field>
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 mt-4">
-                  <Field
-                    type="checkbox"
-                    id="is_popular"
-                    name="is_popular"
-                    className="h-5 w-5 text-primary focus:ring-primary border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-sm">
-                    <Field name="is_popular">
-                      {({ field }: { field: { value: boolean } }) =>
-                        field.value ? "Popular School" : "School Not Popular"
-                      }
-                    </Field>
-                  </span>
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="map_url" className="block text-md font-normal py-2 text-primary">Google Maps Link</Label>
-                <Field as={Input} id="map_url" name="map_url" placeholder={university.map_url || "Enter Google Maps Link"} />
-                <ErrorMessage
-                  name="map_url"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="mission" className="block text-md font-normal py-2 text-primary">Mission</Label>
-                  {/* <ReactQuill
+                  <Label htmlFor="map_url" className="block text-md font-normal py-2 text-primary">Google Maps Link</Label>
+                  <Field as={Input} id="map_url" name="map_url" placeholder={university.map_url || "Enter Google Maps Link"} />
+                  <ErrorMessage
+                    name="map_url"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="mission" className="block text-md font-normal py-2 text-primary">Mission</Label>
+                    {/* <ReactQuill
                   id="mission"
                   value={university.mission || ""}
                   onChange={(value) => setFieldValue("mission", value)} // Formik's setFieldValue
                   placeholder="Enter your mission here"
                   className="mb-2"
                 /> */}
-                  <Field as={Textarea} id="mission" name="mission" placeholder={university.mission || "Enter your mission here"} />
-                  <ErrorMessage
-                    name="mission"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
+                    <Field as={Textarea} id="mission" name="mission" placeholder={university.mission || "Enter your mission here"} />
+                    <ErrorMessage
+                      name="mission"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="vision" className="block text-md font-normal py-2 text-primary">Vision</Label>
+                    <Field as={Textarea} id="vision" name="vision" placeholder={university.vision || "Enter your vision here"} />
+                    <ErrorMessage
+                      name="vision"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="vision" className="block text-md font-normal py-2 text-primary">Vision</Label>
-                  <Field as={Textarea} id="vision" name="vision" placeholder={university.vision || "Enter your vision here"} />
+                  <Label htmlFor="description" className="block text-md font-normal py-2 text-primary">Description</Label>
+                  <Field as={Textarea} id="description" name="description" placeholder={university.description || "Enter Description"} />
                   <ErrorMessage
-                    name="vision"
+                    name="description"
                     component="div"
                     className="text-red-500 text-sm"
                   />
                 </div>
+                <div className="flex justify-end space-x-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => router.back()}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || isUpdating}
+                    className="bg-primary hover:bg-green-700"
+                    aria-busy={isSubmitting || isUpdating}
+                  >
+                    {isSubmitting || isUpdating
+                      ? "Updating..."
+                      : "Update University"}
+                  </Button>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="description" className="block text-md font-normal py-2 text-primary">Description</Label>
-                <Field as={Textarea} id="description" name="description" placeholder={university.description || "Enter Description"} />
-                <ErrorMessage
-                  name="description"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-              <div className="flex justify-end space-x-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.back()}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || isUpdating}
-                  className="bg-primary"
-                  aria-busy={isSubmitting || isUpdating}
-                >
-                  {isSubmitting || isUpdating
-                    ? "Updating..."
-                    : "Update University"}
-                </Button>
-              </div>
-            </div>
-            {/* {submissionError && (
+              {/* {submissionError && (
               <div className="text-red-500 mt-4">{submissionError}</div>
             )}*/}
-            {/* <div className="mt-8 p-4 bg-gray-100 rounded">
+              {/* <div className="mt-8 p-4 bg-gray-100 rounded">
               <h3 className="text-lg font-semibold mb-2">
                 Form Values (Debug):
               </h3>

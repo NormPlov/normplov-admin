@@ -38,14 +38,20 @@ export function SidebarComponent() {
     
           if (res.ok) {
             window.location.reload();
-            toast.success(data.message || "Logged out successfully!");
+            toast.success(data.message || "Logged out successfully!",{
+              hideProgressBar: true
+            });
             
            
           } else {
-            toast.error(data.message || "Failed to log out.");
+            toast.error(data.message || "Failed to log out.",{
+              hideProgressBar: true
+            });
           }
         } catch (error) {
-          toast.error("An error occurred during logout.");
+          toast.error("An error occurred during logout.",{
+            hideProgressBar: true,
+          });
           console.error(error);
         }
       };

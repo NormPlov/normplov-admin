@@ -12,7 +12,6 @@ import { useUploadImageMutation } from "@/app/redux/service/media";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
-// import { ImageUploadArea } from "../image/image-upload-area";
 import { CreateUniversityType } from "@/types/types";
 import Image from "next/image";
 import { Upload } from "lucide-react";
@@ -93,7 +92,7 @@ export default function SchoolForm() {
       toast.success("School created successfully!", {
         hideProgressBar: true
       });
-      router.replace("/majors-universities");
+      // router.replace("/majors-universities");
     } catch (error) {
       console.error("Failed to create school:", error);
       toast.error("Failed to create school. Please try again.", {
@@ -131,9 +130,9 @@ export default function SchoolForm() {
     mission: "",
     description: "",
     school_type: "",
-    cover_image: null, // Optional file value
-    logo: null, // Optional file value
-    is_popular: false, // Default boolean value
+    cover_image: null, 
+    logo: null, 
+    is_popular: false, 
   };
 
 

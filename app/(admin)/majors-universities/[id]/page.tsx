@@ -40,6 +40,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Faculty, Major } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast, ToastContainer } from "react-toastify";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const UniversityPage = () => {
     const params = useParams();
@@ -237,11 +238,20 @@ const UniversityPage = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                Loading...
+          <div className="flex flex-col space-y-3 mx-10">
+            <div className="space-y-4 flex justify-between mt-8">
+              <Skeleton className="h-8 w-96 animate-pulse" />
+              <Skeleton className="h-8 w-28 animate-pulse" />
             </div>
+            <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-full animate-pulse" />
+              <Skeleton className="h-8 w-full animate-pulse" />
+            </div>
+          </div>
         );
-    }
+      }
+    
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -543,6 +553,7 @@ const UniversityPage = () => {
                                                                         onChange={handleInputChange}
                                                                         className="border border-gray-300 rounded-md px-3 py-2 w-48 text-sm focus:outline-none focus:ring-1 "
                                                                     >
+                                                                        <option value="">Select a degree</option>
                                                                         <option value="ASSOCIATE">Associate</option>
                                                                         <option value="BACHELOR">Bachelor</option>
                                                                         <option value="MASTER">Master</option>

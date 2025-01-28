@@ -56,10 +56,10 @@ export default function JobPreviewPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!url) {
-      toast.warning("Please enter a valid URL!",{
+      toast.warning("Please enter a valid URL!", {
         hideProgressBar: true
       });
-      
+
       return;
     }
 
@@ -72,22 +72,22 @@ export default function JobPreviewPage() {
       setUrl("")
     } catch (error) {
       console.error("Error scraping job:", error);
-      toast.error("Failed to scrape the job. Please try again.",{
+      toast.error("Failed to scrape the job. Please try again.", {
         hideProgressBar: true
-    });
+      });
     }
   };
 
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
-        <Skeleton className="h-10 w-56 rounded-lg mx-10 mt-8" /> 
+        <Skeleton className="h-10 w-56 rounded-lg mx-10 mt-8" />
         {/* Search Section */}
         <div className="flex items-center justify-between mx-10 mt-8">
           <Skeleton className="h-10 w-3/4 rounded-lg" /> {/* Search Input */}
           <Skeleton className="h-10 w-24 rounded-lg" /> {/* Button */}
         </div>
-        <Skeleton className="h-10 w-44 rounded-lg mx-10 mt-8" /> 
+        <Skeleton className="h-10 w-44 rounded-lg mx-10 mt-8" />
         {/* Table Section */}
         <div className="space-y-2 mx-10 bg-gray-100 rounded-md p-4">
           {/* Table Header */}
@@ -137,6 +137,7 @@ export default function JobPreviewPage() {
 
   console.log("fillterjob", filteredJobs)
 
+  // Pagination handlers
   const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(Number(value));
     setCurrentPage(1);
@@ -165,9 +166,9 @@ export default function JobPreviewPage() {
 
   const handleDeleteConfirm = async () => {
     if (!jobToDelete) {
-      toast.error("No job selected to delete.",{
+      toast.error("No job selected to delete.", {
         hideProgressBar: true
-    });
+      });
       return; // Exit if `jobToDelete` is null
     }
 
@@ -176,14 +177,14 @@ export default function JobPreviewPage() {
       console.log("uuid delete:", jobToDelete.uuid)
       setDeleteModalOpen(false); // Close modal
       setJobToDelete(null); // Reset jobToDelete
-      toast.success("Job successfully deleted.",{
+      toast.success("Job successfully deleted.", {
         hideProgressBar: true
-    });
+      });
     } catch (error) {
       console.error("Error deleting job:", error);
-      toast.error("Failed to delete the job. Please try again.",{
+      toast.error("Failed to delete the job. Please try again.", {
         hideProgressBar: true
-    });
+      });
     }
   };
 
@@ -298,6 +299,7 @@ export default function JobPreviewPage() {
             </Select>
           </div>
 
+          {/* Pagination Controls */}
           <div className="flex items-center gap-4 mb-10">
             <Button
               variant="secondary"

@@ -499,6 +499,37 @@ export type JobDetailsProps = {
   uuid: string;
 };
 
+export type JobDetailsResponse = {
+  date: string; // ISO string for the timestamp
+  status: number; // HTTP status code
+  message: string; // Response message
+  payload: {
+    uuid: string; // Unique identifier for the job
+    title: string; // Job title
+    company: string; // Company name
+    location: string; // Job location
+    posted_at: string; // ISO string for the job posting date
+    description: string; // Job description
+    category: string; // Job category (e.g., Web Development)
+    salary: string; // Salary range
+    closing_date: string; // ISO string for the job closing date
+    requirements: string[]; // Array of job requirements
+    responsibilities: string[]; // Array of job responsibilities
+    benefits: string[]; // Array of job benefits
+    email: string; // Contact email
+    phone: string[]; // Array of phone numbers
+    website: string; // URL of the job posting
+    is_active: boolean; // Whether the job is active
+    is_scraped: boolean; // Whether the job was scraped
+    is_updated: boolean; // Whether the job details were updated
+    logo: string; // URL of the company logo
+    facebook_url: string | null; // Facebook URL (nullable)
+    schedule: string; // Job schedule (e.g., Full-time)
+    job_type: string; // Job type (e.g., Job Opportunity)
+  };
+};
+
+
 // get job category type
 export type GetJobCategoryType = {
   payload: {
