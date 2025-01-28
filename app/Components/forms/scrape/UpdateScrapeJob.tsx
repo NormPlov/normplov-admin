@@ -35,13 +35,12 @@ const validationSchema = Yup.object({
     logo: Yup.mixed().required('Logo is required'),
     facebook_url: Yup.string().url('Must be a valid URL').nullable(),
     location: Yup.string().nullable(),
-    posted_at: Yup.date().required('Posting date is required'),
-    description: Yup.string().required('Description is required'),
+    posted_at: Yup.date(),
+    description: Yup.string(),
     job_type: Yup.string(),
     schedule: Yup.string().nullable(),
     salary: Yup.string(),
     closing_date: Yup.date()
-        .required('Closing Date is required')
         .test('is-greater', 'Closing date must be later than the posting date', function (value) {
             const { posted_at } = this.parent;
             return value > posted_at;
@@ -49,7 +48,7 @@ const validationSchema = Yup.object({
     requirements: Yup.array().of(Yup.string()),
     responsibilities: Yup.array().of(Yup.string()),
     benefits: Yup.array().of(Yup.string()),
-    email: Yup.string().email('Must be a valid email'),
+    email: Yup.string().email('Must be a valid email').nullable(),
     phone: Yup.array().of(Yup.string()).nullable(),
     website: Yup.string().url('Must be a valid URL'),
 });
