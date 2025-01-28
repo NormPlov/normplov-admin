@@ -291,7 +291,7 @@ export default function EditUniversityPage({
                           type="file"
                           accept="image/*"
                           className="absolute inset-0 opacity-0 cursor-pointer"
-                          onChange={(e) => setFieldValue("logo", e.target.files?.[0])}
+                          onChange={(e) => setFieldValue("logo_url", e.target.files?.[0])}
                         />
                       </div>
                       <ErrorMessage name="logo_url" component="div" className="text-red-500 text-sm" />
