@@ -88,6 +88,7 @@ const UniversityPage = () => {
                     hideProgressBar: true
                 });
                 setIsModalOpen(false);
+                window.location.reload();
             } catch (error) {
                 console.error("Failed to create faculty:", error);
                 toast.error("Failed to create faculty", {
@@ -124,6 +125,7 @@ const UniversityPage = () => {
                     hideProgressBar: true
                 });
                 setIsModalOpen(false);
+                window.location.reload();
             } catch (error) {
                 console.error("Failed to create major:", error);
                 if (error.status === 400) {
@@ -167,6 +169,7 @@ const UniversityPage = () => {
                     hideProgressBar: true
                 })
                 setEditingFaculty(null);
+                window.location.reload();
             } catch (error) {
                 console.error("Failed to update faculty:", error);
                 toast.error("Failed to update faculty",{
@@ -182,6 +185,7 @@ const UniversityPage = () => {
             toast.success("Faculty deleted successfully",{
                 hideProgressBar: true
             });
+            window.location.reload();
         } catch (error) {
             console.error("Failed to delete faculty:", error);
             toast.error("Failed to delete faculty",{
@@ -202,9 +206,15 @@ const UniversityPage = () => {
                     degree: editingMajor.degree,
                 }).unwrap();
                 setEditingMajor(null);
-                toast.success("Major Updated successfully!");
+                toast.success("Major Updated successfully!",{
+                    hideProgressBar: true
+                });
+                window.location.reload();
             } catch (error) {
                 console.error("Failed to update major:", error);
+                toast.error("Failed to update major",{
+                    hideProgressBar: true
+                })
             }
         }
     };
@@ -213,10 +223,15 @@ const UniversityPage = () => {
         console.log("uuid delete", id)
         try {
             await deleteMajor({ id: id }).unwrap();
-            toast.success("Major deleted successfully");
+            toast.success("Major deleted successfully",{
+                hideProgressBar: true
+            });
+            window.location.reload();
         } catch (error) {
             console.error("Failed to delete major:", error);
-            toast.error("Failed to delete major")
+            toast.error("Failed to delete major",{
+                hideProgressBar: true
+            })
         }
     };
 
@@ -251,7 +266,7 @@ const UniversityPage = () => {
                 } */}
 
                 <div className="p-6 flex flex-col md:flex-row gap-8 items-center">
-                    <Avatar className="w-64 h-64">
+                    <Avatar className="w-72 h-72">
                         <AvatarImage
                             width={1000}
                             height={1000}
@@ -265,7 +280,7 @@ const UniversityPage = () => {
                             }
 
                             alt={`${university?.en_name || "University"} Logo`}
-                            className="w-full h-full object-container "
+                            className="w-full h-full object-cover "
                         />
                         <AvatarFallback className="text-gray-700">
                             {university?.en_name?.[0]?.toUpperCase() || "?"}
