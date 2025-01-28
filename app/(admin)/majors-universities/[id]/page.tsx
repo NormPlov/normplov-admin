@@ -37,16 +37,14 @@ import {
 import { useParams } from "next/navigation";
 import GoogleMapComponent from "@/app/Components/map/GoogleMap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Faculty, Major} from "@/types/university";
+import { Faculty, Major } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast, ToastContainer } from "react-toastify";
-import ConfirmationModal from "@/app/Components/popup/ConfrimBlock";
-import Image from "next/image";
 
 const UniversityPage = () => {
     const params = useParams();
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
-    const { data, isLoading, error } = useUniversityDetailsQuery(id || "");
+    const { data, isLoading } = useUniversityDetailsQuery(id || "");
     const university = data?.payload;
     console.log("University data", university?.cover_image)
 
@@ -72,55 +70,67 @@ const UniversityPage = () => {
     const [editingFaculty, setEditingFaculty] = useState<Faculty | null>(null);
     const [editingMajor, setEditingMajor] = useState<Major | null>(null);
     const [, setIsModalOpen] = useState(false);
-    const [isMajorDeleteOpen, setIsMajorDeleteOpen] = useState(false);
-    const [isFacultyDeleteOpen, setIsFacultyDeleteOpen] = useState(false);
 
     if (!university) {
         return <div>University not found</div>;
     }
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [deleteTarget, setDeleteTarget] = useState<{
-        type: "faculty" | "major";
-        id: string;
-    } | null>(null);
-
-    const openConfirmModal = (type: "faculty" | "major", id: string) => {
-        setDeleteTarget({ type, id });
-        setIsConfirmModalOpen(true);
-    };
-
-    const closeConfirmModal = () => {
-        setIsConfirmModalOpen(false);
-        setDeleteTarget(null);
-    };
-
-    const handleDeleteConfirmed = async () => {
-        if (!deleteTarget) return;
-
-        try {
-            if (deleteTarget.type === "faculty") {
-                // Delete faculty
-                await deleteFaculty(deleteTarget.id).unwrap();
-                toast.success("Faculty deleted successfully", {
-                    hideProgressBar: true,
+    const handleAddNewFaculty = async () => {
+        if (newFacultyName && id) {
+            try {
+                await createFaculty({
+                    name: newFacultyName,
+                    description: newFacultyDescription,
+                    school_uuid: id,
+                }).unwrap();
+                setNewFacultyName("");
+                setNewFacultyDescription("");
+                toast.success("Faculty created successfully", {
+                    hideProgressBar: true
                 });
-            } else if (deleteTarget.type === "major") {
-                // Delete major
-                await deleteMajor({ id: deleteTarget.id }).unwrap();
-                toast.success("Major deleted successfully", {
-                    hideProgressBar: true,
+                setIsModalOpen(false);
+            } catch (error) {
+                console.error("Failed to create faculty:", error);
+                toast.error("Failed to create faculty", {
+                    hideProgressBar: true
                 });
             }
-        } catch (error) {
-            console.error(`Failed to delete ${deleteTarget.type}:`, error);
-        
-            // Specific handling for "major"
-            if (deleteTarget.type === "major") {
+        }
+    };
+    const handleInputChange = (e: { target: { name: string; value: string; }; }) => {
+        const { name, value } = e.target;
+        setNewMajor((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAddNewMajor = async () => {
+        if (newMajor.name && selectedFaculty) {
+            console.log("major name", newMajor.name)
+            console.log("faculty uuid:", selectedFaculty)
+            try {
+                await createMajor({
+                    ...newMajor,
+                    faculty_uuid: selectedFaculty,
+                }).unwrap();
+
+                setNewMajor({
+                    name: "",
+                    description: "",
+                    fee_per_year: 0,
+                    duration_years: 0,
+                    degree: "",
+                    faculty_uuid: ""
+                });
+                setSelectedFaculty("");
+                toast.success("Major created successfully", {
+                    hideProgressBar: true
+                });
+                setIsModalOpen(false);
+            } catch (error) {
+                console.error("Failed to create major:", error);
                 if (error.status === 400) {
                     toast.error("⛔ Deletion not allowed for recommended majors.", {
                         hideProgressBar: true,
                     });
-                }else if (error.status === 404) {
+                } else if (error.status === 404) {
                     toast.error("Major not found. Please verify the ID.", {
                         hideProgressBar: true,
                     });
@@ -141,108 +151,6 @@ const UniversityPage = () => {
                         hideProgressBar: true,
                     });
                 }
-            } else {
-                // General handling for other types (e.g., faculty)
-                if (error.status === 404) {
-                    toast.error(`${deleteTarget.type} not found.`, {
-                        hideProgressBar: true,
-                    });
-                } 
-                
-                else if (error.status === 403) {
-                    toast.error(`You don't have permission to delete this ${deleteTarget.type}.`, {
-                        hideProgressBar: true,
-                    });
-                } else if (error.status === 500) {
-                    toast.error(`Server error occurred while deleting ${deleteTarget.type}.`, {
-                        hideProgressBar: true,
-                    });
-                } else {
-                    toast.error(`Failed to delete ${deleteTarget.type}`, {
-                        hideProgressBar: true,
-                    });
-                }
-            }
-        } finally {
-            closeConfirmModal();
-        }
-        
-        
-    };
-
-    const handleAddNewFaculty = async () => {
-        if (newFacultyName && id) {
-            setIsFacultyDeleteOpen(true)
-            try {
-                await createFaculty({
-                    name: newFacultyName,
-                    description: newFacultyDescription,
-                    school_uuid: id,
-                }).unwrap();
-
-                setNewFacultyName("");
-                setNewFacultyDescription("");
-                toast.success("Faculty created successfully", {
-                    hideProgressBar: true
-                });
-                setIsModalOpen(false);
-            } catch (error) {
-                console.error("Failed to create faculty:", error);
-                toast.error("Failed to create faculty", {
-                    hideProgressBar: true
-                });
-              
-            }
-        }
-    };
-    const handleInputChange = (e: { target: { name: string; value: string; }; }) => {
-        const { name, value } = e.target;
-        setNewMajor((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleAddNewMajor = async () => {
-        if (newMajor.name && selectedFaculty) {
-            console.log("major name", newMajor.name)
-            console.log("faculty uuid:", selectedFaculty)
-            try {
-                const response = await createMajor({
-                    ...newMajor,
-                    faculty_uuid: selectedFaculty,
-                }).unwrap();
-
-                setNewMajor({
-                    name: "",
-                    description: "",
-                    fee_per_year: 0,
-                    duration_years: 0,
-                    degree: "",
-                    faculty_uuid: ""
-                });
-                setSelectedFaculty("");
-                if (response.status === 200) {
-                    toast.success("Major created successfully");
-                    setIsModalOpen(false);
-                }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-an
-            } catch (error: any) {
-                console.error("Failed to create major:", error, {
-                    hideProgressBar: true
-                });
-                if (error.status === 422) {
-                    toast.error("Major must not have the same degree!", {
-                        hideProgressBar: true
-                    });
-                } else if (error.status === 400) {
-                    toast.error("Major must not have the same degree!", {
-                        hideProgressBar: true
-                    });
-                }
-                else {
-                    toast.error("Failed to create major", {
-                        hideProgressBar: true
-                    })
-                }
-
             }
         }
     };
@@ -255,19 +163,32 @@ const UniversityPage = () => {
                     name: editingFaculty.name,
                     description: editingFaculty.description,
                 }).unwrap();
-                toast.success("Faculty Updated successfully!", {
+                toast.success("Faculty Updated successfully!",{
                     hideProgressBar: true
                 })
                 setEditingFaculty(null);
             } catch (error) {
                 console.error("Failed to update faculty:", error);
-                toast.error("Failed to update faculty", {
+                toast.error("Failed to update faculty",{
                     hideProgressBar: true
                 })
             }
         }
     };
 
+    const handleDeleteFaculty = async (id: string) => {
+        try {
+            await deleteFaculty(id).unwrap();
+            toast.success("Faculty deleted successfully",{
+                hideProgressBar: true
+            });
+        } catch (error) {
+            console.error("Failed to delete faculty:", error);
+            toast.error("Failed to delete faculty",{
+                hideProgressBar: true
+            })
+        }
+    };
 
     const handleEditMajor = async (major: Major) => {
         if (editingMajor) {
@@ -281,15 +202,21 @@ const UniversityPage = () => {
                     degree: editingMajor.degree,
                 }).unwrap();
                 setEditingMajor(null);
-                toast.success("Major Updated successfully!", {
-                    hideProgressBar: true
-                });
+                toast.success("Major Updated successfully!");
             } catch (error) {
                 console.error("Failed to update major:", error);
-                toast.error("Failed to update major", {
-                    hideProgressBar: true
-                })
             }
+        }
+    };
+
+    const handleDeleteMajor = async (id: string) => {
+        console.log("uuid delete", id)
+        try {
+            await deleteMajor({ id: id }).unwrap();
+            toast.success("Major deleted successfully");
+        } catch (error) {
+            console.error("Failed to delete major:", error);
+            toast.error("Failed to delete major")
         }
     };
 
@@ -301,37 +228,27 @@ const UniversityPage = () => {
         );
     }
 
-    if (error || !university) {
-        return (
-            <div className="flex justify-center items-center h-screen text-red-500">
-                {/* //eslint-disable-next-line @typescript-eslint/no-explicit-an */}
-                {(error as any)?.data?.message ||
-                    "An error occurred while fetching university details."}
-            </div>
-        );
-    }
-
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
                 <ToastContainer />
-                {/* {university?.cover_image ? (
-              <Image
-                width={1000}
-                height={1000}
-                src={
-                  university.cover_image.startsWith('http')
-                    ? university.cover_image
-                    : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
-                }
-                alt="University cover"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="h-64 bg-gray-200 flex items-center justify-center">
-                <p className="text-gray-500">No cover image available</p>
-              </div>
-            )} */}
+                {/* {
+                    university?.cover_image ? (
+                        <Image
+                            width={1000}
+                            height={1000}
+                            src={
+                                university.cover_image.startsWith("http")
+                                    ? university.cover_image
+                                    : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
+                            }
+                            alt={`University cover`}
+                            className="w-full h-full object-container"
+                        />
+                    ) : (
+                        <div></div>
+                    )
+                } */}
 
                 <div className="p-6 flex flex-col md:flex-row gap-8 items-center">
                     <Avatar className="w-64 h-64">
@@ -341,7 +258,7 @@ const UniversityPage = () => {
                             src={
                                 !university
                                     ?.logo_url
-                                    ? "/assets/placeholder.png"
+                                    ? "/assets/placeholder.jpg"
                                     : university.logo_url.startsWith("http")
                                         ? university.logo_url
                                         : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.logo_url}`
@@ -541,7 +458,7 @@ const UniversityPage = () => {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    onClick={() => openConfirmModal("faculty", faculty.uuid)}
+                                                    onClick={() => handleDeleteFaculty(faculty.uuid)}
                                                     className="text-red-500 hover:text-red-700"
                                                 >
                                                     <FaTrash className="mr-2" /> Delete
@@ -611,8 +528,8 @@ const UniversityPage = () => {
                                                                         onChange={handleInputChange}
                                                                         className="border border-gray-300 rounded-md px-3 py-2 w-48 text-sm focus:outline-none focus:ring-1 "
                                                                     >
-                                                                        <option value="BACHELOR">Bachelor</option>
                                                                         <option value="ASSOCIATE">Associate</option>
+                                                                        <option value="BACHELOR">Bachelor</option>
                                                                         <option value="MASTER">Master</option>
                                                                         <option value="PHD">PhD</option>
                                                                     </select>
@@ -659,7 +576,7 @@ const UniversityPage = () => {
                                                                         size="sm"
                                                                         onClick={() => {
                                                                             if (!major.is_recommended) {
-                                                                                openConfirmModal("major", major.uuid)
+                                                                                handleDeleteMajor(major.uuid)
                                                                             } else {
                                                                                 toast.error("This major is recommended cannot be deleted")
                                                                             }
@@ -821,18 +738,6 @@ const UniversityPage = () => {
                                 </CardContent>
                             </Card>
                         ))}
-                        {isConfirmModalOpen && (
-                            <ConfirmationModal
-                                title={`Confirm Delete ${deleteTarget?.type === "faculty" ? "Faculty" : "Major"
-                                    }`}
-                                message={`Are you sure you want to delete this ${deleteTarget?.type === "faculty" ? "faculty" : "major"
-                                    }? This action cannot be undone.`}
-                                onConfirm={handleDeleteConfirmed}
-                                onCancel={closeConfirmModal}
-                                confirmText="Delete"
-                                cancelText="Cancel"
-                            />
-                        )}
                     </div>
                 </section>
             </div>

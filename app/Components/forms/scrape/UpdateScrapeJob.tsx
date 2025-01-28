@@ -256,7 +256,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             toast.success("Job updated successfully!",{
                 hideProgressBar: true
             });
-            router.push("/scrape");
+            // router.push("/scrape");
         } catch (error) {
             console.error("Error updating job:", error);
             toast.error("Failed to update the job. Please try again.",{

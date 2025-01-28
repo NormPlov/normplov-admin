@@ -217,76 +217,22 @@ const handleDrop = (
   
       // Post the job data
       await postJob({ postJob: jobData }).unwrap();
-      toast.success("Job successfully created!");
+      toast.success("Job successfully created!",{
+        hideProgressBar: true
+      });
   
       // Clear the selected image preview
       setSelectedImage(null);
     } catch (error) {
       console.error("Error submitting job:", error);
-      toast.error("Failed to add job. Please try again.");
+      toast.error("Failed to add job. Please try again.",{
+        hideProgressBar: true
+      });
     }
   };
   console.log("Before function call")
 
-  // const handleSubmit = async (values: typeof initialValues, { resetForm }: { resetForm: () => void }) => {
-  //   console.log('Form Values on Submit:', values);
-  //   try {
-  //     // Ensure logo is a valid File object
-  //     if (!(values.logo instanceof File)) {
-  //       console.log('Logo must be a valid file.');
-  //       return;
-  //     }
-
-  //     // Prepare job data according to UpdateJob type
-  //     const jobData: PostJob = {
-  //       category: values.category,
-  //       title: values.title,
-  //       company: values.company,
-  //       logo: values.logo, // Include the valid File object for logo
-  //       facebook_url: values.facebook_url || '',
-  //       location: values.location,
-  //       posted_at: new Date(values.posted_at).toISOString().split(".")[0], // Ensure ISO format for dates
-  //       description: values.description || [],
-  //       job_type: values.job_type,
-  //       schedule: values.schedule || '',
-  //       salary: values.salary,
-  //       closing_date: new Date(values.closing_date).toISOString().split(".")[0], // Ensure ISO format for dates
-  //       requirements: values.requirements,
-  //       responsibilities: values.responsibilities,
-  //       benefits: values.benefits,
-  //       email: values.email,
-  //       phone: values.phone,
-  //       website: values.website || '',
-        
-  //     };
-
-  //     postJob({ postJob: jobData })
-  //       .unwrap()
-  //       .then(() => {
-  //         console.log("Job successfully created!");
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error adding job:", error);
-  //         toast.error("Job creation failed. Please try again.",{
-  //           hideProgressBar: true
-  //       });
-  //       });
-
-  //     // Success 
-  //     toast.success("Job created successfully!",{
-  //       hideProgressBar: true
-  //   })
-  //     resetForm(); // Reset the form
-  //     setSelectedImage(null); // Clear the selected image preview
-  //   } catch (error) {
-  //     console.error('Error adding job:', error);
-  //     toast.error('Failed to add job. Please try again.',{
-  //       hideProgressBar: true
-  //   });
-  //   }
-  // };
-
-
+ 
   return (
     <Formik
       initialValues={initialValues}
