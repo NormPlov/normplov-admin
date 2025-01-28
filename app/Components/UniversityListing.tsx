@@ -90,18 +90,18 @@ export function UniversityListing() {
 const totalPages = data?.payload?.metadata?.total_pages || 0;
 const totalItems = data?.payload?.metadata?.total_items || 0;
 
-  const handleItemsPerPageChange = (value: string) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1);
-  };
+const handleItemsPerPageChange = (value: string) => {
+  setItemsPerPage(Number(value));
+  setCurrentPage(1);
+};
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
+const handlePreviousPage = () => {
+  if (currentPage > 1) setCurrentPage(currentPage - 1);
+};
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+const handleNextPage = () => {
+  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+};
 
   const filteredUniversities: School[] = data?.payload?.schools?.filter((school: School) => {
     const matchesSearch = (school?.en_name ?? "")
@@ -160,7 +160,7 @@ const totalItems = data?.payload?.metadata?.total_items || 0;
               <SelectValue placeholder="All" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="PUBLIC">Public School</SelectItem>
               <SelectItem value="PRIVATE">Private School</SelectItem>
               <SelectItem value="TVET">TVET</SelectItem>
