@@ -350,7 +350,7 @@ export const InterestResultComponent = () => {
               jobTitle={item.career_name}
               jobDesc={item.description}
               majors={item.majors}
-              jobUuid={""}
+              // jobUuid={""}
             />
           ))}
         </div>
