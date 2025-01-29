@@ -130,7 +130,7 @@ const UniversityPage = () => {
             } catch (error) {
                 console.error("Failed to create major:", error);
                 if (error.status === 400) {
-                    toast.error("⛔ Deletion not allowed for recommended majors.", {
+                    toast.error("Deletion not allowed for recommended majors.", {
                         hideProgressBar: true,
                     });
                 } else if (error.status === 404) {
