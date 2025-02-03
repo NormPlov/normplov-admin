@@ -39,16 +39,18 @@ import GoogleMapComponent from "@/app/Components/map/GoogleMap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Faculty, Major } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast, ToastContainer } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const UniversityPage = () => {
+    const { toast } = useToast();
     const params = useParams();
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
     const { data, isLoading } = useUniversityDetailsQuery(id || "");
     const university = data?.payload;
     console.log("University data", university?.cover_image)
-
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isFacultyDialogOpen, setIsFacultyDialogOpen] = useState(false);
     const [newFacultyName, setNewFacultyName] = useState("");
     const [newFacultyDescription, setNewFacultyDescription] = useState("");
     const [selectedFaculty, setSelectedFaculty] = useState("");
@@ -60,6 +62,7 @@ const UniversityPage = () => {
         degree: "",
         faculty_uuid: ""
     });
+    
 
     const [createFaculty] = useCreateFacultyMutation();
     const [createMajor] = useCreateMajorMutation();
@@ -85,15 +88,17 @@ const UniversityPage = () => {
                 }).unwrap();
                 setNewFacultyName("");
                 setNewFacultyDescription("");
-                toast.success("Faculty created successfully", {
-                    hideProgressBar: true
+                toast({
+                    description: "Faculty created successfully",
+                    variant: "default"
                 });
                 setIsModalOpen(false);
                 window.location.reload();
             } catch (error) {
                 console.error("Failed to create faculty:", error);
-                toast.error("Failed to create faculty", {
-                    hideProgressBar: true
+                toast({
+                    description: "Failed to create faculty",
+                    variant: "destructive"
                 });
             }
         }
@@ -121,40 +126,45 @@ const UniversityPage = () => {
                     degree: "",
                     faculty_uuid: ""
                 });
+
                 setSelectedFaculty("");
-                toast.success("Major created successfully", {
-                    hideProgressBar: true
+                toast({
+                    description: "Major created successfully",
+                    variant: "default"
                 });
+
                 setIsModalOpen(false);
                 window.location.reload();
+
             } catch (error) {
                 console.error("Failed to create major:", error);
-                if (error.status === 400) {
-                    toast.error("Deletion not allowed for recommended majors.", {
-                        hideProgressBar: true,
-                    });
-                } else if (error.status === 404) {
-                    toast.error("Major not found. Please verify the ID.", {
-                        hideProgressBar: true,
-                    });
-                } else if (error.status === 403) {
-                    toast.error("You don't have permission to delete this major.", {
-                        hideProgressBar: true,
-                    });
-                } else if (error.status === 409) {
-                    toast.error("Cannot delete the major because it is associated with active students.", {
-                        hideProgressBar: true,
-                    });
-                } else if (error.status === 500) {
-                    toast.error("Server error occurred while deleting the major.", {
-                        hideProgressBar: true,
-                    });
-                } else {
-                    toast.error("An unknown error occurred while deleting the major.", {
-                        hideProgressBar: true,
-                    });
+
+                let message = "An unknown error occurred while creating the major.";
+
+                switch (error.status) {
+                    case 400:
+                        message = "Major must not have the same degree.";
+                        break;
+                    case 404:
+                        message = "Major not found. Please verify the ID.";
+                        break;
+                    case 403:
+                        message = "You don't have permission to create major.";
+                        break;
+                    case 409:
+                        message = "Cannot create the major because it is associated with active students.";
+                        break;
+                    case 500:
+                        message = "Server error occurred while creating the major.";
+                        break;
                 }
+
+                toast({
+                    description: message,
+                    variant: "destructive"
+                });
             }
+
         }
     };
 
@@ -166,15 +176,17 @@ const UniversityPage = () => {
                     name: editingFaculty.name,
                     description: editingFaculty.description,
                 }).unwrap();
-                toast.success("Faculty Updated successfully!",{
-                    hideProgressBar: true
+                toast({
+                    description: "Faculty Updated successfully!",
+                    variant: "default"
                 })
                 setEditingFaculty(null);
                 window.location.reload();
             } catch (error) {
                 console.error("Failed to update faculty:", error);
-                toast.error("Failed to update faculty",{
-                    hideProgressBar: true
+                toast({
+                    description: "Failed to update faculty",
+                    variant: "destructive"
                 })
             }
         }
@@ -183,14 +195,16 @@ const UniversityPage = () => {
     const handleDeleteFaculty = async (id: string) => {
         try {
             await deleteFaculty(id).unwrap();
-            toast.success("Faculty deleted successfully",{
-                hideProgressBar: true
+            toast({
+                description: "Faculty deleted successfully",
+                variant: "default"
             });
             window.location.reload();
         } catch (error) {
             console.error("Failed to delete faculty:", error);
-            toast.error("Failed to delete faculty",{
-                hideProgressBar: true
+            toast({
+                description: "Failed to delete faculty",
+                variant: "destructive"
             })
         }
     };
@@ -207,14 +221,16 @@ const UniversityPage = () => {
                     degree: editingMajor.degree,
                 }).unwrap();
                 setEditingMajor(null);
-                toast.success("Major Updated successfully!",{
-                    hideProgressBar: true
+                toast({
+                    description: "Major Updated successfully!",
+                    variant: "default"
                 });
                 window.location.reload();
             } catch (error) {
                 console.error("Failed to update major:", error);
-                toast.error("Failed to update major",{
-                    hideProgressBar: true
+                toast({
+                    description: "Failed to update major",
+                    variant: "destructive"
                 })
             }
         }
@@ -224,56 +240,80 @@ const UniversityPage = () => {
         console.log("uuid delete", id)
         try {
             await deleteMajor({ id: id }).unwrap();
-            toast.success("Major deleted successfully",{
-                hideProgressBar: true
+            toast({
+                description: "Major deleted successfully",
+                variant: "default"
             });
             window.location.reload();
         } catch (error) {
-            console.error("Failed to delete major:", error);
-            toast.error("Failed to delete major",{
-                hideProgressBar: true
-            })
+            console.error("Failed to create major:", error);
+            if (error.status === 400) {
+                toast({
+                    description: "Deletion not allowed for recommended majors.",
+                    variant: "destructive"
+                });
+            } else if (error.status === 404) {
+                toast({
+                    description: "Major not found. Please verify the ID.",
+                    variant: "destructive"
+                });
+            } else if (error.status === 403) {
+                toast({
+                    description: "You don't have permission to delete this major.",
+                    variant: "destructive"
+                });
+            } else if (error.status === 500) {
+                toast({
+                    description: "Server error occurred while deleting the major.",
+                    variant: "destructive"
+                });
+            } else {
+                toast({
+                    description: "An unknown error occurred while deleting the major.",
+                    variant: "destructive"
+                });
+            }
         }
     };
 
     if (isLoading) {
         return (
-          <div className="flex flex-col space-y-3 mx-10">
-            <div className="space-y-4 flex justify-between mt-8">
-              <Skeleton className="h-8 w-96 animate-pulse" />
-              <Skeleton className="h-8 w-28 animate-pulse" />
+            <div className="flex flex-col space-y-3 mx-10">
+                <div className="space-y-4 flex justify-between mt-8">
+                    <Skeleton className="h-8 w-96 animate-pulse" />
+                    <Skeleton className="h-8 w-28 animate-pulse" />
+                </div>
+                <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-full animate-pulse" />
+                    <Skeleton className="h-8 w-full animate-pulse" />
+                </div>
             </div>
-            <Skeleton className="h-[200px] max-w-full rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-full animate-pulse" />
-              <Skeleton className="h-8 w-full animate-pulse" />
-            </div>
-          </div>
         );
-      }
-    
+    }
+
 
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
-                <ToastContainer />
-                {/* {
+
+                {
                     university?.cover_image ? (
-                        <Image
+                        <img
                             width={1000}
-                            height={1000}
+                            height={500}
                             src={
-                                university.cover_image.startsWith("http")
+                                university.cover_image.startsWith("https")
                                     ? university.cover_image
                                     : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university.cover_image}`
                             }
                             alt={`University cover`}
-                            className="w-full h-full object-container"
+                            className="w-full h-72 object-cover rounded-md"
                         />
                     ) : (
                         <div></div>
                     )
-                } */}
+                }
 
                 <div className="p-6 flex flex-col md:flex-row gap-8 items-center">
                     <Avatar className="w-72 h-72">
@@ -369,7 +409,7 @@ const UniversityPage = () => {
                         <h2 className="text-2xl font-bold text-textprimary">
                             Faculties and Majors
                         </h2>
-                        <Dialog>
+                        <Dialog open={isFacultyDialogOpen} onOpenChange={setIsFacultyDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button
                                     variant="outline"
@@ -415,6 +455,7 @@ const UniversityPage = () => {
                                         onClick={() => {
                                             setNewFacultyName("");
                                             setNewFacultyDescription("");
+                                            setIsFacultyDialogOpen(false);
                                         }}
                                     >
                                         Cancel
@@ -553,7 +594,8 @@ const UniversityPage = () => {
                                                                         onChange={handleInputChange}
                                                                         className="border border-gray-300 rounded-md px-3 py-2 w-48 text-sm focus:outline-none focus:ring-1 "
                                                                     >
-                                                                        <option value="">Select a degree</option>
+                                                                        <option value="">{editingMajor.degree}</option>
+                                                                        <option value="SHORT_COURSE">Short Courses</option>
                                                                         <option value="ASSOCIATE">Associate</option>
                                                                         <option value="BACHELOR">Bachelor</option>
                                                                         <option value="MASTER">Master</option>
@@ -577,6 +619,7 @@ const UniversityPage = () => {
                                                             </div>
                                                         ) : (
                                                             <>
+                                                                {/* show major details */}
                                                                 <CardTitle className="text-lg font-medium text-gray-800">
                                                                     {major.name}
                                                                 </CardTitle>
@@ -604,12 +647,12 @@ const UniversityPage = () => {
                                                                             if (!major.is_recommended) {
                                                                                 handleDeleteMajor(major.uuid)
                                                                             } else {
-                                                                                toast.error("This major is recommended cannot be deleted")
+                                                                                toast({
+                                                                                    description: "This major is recommended cannot be deleted",
+                                                                                    variant: "destructive"
+                                                                                })
                                                                             }
-
-                                                                        }
-
-                                                                        }
+                                                                        }}
                                                                         className="text-red-500 hover:text-red-700"
                                                                     >
                                                                         <FaTrash className="mr-2" /> Delete
@@ -626,7 +669,7 @@ const UniversityPage = () => {
                                             No majors available for this faculty.
                                         </p>
                                     )}
-                                    <Dialog>
+                                    <Dialog  open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                                         <DialogTrigger asChild>
                                             <Button
                                                 variant="outline"
@@ -725,6 +768,8 @@ const UniversityPage = () => {
                                                         onChange={handleInputChange}
                                                         className="border border-gray-300 rounded-md px-3 py-2 w-48 text-sm focus:outline-none focus:ring-1 "
                                                     >
+                                                        <option value="">Select a degree</option>
+                                                        <option value="SHORT_COURSE">Short Courses</option>
                                                         <option value="ASSOCIATE">Associate</option>
                                                         <option value="BACHELOR">Bachelor</option>
                                                         <option value="MASTER">Master</option>
@@ -735,7 +780,7 @@ const UniversityPage = () => {
                                             <DialogFooter>
                                                 <Button
                                                     variant="outline"
-                                                    onClick={() =>
+                                                    onClick={() =>{
                                                         setNewMajor({
                                                             name: "",
                                                             description: "",
@@ -744,7 +789,8 @@ const UniversityPage = () => {
                                                             degree: "",
                                                             faculty_uuid: ""
                                                         })
-                                                    }
+                                                        setIsDialogOpen(false);
+                                                    }}
                                                 >
                                                     Cancel
                                                 </Button>

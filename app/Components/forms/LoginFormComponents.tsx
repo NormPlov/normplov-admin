@@ -126,7 +126,7 @@ export default function Login() {
                     />
                 </div>
                 <div className="space-y-6 text-textprimary mt-8 text-center">
-                    <h1 className="text-4xl font-bold">សូមស្វាគមន៍មកកាន់គេហទំព័រនាំផ្លូវ</h1>
+                    <h1 className="text-4xl font-bold">សូមស្វាគមន៍មកកាន់គេហទំព័រ E-Found</h1>
                     <h2 className="text-4xl font-bold"></h2>
                     <p className="text-lg font-normal">
                         រក្សាទុកពាក្យសម្ងាត់របស់អ្នក និងស្វែងរកព័ត៌មានផ្ទាល់ខ្លួននៅលើគេហទំព័រដែលមានសុវត្ថិភាពបំផុត។

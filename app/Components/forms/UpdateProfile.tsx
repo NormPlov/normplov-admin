@@ -5,8 +5,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { UpdateProfilesTypes } from "@/types/types";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { HiCamera } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
 import {
     useGetMeQuery,
@@ -223,7 +221,7 @@ const UpdateProfile = () => {
                                     }}
                                     onDragOver={(e) => e.preventDefault()}
                                 >
-                                    <Image
+                                    <img
                                         src={selectedImage || `${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}` || "/assets/placeholderProfile.png"}
                                         alt="Profile picture"
                                         width={1000}

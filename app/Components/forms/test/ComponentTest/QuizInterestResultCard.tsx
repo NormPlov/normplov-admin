@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import Image, { StaticImageData } from 'next/image'
+import { StaticImageData } from 'next/image'
 import placeholderImage from '@/public/assets/placeholder.png'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -31,7 +31,9 @@ export const QuizInterestResultCard = ({ title, desc, image, isLoading }: props)
                 }
 
                 // Prepend the API base URL after modification
-                imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API_URL}${modifiedImage}`;
+                imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API}${modifiedImage}`;
+                console.log("img ", modifiedImage)
+                console.log("img with domain:",imageUrl)
             }
         } else if (image && 'src' in image) {
             // If image is StaticImageData, use its src property (which is a string URL)
@@ -69,7 +71,7 @@ export const QuizInterestResultCard = ({ title, desc, image, isLoading }: props)
                     <Skeleton className="h-[350px] w-[350px] rounded-xl" />
                 ) : (
 
-                    <Image
+                    <img
                         src={imageSrc}
                         alt="Quiz Illustration"
                         width={350}

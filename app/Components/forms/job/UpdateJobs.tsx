@@ -4,7 +4,6 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
-import Image from 'next/image';
 import { FaUpload } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 import {
@@ -23,15 +22,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronDown } from 'lucide-react';
 
 
-
-
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
 const validationSchema = Yup.object({
     category: Yup.string(),
     title: Yup.string().required('Position is required'),
     company: Yup.string().required('Company Name is required'),
-    logo: Yup.mixed().required('Logo is required'),
+    logo_url: Yup.mixed().required('Logo is required'),
     facebook_url: Yup.string().url('Must be a valid URL').nullable(),
     location: Yup.string().nullable(),
     posted_at: Yup.date().required('Posting date is required'),
@@ -135,12 +132,12 @@ const {toast} = useToast()
     const initialValues: UpdateJob = {
         company: job.company_name || "",
         title: job.title || "",
-        logo: job.logo || "",
+        logo_url: job.logo || "",
         facebook_url: job.facebook_url || null,
         location: job.location || null,
         description: job.description || "",
         job_type: job.job_type || null,
-        salary: job.salary || "",
+        salary: job.salary || "Negotiable",
         posted_at: job.created_at || "",
         closing_date: job.closing_date || null,
         requirements: Array.isArray(job.requirements) ? job.requirements : [],
@@ -180,9 +177,9 @@ const {toast} = useToast()
 
         try {
             // Handle logo upload
-            let logoUrl = values.logo;
-            if (values.logo instanceof File) {
-                const uploadedLogoUrl = await handleUploadImage(values.logo);
+            let logoUrl = values.logo_url;
+            if (values.logo_url instanceof File) {
+                const uploadedLogoUrl = await handleUploadImage(values.logo_url);
                 if (uploadedLogoUrl) {
                     logoUrl = uploadedLogoUrl;
                 } else {
@@ -238,7 +235,7 @@ const {toast} = useToast()
             // Prepare the update object for UpdateJob type
             const update: UpdateJob = {
                 ...values,
-                logo: logoUrl,
+                logo_url: logoUrl,
                 closing_date: closingDateISO,
                 posted_at: postedAtISO,
                 category: formatCategory,
@@ -254,9 +251,10 @@ const {toast} = useToast()
                         description: "Job updated successfully!",
                         variant: "default"
                     });
+                    router.push("/jobs");
                 });
 
-            // router.push("/jobs");
+            
         } catch (error) {
             console.error("Error updating job:", error);
             toast({
@@ -311,7 +309,7 @@ const {toast} = useToast()
                     </div>
                     {/* cover Job seeking  */}
 
-                    <label htmlFor="logo" className="block font-medium text-primary text-md mb-2">
+                    <label htmlFor="logo_url" className="block font-medium text-primary text-md mb-2">
                         Cover
                     </label>
 
@@ -322,7 +320,7 @@ const {toast} = useToast()
                         onDragOver={(e) => e.preventDefault()}
                     >
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                            <Image
+                            <img
                                 src={
                                     selectedImage || // Use the selected image if available
                                     (job.logo && job.logo.startsWith("http") // Check if job.logo exists and starts with "http"
@@ -353,14 +351,14 @@ const {toast} = useToast()
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                    setFieldValue('logo', file);
+                                    setFieldValue('logo_url', file);
                                     setSelectedImage(URL.createObjectURL(file));
                                 }
                             }}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         />
                     </div>
-                    <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
+                    <ErrorMessage name="logo_url" component="p" className="text-red-500 text-sm mt-2" />
 
                     <div className="flex justify-between w-full gap-24">
                         {/* category */}

@@ -24,7 +24,8 @@ import Pagination from "../ComponentTest/Pagination";
 import ValueSkeletonLoader from "../ComponentTest/Loading/ValuesSkeletonLoading";
 import Image from "next/image";
 import errorLoading from '@/public/assets/errorLoading.png'
-// import { useGetAllFinalTestUuidsQuery } from "@/redux/feature/assessment/quiz";
+import { useGetAllAssessmentDetailQuery } from "@/app/redux/service/result";
+
 // Define ChartData type
 type ChartData = {
   label: string;
@@ -81,9 +82,9 @@ export const ValueResultComponent = () => {
     typeof params.type === "string" ? params.type : "";
   const uuidString = typeof params.uuid === "string" ? params.uuid : "";
 
-  // const { data: responseUuid } = useGetAllFinalTestUuidsQuery({ testUuid: uuidString })
+  const { data: responseUuid } = useGetAllAssessmentDetailQuery({ uuid: uuidString })
 
-  // const finalUuid = resultTypeString === "all" ? responseUuid?.payload?.referenced_test_uuids?.Values?.test_uuid || "" : uuidString;
+  const finalUuid = resultTypeString === "AllTests" ? responseUuid?.payload?.referenced_test_uuids?.Values?.test_uuid || "" : uuidString;
 
   const finalResultTypeString = resultTypeString === "AllTests" ? "Values" : resultTypeString;
 
@@ -92,17 +93,14 @@ export const ValueResultComponent = () => {
     isLoading,
     error
   } = useFetchAssessmentDetailsQuery({
-    testUUID: uuidString,
+    testUUID: finalUuid,
     resultType: finalResultTypeString,
   });
 
-  if(resultTypeString === 'all'){
-    localStorage.setItem('currentTestUuid',uuidString)
+  if(resultTypeString === 'AllTests'){
+    localStorage.setItem('currentTestUuid',finalUuid)
   }
 
-  // if (!resultTypeString || !uuidString) {
-  //   return <div className=' w-full flex justify-center items-center'><Loading /></div>;
-  // }
 
   if (isLoading) {
     return(

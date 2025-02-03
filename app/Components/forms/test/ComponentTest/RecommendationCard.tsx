@@ -121,9 +121,6 @@ export const RecommendationCard = ({ jobTitle, majors, isLoading, jobList, jobUu
                                     )}
                                 </div>
                             </div>
-
-
-
                             {/* Majors */}
                             <div className='pt-2'>
 

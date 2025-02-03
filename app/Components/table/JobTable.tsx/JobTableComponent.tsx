@@ -208,7 +208,7 @@ export default function JobListTableComponent() {
                         <AvatarImage
                           src={
                             job.logo
-                              ? job.logo.startsWith("http") // Check if the URL starts with 'http' or 'https'
+                              ? job.logo.startsWith("https") // Check if the URL starts with 'http' or 'https'
                                 ? job.logo // Use the original full URL
                                 : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend base URL if 'http' is missing
                               : "/assets/placeholder.png" // Fallback to placeholder if no logo

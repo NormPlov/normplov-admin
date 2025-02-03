@@ -3,12 +3,11 @@
 import React from "react";
 import { HiCamera } from "react-icons/hi2";
 import { IoMdCalendar } from "react-icons/io";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/app/redux/service/user";
 import { Skeleton } from "@/components/ui/skeleton";
-// import Loading from "@/app/Loading";
+
 
 
 const ProfileSetting = () => {
@@ -66,7 +65,7 @@ const ProfileSetting = () => {
                 <div className="relative w-full h-40 bg-primary rounded-lg mb-20">
                     <div className="absolute -bottom-32 left-20">
                         <div className="relative border border-1 bg-[#fdfdfd] w-40 h-40 rounded-full ">
-                            <Image
+                            <img
                                 src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}` || "/assets/placeholderProfile.png"}
                                 alt="Profile picture"
                                 width={1000}

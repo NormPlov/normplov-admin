@@ -31,7 +31,7 @@ export const QuizResultListing = ({ title, desc, image, isLoading }: props) => {
               }
 
               // Prepend the API base URL after modification
-              imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API_URL}${modifiedImage}`;
+              imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API}${modifiedImage}`;
           }
       } else if (image && 'src' in image) {
           // If image is StaticImageData, use its src property (which is a string URL)
@@ -51,8 +51,8 @@ export const QuizResultListing = ({ title, desc, image, isLoading }: props) => {
         {isLoading ? (
           <Skeleton className="w-full h-full rounded-md" /> // Skeleton for the image
         ) : (
-          <Image
-          src={imageSrc}
+          <img
+            src={imageSrc}
             alt="Quiz Illustration"
             width={36} // Set a consistent width
             height={36} // Set a consistent height

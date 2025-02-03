@@ -13,6 +13,7 @@ import Pagination from '../ComponentTest/Pagination';
 import Image from 'next/image';
 import errorLoading from '@/public/assets/errorLoading.png'
 import { Skeleton } from '@/components/ui/skeleton';
+import { useGetAllAssessmentDetailQuery } from '@/app/redux/service/result';
 
 type Skill = {
   skill: string;
@@ -51,20 +52,20 @@ export const SkillResultComponent = () => {
   const resultTypeString = typeof params.type === 'string' ? params.type : '';
   const uuidString = typeof params.uuid === 'string' ? params.uuid : '';
 
-  // const { data: responseUuid } = useGetAllFinalTestUuidsQuery({ testUuid: uuidString })
+  const { data: responseUuid } = useGetAllAssessmentDetailQuery({ uuid: uuidString })
 
-  // const finalUuid = resultTypeString === "all" ? responseUuid?.payload?.referenced_test_uuids?.Skills?.test_uuid || "" : uuidString;
+  const finalUuid = resultTypeString === "AllTests" ? responseUuid?.payload?.referenced_test_uuids?.Skills?.test_uuid || "" : uuidString;
 
   const finalResultTypeString = resultTypeString === "AllTests" ? "Skills" : resultTypeString;
 
   const { data: response, isLoading, error } = useFetchAssessmentDetailsQuery({
-    testUUID: uuidString,
+    testUUID: finalUuid,
     resultType: finalResultTypeString
   });
   console.log("Skill data:",response)
 
-  if(resultTypeString === 'All'){
-    localStorage.setItem('currentTestUuid',uuidString)
+  if(resultTypeString === 'AllTests'){
+    localStorage.setItem('currentTestUuid',finalUuid)
   }
 
   console.log(`result: ${resultTypeString} id: ${uuidString}`)
@@ -90,10 +91,6 @@ export const SkillResultComponent = () => {
   const skillCategory = response?.categoryPercentages;
 
   console.log("skill: ", skillCategory)
-
-  // if (!skillCategory) {
-  //   return <p>Loading...</p>;
-  // }
 
   const strongSkill = response?.skillsGrouped["Strong"] ?? [];
   const averageSkill = response?.skillsGrouped["Average"] ?? [];

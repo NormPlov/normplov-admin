@@ -63,10 +63,10 @@ export default function EditUniversityPage({
   const university = data?.payload
   console.log("university in edit:", university)
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university?.cover_image}` || null
+    `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university?.cover_image}` 
   );
   const [logoPreview, setLogoPreview] = useState<string | null>(
-    `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university?.logo_url}`|| null
+    `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university?.logo_url}`
   );
 
   if (isError) {
@@ -142,6 +142,7 @@ export default function EditUniversityPage({
       return null;
     }
   };
+  console.log("cover",coverPreview)
 
   return (
     <div className="w-full mx-auto p-6">
@@ -223,11 +224,10 @@ export default function EditUniversityPage({
                   >
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                       {coverPreview ? (
-                        <Image
+                        <img
                           src={coverPreview}
                           alt="Cover Preview"
-                          layout="fill"
-                          objectFit="cover"
+                          className="object-cover"
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
@@ -257,11 +257,10 @@ export default function EditUniversityPage({
                         onDragOver={(e) => e.preventDefault()}
                       >
                         {logoPreview ? (
-                          <Image
+                          <img
                             src={logoPreview}
                             alt="Logo Preview"
-                            layout="fill"
-                            objectFit="contain"
+                            className="object-contain"
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">

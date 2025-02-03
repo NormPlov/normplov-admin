@@ -474,7 +474,7 @@ export type UpdateJob = {
   email: string;
   phone: string[];
   website: string;
-  logo: string | File;
+  logo_url: string | File;
   location: string;
   facebook_url: string;
   benefits: string[];

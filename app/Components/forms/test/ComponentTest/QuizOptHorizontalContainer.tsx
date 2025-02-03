@@ -2,7 +2,7 @@
 
 'use client'
 import React, { useEffect, useState } from 'react'
-import Image, { StaticImageData } from 'next/image'
+import { StaticImageData } from 'next/image'
 import { QuizButton } from './QuizButton'
 import { ArrowRight } from "lucide-react"
 import placeholderImage from '@/public/assets/placeholder.png'
@@ -51,7 +51,7 @@ export const QuizOptHorizontalContainer = ({
         }
 
         // Prepend the API base URL after modification
-        imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API_URL}${modifiedImage}`;
+        imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API}${modifiedImage}`;
       }
     } else if (image && 'src' in image) {
       // If image is StaticImageData, use its src property (which is a string URL)
@@ -74,7 +74,7 @@ export const QuizOptHorizontalContainer = ({
         ) : (
 
           type === 'LearningStyle' ? (
-            <Image
+            <img
               src={imageSrc}
               alt="Technique Illustration"
               width={100}
@@ -83,7 +83,7 @@ export const QuizOptHorizontalContainer = ({
               onError={() => setImageSrc(placeholderImage.src)}
             />
           ) : (
-            < Image
+            < img
               src={imageSrc}
               alt="Technique Illustration"
               width={200}

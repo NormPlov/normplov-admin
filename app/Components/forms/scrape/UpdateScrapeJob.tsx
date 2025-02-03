@@ -4,7 +4,6 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
-import Image from 'next/image';
 import { FaUpload } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 import {
@@ -31,7 +30,7 @@ const validationSchema = Yup.object({
     category: Yup.string(),
     title: Yup.string().required('Position is required'),
     company: Yup.string().required('Company Name is required'),
-    logo: Yup.mixed().required('Logo is required'),
+    logo_url: Yup.mixed().required('Logo is required'),
     facebook_url: Yup.string().url('Must be a valid URL').nullable(),
     location: Yup.string().nullable(),
     posted_at: Yup.date(),
@@ -128,12 +127,12 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const initialValues: UpdateJob = {
         company: job.company || "",
         title: job.title || "",
-        logo: job.logo || "",
+        logo_url: job.logo || "",
         facebook_url: job.facebook_url || null,
         location: job.location || null,
         description: job.description || "",
         job_type: job.job_type || null,
-        salary: job.salary || "",
+        salary: job.salary || "Negotiable",
         posted_at: job.posted_at || "",
         closing_date: job.closing_date || null,
         requirements: Array.isArray(job.requirements) ? job.requirements : [],
@@ -177,9 +176,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
         try {
             // Handle logo upload
-            let logoUrl = values.logo;
-            if (values.logo instanceof File) {
-                const uploadedLogoUrl = await handleUploadImage(values.logo);
+            let logoUrl = values.logo_url;
+            if (values.logo_url instanceof File) {
+                const uploadedLogoUrl = await handleUploadImage(values.logo_url);
                 if (uploadedLogoUrl) {
                     logoUrl = uploadedLogoUrl;
                     console.log("url: ", uploadedLogoUrl);
@@ -238,7 +237,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             // Prepare the update object for UpdateJob type
             const update: UpdateJob = {
                 ...values,
-                logo: logoUrl,
+                logo_url: logoUrl,
                 closing_date: closingDateISO,
                 posted_at: postedAtISO,
                 category: formatCategory,
@@ -254,13 +253,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         description: "Job updated successfully!",
                         variant: "default"
                     });
-
+            router.push("/scrape");
                 });
-            toast({
-                description: "Job updated successfully!",
-                variant: "default"
-            });
-            // router.push("/scrape");
+            
         } catch (error) {
             console.error("Error updating job:", error);
             toast({
@@ -313,7 +308,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     </div>
                     {/* cover Job seeking  */}
 
-                    <label htmlFor="logo" className="block font-medium text-primary text-md mb-2">
+                    <label htmlFor="logo_url" className="block font-medium text-primary text-md mb-2">
                         Cover
                     </label>
 
@@ -324,7 +319,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         onDragOver={(e) => e.preventDefault()}
                     >
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                            <Image
+                            <img
                                 src={
                                     selectedImage || // Use the selected image if available
                                     (job.logo && job.logo.startsWith("https") 
@@ -355,14 +350,14 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                    setFieldValue("logo", file);
+                                    setFieldValue("logo_url", file);
                                     setSelectedImage(URL.createObjectURL(file));
                                 }
                             }}
                             className="absolute inset-0 opacity-0 cursor-pointer"
                         />
                     </div>
-                    <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
+                    <ErrorMessage name="logo_url" component="p" className="text-red-500 text-sm mt-2" />
 
                     <div className="flex justify-between w-full gap-24">
                         {/* category */}
@@ -701,12 +696,12 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
                     </div>
                     {/* Debug output */}
-                    {/* <div className="mt-8 p-4 bg-gray-100 rounded">
+                    <div className="mt-8 p-4 bg-gray-100 rounded">
                         <h3 className="text-lg font-semibold mb-2">
                             Form Values (Debug):
                         </h3>
                         <pre>{JSON.stringify(values, null, 2)}</pre>
-                    </div> */}
+                    </div>
                 </Form>
 
             )}
