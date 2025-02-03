@@ -9,8 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCreateUniversityMutation } from "@/app/redux/service/university";
 import { useUploadImageMutation } from "@/app/redux/service/media";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { CreateUniversityType } from "@/types/types";
 import Image from "next/image";
@@ -42,6 +41,8 @@ export default function SchoolForm() {
   const [uploadImage, { isLoading: isUploading }] = useUploadImageMutation();
   const router = useRouter();
 
+  const {toast} = useToast()
+
   if (isLoading || isUploading) {
     return (
         <div className="flex flex-col space-y-3 mx-10">
@@ -64,8 +65,9 @@ export default function SchoolForm() {
       return response.payload.file_url;
     } catch (error) {
       console.error("Failed to upload image:", error);
-      toast.error("Failed to upload image.", {
-        hideProgressBar: true
+      toast({
+        description: "Failed to upload image.", 
+        variant: "destructive"
       });
       return null;
     }
@@ -89,14 +91,16 @@ export default function SchoolForm() {
 
       // Send the data to the API
       await createUniversity({ newUniversity: schoolData }).unwrap();
-      toast.success("School created successfully!", {
-        hideProgressBar: true
+      toast({
+        description: "School created successfully!", 
+        variant: "default"
       });
       // router.replace("/majors-universities");
     } catch (error) {
       console.error("Failed to create school:", error);
-      toast.error("Failed to create school. Please try again.", {
-        hideProgressBar: true
+      toast({
+        description: "Failed to create school. Please try again.", 
+        variant: "destructive"
       });
     } finally {
       setSubmitting(false);
@@ -160,7 +164,7 @@ export default function SchoolForm() {
       >
         {({ isSubmitting, setFieldValue, values }) => (
           <Form className="space-y-6">
-            <ToastContainer />
+            
              {/* Cover Image Upload */}
             <div className="space-y-6 mb-6">
               <div

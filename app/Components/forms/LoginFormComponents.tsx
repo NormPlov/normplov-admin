@@ -8,11 +8,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { ToastContainer, ToastOptions, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { setAccessToken, setUserRole } from "@/app/redux/features/auth/authSlice";
 import { LoginType } from "@/types/types";
+import { useToast } from "@/hooks/use-toast"
+
 
 const initialValues: LoginType = {
     email: "",
@@ -25,6 +25,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Login() {
+    const { toast } = useToast()
 
     const dispatch = useAppDispatch()
     const router = useRouter();
@@ -35,22 +36,10 @@ export default function Login() {
         setShowPassword(!showPassword);
     };
 
-    // Toastify Config
-    const toastConfig: ToastOptions = {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-
-    };
-
     // Handle submit
     const handleSubmit = async (values: LoginType) => {
         setLoading(true);
-        toast.info("Login Processing!", toastConfig);
+        // toast.info("Login Processing!", toastConfig);
 
         try {
             const res = await fetch(`/api/login`, {
@@ -62,52 +51,60 @@ export default function Login() {
             });
 
             if (res.ok) {
-                toast.success("Login Successfully!", {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+           
                 const data = await res.json();
-                
-                    console.log("You are admin")
-                    if (data?.payload?.access_token) {
-                        console.log("ACCESS TOKEN : ", data.payload.access_token);
-                        dispatch(setAccessToken(data.payload.access_token))
-                        dispatch(setUserRole(data?.payload?.roles));
-                        router.refresh()
-                        router.push("/")
-                        console.log("data", data)
-                    }
-               
+
+                console.log("You are admin")
+                if (data?.payload?.access_token) {
+                    console.log("ACCESS TOKEN : ", data.payload.access_token);
+                    dispatch(setAccessToken(data.payload.access_token))
+                    dispatch(setUserRole(data?.payload?.roles));
+                    toast({
+                        title: "Logged in Successfully 🎉",
+                        description: "Your action was completed successfully.",
+                        variant: "default",
+                        duration: 3000,
+                      })
+                    // router.refresh()
+                    router.push("/")
+                    console.log("data", data)
+                }
+
             } else {
                 // meaning the credential can be incorrect!
                 switch (res.status) {
                     case 401:
-                        toast.error("Incorrect Password!", { autoClose: 2000, hideProgressBar: true });
+                        toast({
+                            variant: "destructive",
+                            description: "Incorrect Password!"
+                        });
                         break;
                     case 404:
-                        toast.error("User not found!", { autoClose: 2000, hideProgressBar:true });
+                        toast({
+                            description: "User not found!",
+                            variant: "destructive"
+                        });
                         break;
                     case 403:
-                        toast.warn("You need to be an admin to access this page!", { autoClose: 2000, hideProgressBar: true });
+                        toast({
+                            description:"You need to be an admin to access this page!", 
+                            variant: "warning"
+                         });
                         break;
                     default:
-                        toast.error("Something went wrong!", { autoClose: 3000, hideProgressBar: true,
-                            style: {
-                                marginBottom: "10px", // Space between toasts
-                                borderRadius: "8px",
-                                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                            },
-                         });
+                        toast({
+                            description: "Something went wrong!",
+                            variant: "destructive"
+                        });
                         break;
                 }
             }
         } catch (error) {
             console.log("There is an error when login : ", error);
-            toast.error("An unexpected error occurred.", toastConfig);
+            toast({
+                description: "An unexpected error occurred.",
+                variant: "destructive"
+            });
         } finally {
             setLoading(false);
         }
@@ -116,18 +113,9 @@ export default function Login() {
 
     return (
         <main className="flex min-h-screen ">
-            <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                newestOnTop={true} // Ensures newest toast is at the top
-                closeOnClick
-                pauseOnHover
-                draggable
-                limit={3} />
-            
+
             <div className="hidden flex-col bg-primary/10 px-20 pt-12 lg:block relate w-[900px]">
-                
+
                 <div className="mt-5">
                     <Image
                         src={"/assets/2.png"}
@@ -150,7 +138,7 @@ export default function Login() {
                     <div className="space-y-2 text-center">
                         <h2 className="text-5xl font-bold text-primary">Login</h2>
                     </div>
-                    <Formik 
+                    <Formik
                         initialValues={initialValues}
                         validationSchema={validationSchema}
                         onSubmit={(values, actions) => {
@@ -198,7 +186,7 @@ export default function Login() {
                                             onClick={handleShowPassword}
                                         >
                                             {showPassword ? (
-                                                 <IoEyeSharp className="h-5 w-5 text-gray-500" />
+                                                <IoEyeSharp className="h-5 w-5 text-gray-500" />
                                             ) : (
                                                 <IoEyeOff className="h-5 w-5 text-gray-500" />
                                             )}
@@ -226,7 +214,7 @@ export default function Login() {
                     </Formik>
                 </div>
             </div>
-   
+
         </main>
     );
 }

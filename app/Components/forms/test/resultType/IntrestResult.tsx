@@ -1,360 +1,272 @@
-import React from "react";
-import QuizHeader from "../ComponentTest/QuizHeader";
-import { QuizInterestResultCard } from "../ComponentTest/QuizInterestResultCard";
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-} from "recharts";
-import { useParams } from "next/navigation";
-import { useFetchAssessmentDetailsQuery } from "@/app/redux/service/result";
-import { RecommendationCard } from "../ComponentTest/RecommendationCard";
+import React, { useState } from 'react'
+import QuizHeader from '../ComponentTest/QuizHeader';
+import { QuizInterestResultCard } from '../ComponentTest/QuizInterestResultCard';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import { useParams } from 'next/navigation';
+import { useFetchAssessmentDetailsQuery } from '@/app/redux/service/result';
+import { RecommendationCard } from '../ComponentTest/RecommendationCard';
+import Pagination from '../ComponentTest/Pagination';
+import Image from 'next/image';
+import errorLoading from '@/public/assets/errorLoading.png'
+import { Skeleton } from '@/components/ui/skeleton';
+import { useGetAllAssessmentDetailQuery } from '@/app/redux/service/result';
 
-// Type Definitions
 type ChartDataType = {
-  label: string;
-  score: number;
+    label: string;
+    score: number;
 };
 
-// type InterestCardItem = {
-//   dimension_name: string;
-//   description: string;
-//   image_url: string;
-// };
+type InterestCardItem = {
+    dimension_name: string;
+    description: string;
+    image_url: string;
+};
 
-// type RecommendedCareer = {
-//   career_name: string;
-//   description: string;
-//   majors: Major[];
-// };
+type Job = {
+    category_name: string;
+    responsibilities: string[];
+}
 
-// type Major = {
-//   major_name: string;
-//   schools: string[];
-// };
+type RecommendedCareer = {
+    career_name: string;
+    description: string;
+    majors: Major[];
+    career_uuid: string;
+    categories: Job[];
+};
 
-// type Category = {
-//   category_name: string;
-//   responsibilities: string[];
-// };
+type SchoolType = {
+    school_uuid: string;
+    school_name: string;
+}
 
-// Matches the InterestsResponse type
-// type InterestsResponse = {
-//   assessmentType: "Interests";
-//   testUUID: string;
-//   testName: string;
-//   createdAt: string;
-//   hollandCode: string;
-//   typeName: string;
-//   description: string;
-//   keyTraits: string[];
-//   careerPath: RecommendedCareer[];
-//   chartData: ChartDataType[];
-//   categories: Category[];
-//   dimensionDescriptions: InterestCardItem[];
-// };
-
-// // General Assessment Response
-// type AssessmentResponse = InterestsResponse; // Extend here for additional types if needed
-
-// export const InterestResultComponent= () => {
-//   const params = useParams();
-
-//   const resultTypeString = typeof params.type === "string" ? params.type : "";
-//   const uuidString = typeof params.uuid === "string" ? params.uuid : "";
-
-//   const { data: response, isLoading, error } = useFetchAssessmentDetailsQuery({
-//     testUUID: uuidString,
-//     resultType: resultTypeString,
-//   });
-
-//   if (isLoading) {
-//     return (
-//       <div className="w-full flex justify-center items-center">
-//         Loading...
-//       </div>
-//     );
-//   }
-
-//   if (error || !response || response.length === 0) {
-//     return <p>Error loading data or data is missing.</p>;
-//   }
-
-//   // Filter only Interests type assessments
-//   const interestsData = response.filter(
-//     (items) => items.user_response_data?.assessmentType === "Interests"
-//   ) as InterestsResponse[];
-
-//   if (!interestsData || Object.keys(interestsData).length === 0) {
-//     return <p>No assessments of type "Interests" found.</p>;
-//   }
-//   const parsedData = interestsData[0]; // Use the first "Interests" response
-
-//   const {
-//     description,
-//     typeName,
-//     keyTraits,
-//     dimensionDescriptions,
-//     chartData,
-//     careerPath,
-//   } = parsedData;
-
-
-//   // Transform chart data for visualization
-//   const transformedChartData = chartData.map((item) => ({
-//     label: item.label,
-//     score: item.score * 10, // Example transformation
-//   }));
-
-//   return (
-//     <div className="space-y-4 lg:space-y-8 max-w-8xl mx-auto p-4 md:p-10 lg:p-12">
-//       {/* Header Section */}
-//       <div className="w-full grid gap-4 grid-cols-1 lg:grid-cols-2 pb-4 ">
-//         <div className="col-span-1 space-y-2 md:space-y-4">
-//           <p className="text-md md:text-xl">អ្នកគឺជា</p>
-//           <p className="text-3xl md:text-4xl text-primary font-bold">
-//             {typeName}
-//           </p>
-//           <div className="flex flex-wrap gap-2">
-//             {keyTraits.map((trait, index) => (
-//               <div
-//                 key={index}
-//                 className="rounded-[8px] text-secondary bg-secondary bg-opacity-10 text-xs lg:text-sm max-w-fit px-1 lg:px-2"
-//               >
-//                 {trait}
-//               </div>
-//             ))}
-//           </div>
-//           <p className="text-textprimary">{description}</p>
-//         </div>
-
-//         <div className="col-span-1">
-//           <ResponsiveContainer width="100%" height="100%">
-//             <RadarChart
-//               cx="50%"
-//               cy="50%"
-//               outerRadius="80%"
-//               data={transformedChartData}
-//             >
-//               <PolarGrid />
-//               <PolarAngleAxis dataKey="label" />
-//               <PolarRadiusAxis angle={30} domain={[0, 100]} />
-//               <Radar
-//                 name="Holland"
-//                 dataKey="score"
-//                 stroke="#FFA500"
-//                 fill="#FFA500"
-//                 fillOpacity={0.6}
-//               />
-//             </RadarChart>
-//           </ResponsiveContainer>
-//         </div>
-//       </div>
-
-//       {/* Dimensions Section */}
-//       <QuizHeader
-//         title="បុគ្គលដែលមានចំណាប់អារម្មណ៍លើផ្នែកនេះមានទំនោរទៅខាង"
-//         description="Individuals with an interest in this area tend to be"
-//         size="sm"
-//         type="result"
-//       />
-
-//       <div className="flex flex-nowrap gap-4 justify-start overflow-x-auto">
-//         {dimensionDescriptions.map((item, index) => {
-//           const imageUrl = item.image_url
-//             ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${item.image_url}`
-//             : "/assets/placeholder.png";
-
-//           return (
-//             <QuizInterestResultCard
-//               key={index}
-//               title={item.dimension_name}
-//               desc={item.description}
-//               image={imageUrl || "/assets/placeholder.png"}
-//             />
-//           );
-//         })}
-//       </div>
-
-
-//       {/* Career Recommendations Section */}
-//       <div className="space-y-4 lg:space-y-8 max-w-8xl mx-auto ">
-//         <QuizHeader
-//           title="ការងារទាំងនេះអាចនឹងសាកសមជាមួយអ្នក"
-//           description="These careers may be suitable for you"
-//           size="sm"
-//           type="result"
-//         />
-
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-//           {careerPath.map((item, index) => (
-//             <RecommendationCard
-//               key={item.career_name || index}
-//               jobTitle={item.career_name}
-//               jobDesc={item.description}
-//               majors={item.majors}
-//               jobUuid={""} />
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
+type Major = {
+    major_name: string; // The name of the major
+    schools: SchoolType[];  // An array of schools offering the major
+};
 
 export const InterestResultComponent = () => {
-  const params = useParams();
+    const params = useParams();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
 
-  const resultTypeString = typeof params.type === "string" ? params.type : "";
-  const uuidString = typeof params.uuid === "string" ? params.uuid : "";
+    const resultTypeString = typeof params.type === 'string' ? params.type : '';
+    const uuidString = typeof params.uuid === 'string' ? params.uuid : '';
 
-  const { data: response, isLoading, error } = useFetchAssessmentDetailsQuery({
-    testUUID: uuidString,
-    resultType: resultTypeString,
-  });
+    const { data: responseUuid } = useGetAllAssessmentDetailQuery({ uuid: uuidString })
 
-  if (isLoading) {
-    return (
-      <div className="w-full flex justify-center items-center">
-        Loading...
-      </div>
+    const finalUuid = resultTypeString === "AllTests" ? responseUuid?.payload?.referenced_test_uuids?.Interests?.test_uuid || "" : uuidString;
+
+    const finalResultTypeString = resultTypeString === "AllTests" ? "Interests" : resultTypeString;
+
+    const { data: response, isLoading, error } = useFetchAssessmentDetailsQuery({
+        testUUID: finalUuid,
+        resultType: finalResultTypeString
+    });
+    console.log("data from interest: ", response)
+    
+    if(resultTypeString === 'AllTests'){
+        localStorage.setItem('currentTestUuid', finalUuid)
+    }
+
+
+    if (error) {
+        return (
+            <div className='bg-white w-full flex flex-col justify-center items-center py-6'>
+                < Image
+                    src={errorLoading}
+                    alt="Error Loading Data"
+                    width={500}
+                    height={500}
+                    className="object-fill"
+                />
+                <p className='text-danger text-md lg:text-xl font-semibold text-center'>Sorry, we couldn&#39;t load your data right now.</p>
+                <p className='text-gray-500 text-sm lg:text-lg text-center'>Try refreshing the page or come back later.</p>
+            </div>
+        );
+    }
+
+
+    // Handle the response data
+    const desc = response?.description ?? '';
+    console.log("des: ", desc)
+    const typeName = response?.typeName ?? '';
+    const keyTraits = response?.keyTraits ?? [];
+    const interestCard = response?.dimensionDescriptions ?? [];
+
+    const chartData: ChartDataType[] = response?.chartData?.map((item: ChartDataType) => ({
+        label: item.label,
+        score: item.score * 10,
+    })) || [];
+
+    // Use the correct career data for pagination
+    const recommendedCareer = response?.careerPath ?? [];
+
+
+
+    // Pagination handler
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
+    // Calculate total pages for career recommendations
+    const totalPages = Math.ceil(recommendedCareer?.length / itemsPerPage);
+
+    // Get current items for the current page
+    const currentItems = recommendedCareer.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
     );
-  }
 
-  if (error || !response || response.length === 0) {
-    return <p>Error loading data or data is missing.</p>;
-  }
+    console.log("image: ", interestCard?.[0]?.image_url)
+    return (
 
-  // Parse and filter Interests data
-  const interestsData = response
-    .map((item) => {
-      if (typeof item.user_response_data === "string") {
-        try {
-          return JSON.parse(item.user_response_data); // Parse the string into an object
-        } catch (e) {
-          console.error("Failed to parse user_response_data:", e);
-          return null; // Return null for invalid JSON
-        }
-      }
-      return null; // Return null for non-string data
-    })
-    .filter((data) => data?.test_name === "Interests Test"); // Filter for Interests Test
+        <div className='space-y-4 lg:space-y-8 max-w-7xl mx-auto p-4 md:p-10 lg:p-12' >
 
-  if (!interestsData || interestsData.length === 0) {
-    return <p>No assessments of type Interests found.</p>;
-  }
+            <div className='w-full grid gap-4 grid-cols-1 lg:grid-cols-2 pb-4 '>
+                <div className='col-span-1 space-y-2 md:space-y-4'>
 
-  const parsedData = interestsData[0]; // Use the first "Interests" response
+                    {/* Skeleton for the title */}
+                    {isLoading ? (
+                        <Skeleton className="h-6 w-32 rounded-xl" />
+                    ) : (
+                        <p className='text-md md:text-xl'>អ្នកគឺជា</p>
+                    )}
 
-  const {
-    description,
-    typeName,
-    keyTraits,
-    dimensionDescriptions,
-    chartData,
-    careerPath,
-  } = parsedData;
+                    {/* Skeleton for the typeName */}
+                    {isLoading ? (
+                        <Skeleton className="h-10 w-48 md:w-64 rounded-xl" />
+                    ) : (
+                        <p className='text-3xl md:text-4xl text-primary font-bold'>{typeName}</p>
+                    )}
 
-  // Transform chart data for visualization
-  const transformedChartData = chartData.map((item:ChartDataType) => ({
-    label: item.label,
-    score: item.score * 10, // Example transformation
-  }));
+                    {/* Skeleton for keyTraits */}
+                    {isLoading ? (
+                        <div className='flex flex-wrap gap-2'>
+                            {Array(3).fill(0).map((_, index) => (
+                                <Skeleton key={index} className="h-8 w-24 rounded-[8px]" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className='flex flex-wrap gap-2'>
+                            {keyTraits.map((item: string, index: number) => (
+                                <div key={index} className="rounded-[8px] text-secondary bg-secondary bg-opacity-10 text-xs lg:text-sm max-w-fit px-1 lg:px-2">{item}</div>
+                            ))}
+                        </div>
+                    )}
 
-  return (
-    <div className="space-y-4 lg:space-y-8 max-w-8xl mx-auto p-4 md:p-10 lg:p-12">
-      {/* Header Section */}
-      <div className="w-full grid gap-4 grid-cols-1 lg:grid-cols-2 pb-4 ">
-        <div className="col-span-1 space-y-2 md:space-y-4">
-          <p className="text-md md:text-xl">អ្នកគឺជា</p>
-          <p className="text-3xl md:text-4xl text-primary font-bold">
-            {typeName}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {keyTraits.map((trait: string[], index: React.Key | null | undefined) => (
-              <div
-                key={index}
-                className="rounded-[8px] text-secondary bg-secondary bg-opacity-10 text-xs lg:text-sm max-w-fit px-1 lg:px-2"
-              >
-                {trait}
-              </div>
-            ))}
-          </div>
-          <p className="text-textprimary">{description}</p>
+                    {/* Skeleton for the description */}
+                    {isLoading ? (
+                        <Skeleton className="h-[200px] w-full rounded-xl" />
+                    ) : (
+                        <p className='text-textprimary'>{desc}</p>
+                    )}
+
+                </div>
+
+
+                <div className="col-span-1 w-full md:h-[350px] h-[250px]">
+                    {isLoading ? (
+                        <Skeleton className="h-full w-full rounded-xl " />
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart
+                                cx="50%"
+                                cy="50%"
+                                outerRadius="70%" // Increased outerRadius for more space
+                                data={chartData}
+                                margin={{ top: 10, right: 20, bottom: 20, left: 20 }} // Added margin for more padding
+                            >
+                                <PolarGrid />
+                                <PolarAngleAxis dataKey="label" axisLine={false} />
+                                <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                                <Radar name="Holland" dataKey="score" stroke="#FFA500" fill="#FFA500" fillOpacity={0.6} />
+                            </RadarChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
+            </div>
+
+            <QuizHeader title="បុគ្គលដែលមានចំណាប់អារម្មណ៍លើផ្នែកនេះមានទំនោរទៅខាង" description="Individuals with an interest in this area tend to be" size='sm' type='result' />
+
+            <div className='flex flex-wrap gap-4 justify-center'>
+                {
+                    isLoading ? (
+
+                        Array(2).fill(0).map((_, index) => (
+                            <QuizInterestResultCard
+                                key={index}
+                                title=""
+                                desc=""
+                                image=""
+                                isLoading={true}
+
+                            />
+                        ))
+
+                    ) : (
+                         interestCard.map((item: InterestCardItem, index: number) => (
+                            <QuizInterestResultCard
+                                key={index}
+                                title={item.dimension_name}
+                                desc={item.description}
+                                image={item.image_url}
+                                isLoading={false}
+
+                            />
+                         ))
+                    )
+                }
+
+            </div>
+
+            <div className=' max-w-7xl mx-auto '>
+
+                <QuizHeader title="ការងារទាំងនេះអាចនឹងសាកសមជាមួយអ្នក" description="These career may suitable for you" size='sm' type='result' />
+
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+
+                    {
+                        isLoading ? (
+                            Array(6).fill(0).map((_, index) => (
+
+                                <RecommendationCard
+                                    key={index}
+                                    jobTitle=""
+                                    jobDesc=""
+                                    majors={[]}
+                                    isLoading={true}
+                                    jobUuid=''
+                                />
+
+                            ))) : (
+                                currentItems.map((item: RecommendedCareer, index: number) => (
+                                <RecommendationCard
+                                    key={item.career_name || index}
+                                    jobTitle={item.career_name}
+                                    jobDesc={item.description}
+                                    majors={item.majors}
+                                    jobList={item.categories}
+                                    jobUuid={item.career_uuid}
+                                />
+                            ))
+                        )
+                    }
+                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    setCurrentPage={handlePageChange}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                />
+
+
+
+            </div>
+
+
         </div>
 
-        <div className="col-span-1">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart
-              cx="50%"
-              cy="50%"
-              outerRadius="80%"
-              data={transformedChartData}
-            >
-              <PolarGrid />
-              <PolarAngleAxis dataKey="label" />
-              <PolarRadiusAxis angle={30} domain={[0, 100]} />
-              <Radar
-                name="Holland"
-                dataKey="score"
-                stroke="#FFA500"
-                fill="#FFA500"
-                fillOpacity={0.6}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Dimensions Section */}
-      <QuizHeader
-        title="បុគ្គលដែលមានចំណាប់អារម្មណ៍លើផ្នែកនេះមានទំនោរទៅខាង"
-        description="Individuals with an interest in this area tend to be"
-        size="sm"
-        type="result"
-      />
-
-      <div className="flex flex-nowrap gap-4 justify-start overflow-x-auto">
-        {dimensionDescriptions.map((item: { image_url: string; dimension_name: string; description: string; }, index: React.Key | null | undefined) => {
-          const imageUrl = item.image_url
-            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${item.image_url}`
-            : "/assets/placeholder.png";
-
-          return (
-            <QuizInterestResultCard
-              key={index}
-              title={item.dimension_name}
-              desc={item.description}
-              image={imageUrl || "/assets/placeholder.png"}
-            />
-          );
-        })}
-      </div>
-
-      {/* Career Recommendations Section */}
-      <div className="space-y-4 lg:space-y-8 max-w-8xl mx-auto ">
-        <QuizHeader
-          title="ការងារទាំងនេះអាចនឹងសាកសមជាមួយអ្នក"
-          description="These careers may be suitable for you"
-          size="sm"
-          type="result"
-        />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {careerPath.map((item: { career_name: string; description: string | undefined; majors: { major_name: string; schools: string[]; }[]; }, index: string) => (
-            <RecommendationCard
-              key={item.career_name || index}
-              jobTitle={item.career_name}
-              jobDesc={item.description}
-              majors={item.majors}
-              jobUuid={""}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+    )
+}

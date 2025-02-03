@@ -26,9 +26,7 @@ import "react-toastify/dist/ReactToastify.css";
 import React from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FaUpload } from "react-icons/fa6";
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css';
+import { FaUpload } from "react-icons/fa6"
 
 const SchoolSchema = Yup.object().shape({
   kh_name: Yup.string(),
@@ -65,10 +63,10 @@ export default function EditUniversityPage({
   const university = data?.payload
   console.log("university in edit:", university)
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    university?.cover_image || null
+    `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university?.cover_image}` || null
   );
   const [logoPreview, setLogoPreview] = useState<string | null>(
-    university?.logo_url || null
+    `${process.env.NEXT_PUBLIC_NORMPLOV_API}${university?.logo_url}`|| null
   );
 
   if (isError) {
@@ -108,18 +106,6 @@ export default function EditUniversityPage({
     }
   };
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: File | null) => void,
-    fieldName: string,
-    setPreview: React.Dispatch<React.SetStateAction<string | null>>
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFieldValue(fieldName, file);
-      setPreview(URL.createObjectURL(file)); // Generate preview URL
-    }
-  };
 
   const initialValues = {
     kh_name: university.kh_name || "",

@@ -21,8 +21,7 @@ import { Button } from "@/components/ui/button";
 import { JobScrapeType } from "@/types/types";
 import { FiAlertCircle } from "react-icons/fi";
 import { useScrapeMutation, useGetScrapeQuery, useDeleteScrapeMutation } from "@/app/redux/service/scrape";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
@@ -36,7 +35,7 @@ export default function JobPreviewPage() {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<JobScrapeType | null>(null);
   const [url, setUrl] = useState("");
-
+  const {toast} = useToast()
   const router = useRouter();
 
   // Scrape job
@@ -56,8 +55,9 @@ export default function JobPreviewPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!url) {
-      toast.warning("Please enter a valid URL!", {
-        hideProgressBar: true
+      toast({
+        description: "Please enter a valid URL!", 
+        variant: "warning"
       });
 
       return;
@@ -66,14 +66,16 @@ export default function JobPreviewPage() {
     try {
       const result = await scrapeJob({ url }).unwrap();
       console.log("Scraping successful:", result);
-      toast.success("Job scraped successfully!", {
-        hideProgressBar: true,
+      toast({
+        description: "Job scraped successfully!", 
+        variant: "default"
       });
       setUrl("")
     } catch (error) {
       console.error("Error scraping job:", error);
-      toast.error("Failed to scrape the job. Please try again.", {
-        hideProgressBar: true
+      toast({
+        description: "Failed to scrape the job. Please try again.", 
+        variant: "destructive"
       });
     }
   };
@@ -166,8 +168,9 @@ export default function JobPreviewPage() {
 
   const handleDeleteConfirm = async () => {
     if (!jobToDelete) {
-      toast.error("No job selected to delete.", {
-        hideProgressBar: true
+      toast({
+        description: "No job selected to delete.", 
+        variant: "destructive"
       });
       return; // Exit if `jobToDelete` is null
     }
@@ -177,13 +180,15 @@ export default function JobPreviewPage() {
       console.log("uuid delete:", jobToDelete.uuid)
       setDeleteModalOpen(false); // Close modal
       setJobToDelete(null); // Reset jobToDelete
-      toast.success("Job successfully deleted.", {
-        hideProgressBar: true
+      toast({
+        description: "Job successfully deleted.", 
+        variant: "destructive"
       });
     } catch (error) {
       console.error("Error deleting job:", error);
-      toast.error("Failed to delete the job. Please try again.", {
-        hideProgressBar: true
+      toast({
+        description: "Failed to delete the job. Please try again.", 
+        variant: "destructive"
       });
     }
   };
@@ -191,8 +196,7 @@ export default function JobPreviewPage() {
   return (
     <div className="h-screen p-6 text-textprimary rounded-md mx-6">
       <h2 className="text-2xl font-normal text-secondary mb-6">Scrape Job</h2>
-      <ToastContainer />
-
+      
       <div className="flex items-center gap-4 mb-6">
         <Input
           type="text"

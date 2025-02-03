@@ -1,73 +1,84 @@
-import React from "react";
+'use client'
+import React, { useEffect, useState } from 'react'
+import Image, { StaticImageData } from 'next/image'
+import placeholderImage from '@/public/assets/placeholder.png'
+import { Skeleton } from '@/components/ui/skeleton'
 
-type QuizInterestResultCardProps = {
-  title: string;
-  desc: string;
-  image: string;
-};
 
-export const QuizInterestResultCard: React.FC<QuizInterestResultCardProps> = ({
-  title,
-  desc,
-  image,
-}) => {
-  // Dynamically prepend the base API URL if the image is not external
-  const formattedImage = image.startsWith("/")
-    ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${image}`
-    : image;
+type props = {
+    title: string;
+    desc: string;
+    image: StaticImageData | string;
+    isLoading?: boolean;
+}
 
-  return (
-    <div className="card">
-      <ImageWithFallback
-        src={formattedImage}
-        alt={title}
-        fallbackSrc="/assets/placeholder.png"
-        width={1000}
-        height={1000}
-        className="card-image w-3/4"
-      />
-      <div className="card-content">
-        <h3 className="card-title text-primary">{title}</h3>
-        <p className="card-description text-textprimary">{desc}</p>
-      </div>
-    </div>
-  );
-};
+export const QuizInterestResultCard = ({ title, desc, image, isLoading }: props) => {
 
-// Custom ImageWithFallback Component
-type ImageWithFallbackProps = {
-  src: string;
-  fallbackSrc: string;
-  alt: string;
-  width: number;
-  height: number;
-  className?: string;
-};
+    const [imageSrc, setImageSrc] = useState<string>(placeholderImage.src);
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
-  src,
-  fallbackSrc,
-  alt,
-  width,
-  height,
-  className,
-}) => {
-  const [imgSrc, setImgSrc] = React.useState(src);
+    useEffect(() => {
+        let imageUrl: string;
 
-  const handleImageError = () => {
-    if (imgSrc !== fallbackSrc) {
-      setImgSrc(fallbackSrc); // Set fallback image only once
-    }
-  };
+        if (typeof image === 'string') {
+            // If image is a string, check if it's a relative path or a full URL
+            if (image.startsWith('http')) {
+                imageUrl = image; // If it's a full URL, use it directly
+            } else {
+                // If it's a relative path, modify the path if it contains double 'uploads/uploads'
+                let modifiedImage = image;
+                if (image.includes('uploads/uploads')) {
+                    modifiedImage = image.replace('uploads/uploads', 'uploads'); // Remove redundant part
+                }
 
-  return (
-    <img
-      src={imgSrc}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      onError={handleImageError}
-    />
-  );
-};
+                // Prepend the API base URL after modification
+                imageUrl = `${process.env.NEXT_PUBLIC_NORMPLOV_API_URL}${modifiedImage}`;
+            }
+        } else if (image && 'src' in image) {
+            // If image is StaticImageData, use its src property (which is a string URL)
+            imageUrl = (image as StaticImageData).src;
+        } else {
+            imageUrl = placeholderImage.src; // Fallback to placeholder if image is invalid or not provided
+        }
+
+        setImageSrc(imageUrl);
+    }, [image]); // Re-run when the image prop changes
+
+    return (
+ 
+        <div className="max-w-[350px] lg:max-w-[400px] bg-white p-4 md:p-6 gap-4 rounded-xl">
+            {/* Text and Response Section */}
+            <div>
+                {/* Title Skeleton */}
+                {isLoading ? (
+                    <Skeleton className="h-[30px] w-[200px] mb-2" />
+                ) : (
+                    <h2 className="text-3xl font-bold mb-2 text-secondary">{title}</h2>
+                )}
+
+                {/* Description Skeleton */}
+                {isLoading ? (
+                    <Skeleton className="h-[20px] w-full mb-4" />
+                ) : (
+                    <p className="text-base text-textprimary mb-4">{desc}</p>
+                )}
+            </div>
+
+            {/* Image Section */}
+            <div className="flex-none flex justify-center items-center overflow-hidden">
+                {isLoading ? (
+                    <Skeleton className="h-[350px] w-[350px] rounded-xl" />
+                ) : (
+
+                    <Image
+                        src={imageSrc}
+                        alt="Quiz Illustration"
+                        width={350}
+                        height={350}
+                        className="object-fill"
+                        onError={() => setImageSrc(placeholderImage.src)}
+                    />
+                )}
+            </div>
+        </div>
+    )
+}

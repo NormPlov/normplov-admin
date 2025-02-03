@@ -14,15 +14,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { useGetUserFeedbackQuery, usePromoteFeedbackMutation } from "@/app/redux/service/user";
-import { toast, ToastContainer, ToastOptions } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export default function TableUserFeedback() {
+
+  const { toast } = useToast()
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,16 +100,6 @@ export default function TableUserFeedback() {
       return matchesSearch && matchesFilter;
     }) || [];
 
-  // Toastify Config
-  const toastConfig: ToastOptions = {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  };
 
   // Handle promote feedback
   const handlePromote = async (uuid: string) => {
@@ -115,10 +107,16 @@ export default function TableUserFeedback() {
 
     try {
       await promote({ uuid }).unwrap();
-      toast.success("Promote feedback successfully", toastConfig);
+      toast({
+        description:"Promote feedback successfully",
+        variant: "default"
+      });
     } catch (error) {
       console.error("Error promoting feedback:", error);
-      toast.error("Failed to promote feedback.", toastConfig);
+      toast({
+        description: "Failed to promote feedback.", 
+        variant: "destructive"
+      });
     }
   };
 
@@ -156,7 +154,7 @@ export default function TableUserFeedback() {
 
         {/* Table */}
         <div className="rounded-md border border-gray-200 rounded-md">
-          <ToastContainer />
+         
           <Table>
             <TableHeader>
               <TableRow>

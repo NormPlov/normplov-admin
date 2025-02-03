@@ -32,6 +32,7 @@ import { useGetJobQuery, useDeleteJobMutation } from "@/app/redux/service/job";
 import { GetAllJobType } from "@/types/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FiAlertCircle } from "react-icons/fi";
+import { useToast } from "@/hooks/use-toast";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
@@ -41,7 +42,7 @@ export default function JobListTableComponent() {
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<GetAllJobType | null>(null)
-  // const [filter, setFilter] = useState("all");
+  const {toast} = useToast()
 
   const router = useRouter();
 
@@ -135,6 +136,15 @@ export default function JobListTableComponent() {
       await deleteJob({ uuid: jobToDelete.uuid }); // Perform API call
       setDeleteModalOpen(false); // Close modal
       setJobToDelete(null); // Reset jobToDelete
+      toast({
+        description: "Job deleted successfully",
+        variant: "default",
+      })
+    } else {
+      toast({
+        description: "No job selected for deletion",
+        variant: "destructive",
+      })
     }
   };
 

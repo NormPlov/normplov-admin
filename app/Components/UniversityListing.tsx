@@ -34,13 +34,13 @@ import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import { useDeleteUniversityMutation } from "../redux/service/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export function UniversityListing() {
+  const {toast} = useToast()
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery] = useState("");
   const [filter, setFilter] = useState("all");
@@ -125,6 +125,7 @@ const totalItems = data?.payload?.metadata?.total_items || 0;
   const handleDeleteClick = (university: School) => {
     setUniversityToDelete(university);
     setDeleteModalOpen(true);
+    
   };
 
   const handleDeleteConfirm = async () => {
@@ -144,7 +145,7 @@ const totalItems = data?.payload?.metadata?.total_items || 0;
   return (
     <main className="p-4">
       <div className="flex items-center justify-between mb-6">
-        <ToastContainer />
+        
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
           <div className="relative w-[370px]">
@@ -224,8 +225,9 @@ const totalItems = data?.payload?.metadata?.total_items || 0;
                     onEdit={() => router.push(`/majors-universities/edit/${school?.uuid}`)}
                     onDelete={() => {
                       if (school?.is_recommended) {
-                        toast.error("This school is recommended and cannot be deleted!", {
-                          hideProgressBar: true
+                        toast({
+                          description:"This school is recommended and cannot be deleted!", 
+                          variant: "destructive"
                         });
                       } else {
                         handleDeleteClick(school);

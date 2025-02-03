@@ -13,8 +13,7 @@ import { Button } from '@/components/ui/button';
 import {  PostJob, UploadImageResponse } from '@/types/types';
 import { PostedDate } from '../../calendar/Component';
 import { ClosingDate } from '../../calendar/ClosingDate';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from '@/hooks/use-toast';
 import { ChevronDown } from 'lucide-react';
 import { useUploadImageMutation } from '@/app/redux/service/media';
 
@@ -77,6 +76,7 @@ const FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
 
 const AddJobForm = () => {
+  const {toast} = useToast()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const router = useRouter();
   const [postJob] = usePostJobMutation();
@@ -118,8 +118,9 @@ const handleDrop = (
       setSelectedImage(previewUrl);
       setFieldValue('logo', file);
     } else {
-      toast.error('Invalid file. Please upload a valid image file.', {
-        hideProgressBar: true,
+      toast({
+        description: 'Invalid file. Please upload a valid image file.', 
+        variant: "warning"
       });
     }
   }
@@ -135,14 +136,16 @@ const handleDrop = (
       const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
       console.log("res", res);
       console.log("url:", res.payload.file_url);
-      toast.success("Upload Logo successfully!",{
-        hideProgressBar: true
+      toast({
+        description: "Upload Logo successfully!",
+        variant: "default"
     });
       return res.payload.file_url;
     } catch (error) {
       console.error("Error uploading image:", error);
-      toast.error("Failed to upload the image. Please try again.",{
-        hideProgressBar: true
+      toast({
+        description:"Failed to upload the image. Please try again.",
+        variant: "warning"
     });
       return null;
     }
@@ -185,8 +188,9 @@ const handleDrop = (
         if (uploadedLogoUrl) {
           logoUrl = uploadedLogoUrl;
         } else {
-          toast.error("Failed to upload logo. Please try again.",{
-            hideProgressBar: true
+          toast({
+            description: "Failed to upload logo. Please try again.",
+            variant: "destructive"
         });
           return;
         }
@@ -217,16 +221,18 @@ const handleDrop = (
   
       // Post the job data
       await postJob({ postJob: jobData }).unwrap();
-      toast.success("Job successfully created!",{
-        hideProgressBar: true
+      toast({
+        description: "Job successfully created!",
+        variant: "default"
       });
   
       // Clear the selected image preview
       setSelectedImage(null);
     } catch (error) {
       console.error("Error submitting job:", error);
-      toast.error("Failed to add job. Please try again.",{
-        hideProgressBar: true
+      toast({
+        description: "Failed to add job. Please try again.",
+        variant: "destructive"
       });
     }
   };
@@ -242,7 +248,7 @@ const handleDrop = (
       {({ values, setFieldValue }) => (
 
         <Form className="w-full p-10 space-y-4">
-          <ToastContainer />
+          
           <h2 className="text-3xl font-semibold mb-6 text-secondary">Add Job</h2>
           {/* Back Button */}
           <div className="mb-6 flex justify-end mx-4">

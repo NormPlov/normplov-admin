@@ -1,12 +1,13 @@
+import ResultDynamicComponent from '@/app/Components/forms/test/DynamicResultComponent';
 import React from 'react'
-import ResultDynamicComponent from '@/app/Components/forms/test/DynamicResultComponent'
 
-const page = () => {
+export default function page() {
+
   return (
-    <div>
-      <ResultDynamicComponent/>
+    <div className='bg-bgPrimaryLight'>
+      {/* <TestResultPage/> */}
+      <ResultDynamicComponent />
     </div>
+
   )
 }
-
-export default page

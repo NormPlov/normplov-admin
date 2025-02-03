@@ -22,7 +22,7 @@ export const userApi = normPlovApi.injectEndpoints({
             }),
             providesTags:["userProfile"]
         }),
-
+        
         // user feedback
         getUserFeedback: builder.query<FeedbackResponse, { page?: number; pageSize?: number }>({
             query: ({ page = 1, pageSize = 10 }) => ({

@@ -37,8 +37,8 @@ export default function AdminLayout({
             </aside>
             <div className="w-full bg-[#fdfdfd]">
               <NavbarComponent />
-              {children}
               <Toaster />
+              {children}
             </div>
           </div>
         </StoreProvider>

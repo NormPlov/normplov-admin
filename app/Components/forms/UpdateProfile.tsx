@@ -16,8 +16,7 @@ import {
 } from "@/app/redux/service/user";
 import { DatePickerDemo } from "../calendar/DatePickerDemo";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const FILE_SIZE = 1024 * 1024 * 5;
@@ -58,6 +57,8 @@ const validationSchema = Yup.object().shape({
 
 
 const UpdateProfile = () => {
+    const {toast} = useToast()
+
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -107,8 +108,9 @@ const UpdateProfile = () => {
             // Handle image upload
             if (imageFile) {
                 await postUserImage({ uuid: userData.uuid, avatar_url: imageFile }).unwrap();
-                toast.success("Profile image updated successfully.",{
-                    hideProgressBar: true
+                toast({
+                    description: "Profile image updated successfully.",
+                    variant: "default"
                 });
             }
 
@@ -141,8 +143,9 @@ const UpdateProfile = () => {
 
             if (Object.keys(cleanUpdatedInfo).length > 0) {
                 await updateUserInfo({ uuid: userData?.uuid, user: cleanUpdatedInfo }).unwrap();
-                toast.success("Profile info updated successfully.",{
-                    hideProgressBar: true
+                toast({
+                    description: "Profile info updated successfully.",
+                    variant: "default"
                 });
             }
 
@@ -158,21 +161,24 @@ const UpdateProfile = () => {
                         confirm_new_password: values.confirm_new_password,
                     },
                 }).unwrap();
-                toast.success("Password changed successfully.",{
-                    hideProgressBar: true
+                toast({
+                    description: "Password changed successfully.",
+                    variant: "default"
                 });
             }
 
             // If nothing was updated
             if (!imageFile && Object.keys(cleanUpdatedInfo).length === 0 && !hasPasswordToUpdate) {
-                toast.error("No updates were provided.",{
-                    hideProgressBar: true
+                toast({
+                    description: "No updates were provided.",
+                    variant: "destructive"
                 });
             }
         } catch (error) {
             console.error("Error updating profile:", error);
-            toast.error("Error updating profile. Please try again.",{
-                hideProgressBar: true
+            toast({
+                description: "Error updating profile. Please try again.",
+                variant: "destructive"
             });
         }
     };
@@ -197,7 +203,7 @@ const UpdateProfile = () => {
         >
             {({ setFieldValue }) => (
                 <Form className="w-full mx-auto">
-                    <ToastContainer />
+                   
                     <div className="mx-10">
                         <h1 className="text-3xl my-6 text-secondary font-semibold">Profile Setting</h1>
 
@@ -239,9 +245,7 @@ const UpdateProfile = () => {
                                         }}
                                         className="absolute inset-0 opacity-0 cursor-pointer"
                                     />
-                                    <button className="text-textprimary absolute bottom-3 right-2 bg-white p-1 rounded-full border">
-                                        <HiCamera />
-                                    </button>
+                                   
                                 </div>
                             </div>
                         </div>

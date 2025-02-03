@@ -34,8 +34,8 @@ import {
   useBlockUserMutation,
   useUnBlockUserMutation,
 } from "@/app/redux/service/user";
-import { ToastContainer, ToastOptions, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import { ToastContainer, ToastOptions, toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 import ProfileModal from "../../popup/PopupViewProfile";
 import { User } from "@/types/types";
 import BlockUserModal from "../../popup/ConfrimBlock";
@@ -45,10 +45,14 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export default function UserTable() {
+
+  const {toast }= useToast()
+
   const [Unblock] = useUnBlockUserMutation();
   const [blockUser] = useBlockUserMutation();
   const [search, setSearch] = useState("");
@@ -58,16 +62,16 @@ export default function UserTable() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Store the selected user data
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  // Toastify Config
-  const toastConfig: ToastOptions = {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  };
+  // // Toastify Config
+  // const toastConfig: ToastOptions = {
+  //   position: "top-right",
+  //   autoClose: 5000,
+  //   hideProgressBar: false,
+  //   closeOnClick: true,
+  //   pauseOnHover: true,
+  //   draggable: true,
+  //   progress: undefined,
+  // };
 
   // Fetch data
   const { data, isLoading } = useGetAllUserQuery({
@@ -155,19 +159,31 @@ export default function UserTable() {
         Unblock(selectedUser.uuid)
           .unwrap()
           .then(() => {
-            toast.success("User unblocked successfully", toastConfig);
+            toast({
+              description:"User unblocked successfully",
+              variant: "default"
+            });
           })
           .catch(() => {
-            toast.error("Failed to unblock user", toastConfig);
+            toast({
+              description: "Failed to unblock user", 
+              variant: "destructive"
+            });
           });
       } else {
         blockUser(selectedUser.uuid)
           .unwrap()
           .then(() => {
-            toast.success("User blocked successfully", toastConfig);
+            toast({
+              description: "User blocked successfully", 
+              variant: "default"
+            });
           })
           .catch(() => {
-            toast.error("Failed to block user", toastConfig);
+            toast({
+              description:"Failed to block user",
+              variant: "destructive"
+            });
           });
       }
       setConfirmModalOpen(false);
@@ -206,7 +222,6 @@ export default function UserTable() {
 
         {/* Table */}
         <div className="rounded-md border border-gray-200">
-          <ToastContainer />
           <Table>
             <TableHeader>
               <TableRow>
@@ -256,7 +271,7 @@ export default function UserTable() {
                     </TableCell>
                     <TableCell>
                       <div
-                        className={`font-normal rounded-full text-center text-sm px-1 border ${
+                        className={`font-normal rounded-full text-center text-sm border ${
                           user.is_active
                             ? "bg-green-200 text-green-900 border-green-500"
                             : "bg-red-100 text-red-500 border-red-400"
@@ -265,8 +280,8 @@ export default function UserTable() {
                         {user.is_active ? "Active" : "Inactive"}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
+                    <TableCell className="flex">
+                    <div className="flex items-center justify-center">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -386,7 +401,7 @@ export default function UserTable() {
         <ProfileModal
           user={selectedUser}
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)} // Close the modal
+          onClose={() => setIsModalOpen(false)} 
         />
       )}
 
@@ -397,11 +412,8 @@ export default function UserTable() {
         message={`Are you sure you want to ${selectedUser.is_blocked ? "unblock" : "block"} this user?`}
         onConfirm={handleConfirmBlock}
         onCancel={()=> setConfirmModalOpen(false)}
-        confirmText="Block"
+        confirmText={selectedUser.is_blocked ? "Unblock" : "Block"}
         cancelText="Cancel"
-          // onConfirm={handleConfirmBlock}
-          // onCancel={() => setConfirmModalOpen(false)}
-          // actionType={selectedUser.is_blocked ? "unblock" : "block"}
         />
       )}
     </div>

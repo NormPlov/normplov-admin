@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import checkIcon from "@/public/assets/skill-icon/check.png";
 import xIcon from "@/public/assets/skill-icon/x.png";
 import QuizHeader from "../ComponentTest/QuizHeader";
@@ -7,6 +7,7 @@ import { useFetchAssessmentDetailsQuery } from "@/app/redux/service/result";
 import { useParams } from "next/navigation";
 import CardPersonality from "../ComponentTest/CardPersonality";
 import { RecommendationCard } from "../ComponentTest/RecommendationCard";
+import Pagination from "../ComponentTest/Pagination";
 import {
   BarChart,
   Bar,
@@ -16,10 +17,21 @@ import {
   Rectangle,
   TooltipProps
 } from "recharts";
+import Loading from "../ComponentTest/Loading";
+import PersonalityResultSkeleton from "../ComponentTest/PersonalityResultSkeleton";
+import errorLoading from '@/public/assets/errorLoading.png'
+import Image from "next/image";
+import { useGetAllAssessmentDetailQuery } from "@/app/redux/service/result";
+
 // Define types for API response
 type PersonalityDimension = {
   dimension_name: string;
   score: number;
+};
+
+type Personailities = {
+  name: string;
+  description: string;
 };
 
 type ChartData = {
@@ -35,25 +47,33 @@ type BarProps = {
   height?: number;
   payload?: { color?: string };
 };
-// type Major = {
-//   major_name: string; // The name of the major
-//   schools: string[];  // An array of schools offering the major
-// };
-// type Job = {
-//   category_name: string;
-//   responsibilities: string[];
-// }
-// type RecommendedCareer = {
-//   career_name: string;
-//   description: string;
-//   majors: Major[]; 
-//   career_uuid: string;
-//   categories: Job[];
-// };
 
+type SchoolType = {
+  school_uuid: string;
+  school_name: string;
+}
+
+type Major = {
+  major_name: string; // The name of the major
+  schools: SchoolType[];  // An array of schools offering the major
+};
+type Job = {
+  category_name: string;
+  responsibilities: string[];
+}
+
+type RecommendedCareer = {
+  career_name: string;
+  description: string;
+  majors: Major[]; 
+  career_uuid: string;
+  categories: Job[];
+};
 
 export const PersonalityResultComponent = () => {
   const params = useParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
   const dimensionFullNames: { [key: string]: string } = {
     I_Score: "Introvert Score",
     E_Score: "Extrovert Score",
@@ -66,32 +86,63 @@ export const PersonalityResultComponent = () => {
   };
 
   // Normalize the values from params
-  // const resultType = Array.isArray(params.resultType) ? params.resultType[0] : params.resultType;
+  // const resultType = Array.isArray(params.resultType) ? params.resultType   : params.resultType;
   // const uuid = Array.isArray(params.uuid) ? params.uuid[0] : params.uuid;
+
 
   const resultTypeString =
     typeof params.type === "string" ? params.type : "";
+
   const uuidString = typeof params.uuid === "string" ? params.uuid : "";
 
-  const { data: response, error } = useFetchAssessmentDetailsQuery({
-    testUUID: uuidString,
-    resultType: resultTypeString,
+  const { data: responseUuid } = useGetAllAssessmentDetailQuery({ uuid: uuidString })
+
+  const finalUuid = resultTypeString === "AllTests" ? responseUuid?.payload?.referenced_test_uuids?.Personality?.test_uuid || "" : uuidString;
+
+  const finalResultTypeString = resultTypeString === "AllTests" ? "Personality" : resultTypeString;
+
+  const { data: response, isLoading, error } = useFetchAssessmentDetailsQuery({
+    testUUID: finalUuid,
+    resultType: finalResultTypeString,
   });
+
+  if(resultTypeString === 'AllTests'){
+    localStorage.setItem('currentTestUuid',finalUuid)
+  }
 
   console.log(`result: ${resultTypeString} id: ${uuidString}`);
 
   if (!resultTypeString || !uuidString) {
-    return <p>Loading...</p>;
+    // return <div className=' w-full flex justify-center items-center'><Loading /></div>;
+  }
+
+
+  if (isLoading) {
+    return <PersonalityResultSkeleton />
+    // return <div className='bg-white w-full flex justify-center items-center'><Loading /></div>;
   }
 
   if (error) {
-    console.error("Error fetching data:", error);
-    return <p>Error loading data</p>;
+    return (
+      <div className='bg-white w-full flex flex-col justify-center items-center py-6'>
+        < Image
+          src={errorLoading}
+          alt="Error Loading Data"
+          width={500}
+          height={500}
+          className="object-fill"
+        />
+        <p className='text-danger text-md lg:text-xl font-semibold text-center'>Sorry, we couldn&#39;t load your data right now.</p>
+        <p className='text-gray-500 text-sm lg:text-lg text-center'>Try refreshing the page or come back later.</p>
+      </div>
+    );
   }
+
+
   //   const skillCategory = response?.[0]?.categoryPercentages;
-  const personalities = response?.[0]?.personalityType;
-  const personalitiesDimension = response?.[0]?.dimensions;
-  const dimensions: PersonalityDimension[] = response?.[0]?.dimensions || [];
+  const personalities = response?.personalityType;
+  const personalitiesDimension = response?.dimensions;
+  const dimensions: PersonalityDimension[] = response?.dimensions || [];
   const chartData: ChartData[] = dimensions.map((dim, index) => ({
     label: dimensionFullNames[dim.dimension_name] || dim.dimension_name, // Use full name or fallback to the key
     score: dim.score,
@@ -107,8 +158,8 @@ export const PersonalityResultComponent = () => {
 
     ][index % 8], // Cycle through colors
   }));
- 
-  
+
+
   const CustomBar = (props: BarProps) => {
     const { x, y, width, height } = props;
     return (
@@ -138,48 +189,18 @@ export const PersonalityResultComponent = () => {
 
   console.log("Personalities dimension", personalitiesDimension);
 
-  const personailitiesTrait = response?.[0]?.traits;
+
+  const personailitiesTrait = response?.traits;
   console.log("PersonailitiesTrait", personailitiesTrait);
   console.log("PersonailitiesTrait Positive", personailitiesTrait?.positive);
   console.log("PersonailitiesTrait Negative", personailitiesTrait?.negative);
-  console.log("Personailities Strength", response?.[0]?.strengths);
-  console.log("Personailities Weakness", response?.[0]?.weaknesses);
+  console.log("Personailities Strength", response?.strengths);
+  console.log("Personailities Weakness", response?.weaknesses);
 
-  const recommendedCareer = response?.[0]?.careerRecommendations;
+
+  const recommendedCareer = response?.careerRecommendations ?? [];
   console.log("Recommended Career: ", recommendedCareer);
-  // Example data for the RecommendationCard
-  const recommendations = [
-    {
-      jobTitle: "Software Engineer",
-      jobDesc:
-        "Design, develop, and maintain software applications. Collaborate with cross-functional teams to deliver high-quality products.",
-      majors: [
-        {
-          major_name: "Computer Science",
-          schools: ["MIT", "Stanford University", "Carnegie Mellon University"],
-        },
-        {
-          major_name: "Software Engineering",
-          schools: ["Harvard University", "UC Berkeley"],
-        },
-      ],
-    },
-    {
-      jobTitle: "Data Analyst",
-      jobDesc:
-        "Analyze data to uncover trends and insights. Prepare data reports to assist in decision-making.",
-      majors: [
-        {
-          major_name: "Data Science",
-          schools: ["NYU", "Columbia University"],
-        },
-        {
-          major_name: "Statistics",
-          schools: ["Princeton University", "University of Chicago"],
-        },
-      ],
-    },
-  ];
+
   const CustomTooltip = ({
     active,
     payload,
@@ -190,18 +211,32 @@ export const PersonalityResultComponent = () => {
         score: number;
         color: string; // Add color property from chartData
       }; // Ensure payload structure is typed correctly
-  
+
       return (
         <div className="bg-white p-2 border rounded shadow-sm">
-      
-          <p className="font-semibold text-slate-600">{data.label}</p>
+
+
+<p className="font-semibold text-slate-600">{data.label}</p>
           <p className="text-gray-500">Score: {data.score}</p>
         </div>
       );
     }
-  
+
     return null;
   };
+  // Pagination handler
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  // Calculate total pages for career recommendations
+  const totalPages = Math.ceil(recommendedCareer?.length / itemsPerPage);
+
+  // Get current items for the current page
+  const currentItems = recommendedCareer.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
   return (
     <div className="bg-white">
       {/* Personalities Name and Description */}
@@ -242,68 +277,36 @@ export const PersonalityResultComponent = () => {
             </div>
           </div>
           {/* Legend */}
-         {/* Legend */}
-        
+          {/* Legend */}
+
         </div>
         <div className="mx-4 md:mx-0 border border-slate-50 mt-5 md:mt-14 p-6 rounded-[8px]">
           <h2 className="bg-secondary inline-block text-white text-lg md:text-2xl px-4 py-2 rounded-[8px] mb-6">
             លក្ខណៈសំខាន់ៗរបស់ {personalities?.name}
           </h2>
-          {/* Positive Traits */}
-          <div className="">
-            <div className="text-primary space-y-8 max-w-7xl mx-auto p-4 md:p-10 lg:p-12">
-              <QuizHeader
-                title="ចំណុចវិជ្ជមានរបស់អ្នក"
-                description="Positive Traits"
-                size="sm"
-                type="result"
-                titleColor="text-success"
-              />
-
+          <div className="bg-bgPrimaryLight">
+            <div className="space-y-4 lg:space-y-8 max-w-7xl mx-auto p-4 md:p-10 lg:p-12">
+              <QuizHeader title="ចំណុចខ្លាំងរបស់អ្នក" description="Your Strength" size="sm" type="result" />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                {personailitiesTrait?.positive.map(
-                  (trait: string, index: number) => (
-                    <QuizResultListing
-                      key={index}
-                      title=""
-                      desc={trait}
-                      image={checkIcon}
-                    />
-                  )
-                )}
+                {personailitiesTrait.map((personality: Personailities, index: number) => (
+                  <QuizResultListing
+                    key={index}
+                    title={personality.name}
+                    desc={personality.description}
+                    image={checkIcon}
+                  />
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Negative Traits */}
-          <div className="">
-            <div className="space-y-8 max-w-7xl mx-auto p-4 md:p-10 lg:p-12">
-              <QuizHeader
-                title="ចំណុចអវិជ្ជមានរបស់អ្នក"
-                description="Negative Traits"
-                size="sm"
-                type="result"
-                titleColor="text-danger"
-              />
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                {personailitiesTrait?.negative.map(
-                  (trait: string, index: number) => (
-                    <QuizResultListing
-                      key={index}
-                      title=""
-                      desc={trait}
-                      image={xIcon}
-                    />
-                  )
-                )}
-              </div>
-            </div>
-          </div>
+
+
         </div>
         <div className="mx-4 md:mx-0 border border-slate-50 mt-5 md:mt-14 p-6 rounded-[8px]">
           <h2 className="bg-secondary inline-block text-white text-lg md:text-2xl px-4 py-2 rounded-[8px] mb-6">
-            លក្ខណៈសំខាន់ៗរបស់ {personalities?.name}
+            ចំណុចខ្លាំងនិងចំណុចខ្សោយរបស់អ្នក {personalities?.name}
           </h2>
           {/* Strength */}
           <div className="">
@@ -316,8 +319,9 @@ export const PersonalityResultComponent = () => {
                 titleColor="text-success"
               />
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                {response?.[0]?.strengths.map(
+
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                {response?.strengths?.map(
                   (strength: string, index: number) => (
                     <QuizResultListing
                       key={index}
@@ -343,7 +347,7 @@ export const PersonalityResultComponent = () => {
               />
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                {response?.[0]?.weaknesses.map(
+                {response?.weaknesses?.map(
                   (weakness: string, index: number) => (
                     <QuizResultListing
                       key={index}
@@ -366,17 +370,24 @@ export const PersonalityResultComponent = () => {
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {recommendations.map((recommendation, index) => (
+            {currentItems.map((item: RecommendedCareer, index: number) => (
               <RecommendationCard
-                key={index}
-                jobTitle={recommendation.jobTitle}
-                jobDesc={recommendation.jobDesc}
-                majors={recommendation.majors}
-                jobUuid=""
-                jobList={[]}
-                />
+                key={item.career_name || index}
+                jobTitle={item.career_name}
+                jobDesc={item.description}
+                majors={item.majors}
+                jobList={item.categories}
+                jobUuid={item.career_uuid}
+              />
             ))}
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={handlePageChange}
+            itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
+          />
         </div>
       </div>
     </div>

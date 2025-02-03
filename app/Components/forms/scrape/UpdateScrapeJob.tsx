@@ -12,8 +12,7 @@ import {
 } from '@/app/redux/service/job';
 import { JobDetailsProps, UpdateJob, UploadImageResponse } from '@/types/types';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ClosingDate } from '../../calendar/ClosingDate';
@@ -62,7 +61,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [, setImageFile] = useState<File | null>(null);
     const [dropdownOpen, setDropdownOpen] = useState(false)
-
+    const {toast} = useToast()
     const router = useRouter();
 
     // Fetch job data
@@ -117,8 +116,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             setImageFile(file);
             setFieldValue("logo", file);
         } else {
-            toast.error("Invalid file. Please upload a valid image file.",{
-                hideProgressBar: true
+            toast({
+                description: "Invalid file. Please upload a valid image file.",
+                variant: "warning"
             });
         }
     };
@@ -150,8 +150,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         console.log("data file", file);
         try {
             const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
-            toast.success("Upload Logo successfully!",{
-                hideProgressBar: true
+            toast({
+                description: "Upload Logo successfully!",
+                variant: "default"
             });
 
             // Prepend the API URL to the response URL
@@ -161,8 +162,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
             return fullUrl;
         } catch (error) {
             console.log("Error upload image:", error);
-            toast.error("Failed to upload the image. Please try again.",{
-                hideProgressBar: true
+            toast({
+                description: "Failed to upload the image. Please try again.",
+                variant: "destructive"
             });
             return null;
         }
@@ -182,8 +184,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     logoUrl = uploadedLogoUrl;
                     console.log("url: ", uploadedLogoUrl);
                 } else {
-                    toast.error("Failed to upload logo. Please try again.",{
-                        hideProgressBar: true
+                    toast({
+                        description: "Failed to upload logo. Please try again.",
+                        variant: "destructive"
                     });
                     return;
                 }
@@ -247,19 +250,22 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                 .unwrap()
                 .then((response) => {
                     console.log("Job updated successfully:", response);
-                    toast.success("Job updated successfully!",{
-                        hideProgressBar: true
+                    toast({
+                        description: "Job updated successfully!",
+                        variant: "default"
                     });
 
                 });
-            toast.success("Job updated successfully!",{
-                hideProgressBar: true
+            toast({
+                description: "Job updated successfully!",
+                variant: "default"
             });
             // router.push("/scrape");
         } catch (error) {
             console.error("Error updating job:", error);
-            toast.error("Failed to update the job. Please try again.",{
-                hideProgressBar: true
+            toast({
+                description: "Failed to update the job. Please try again.",
+                variant: "destructive"
             });
         }
     };
@@ -279,7 +285,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
         >
             {({ values, setFieldValue }) => (
                 <Form className="w-full p-10 space-y-4">
-                    <ToastContainer />
+                   
                     <h2 className="text-3xl font-semibold mb-6 text-secondary">Update Jobs</h2>
                     {/* Back Button */}
                     <div className="mb-6 flex justify-end mx-4">
