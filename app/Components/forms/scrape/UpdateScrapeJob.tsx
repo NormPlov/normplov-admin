@@ -44,8 +44,8 @@ const validationSchema = Yup.object({
             const { posted_at } = this.parent;
             return value > posted_at;
         }),
-    requirements: Yup.array().of(Yup.string()),
-    responsibilities: Yup.array().of(Yup.string()),
+    requirements: Yup.array().of(Yup.string()).required(),
+    responsibilities: Yup.array().of(Yup.string()).required(),
     benefits: Yup.array().of(Yup.string()).required("Benefits is required"),
     email: Yup.string().email('Must be a valid email').nullable(),
     phone: Yup.array().of(Yup.string()).nullable(),

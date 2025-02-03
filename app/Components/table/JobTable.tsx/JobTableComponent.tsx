@@ -89,6 +89,18 @@ export default function JobListTableComponent() {
   const totalPages = data?.payload?.metadata?.total_pages || 0;
   const totalItems = data?.payload?.metadata?.total_items || 0;
   console.log("job table :", jobs)
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   const filteredJobs =
     jobs.filter((job) => {
@@ -101,20 +113,6 @@ export default function JobListTableComponent() {
       return matchesJobs;
     }) || [];
 
-
-  // Pagination handlers
-  const handleItemsPerPageChange = (value: string) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1);
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
-  };
 
   // Actions
   const handleView = (uuid: string) => {
@@ -247,19 +245,26 @@ export default function JobListTableComponent() {
             </TableBody>
           </Table>
         </div>
-        {/* Pagination Section */}
-        <div className="flex justify-between items-center mt-4">
+       {/* Pagination Section */}
+       <div className="flex justify-between items-center mt-4">
           {/* Showing data */}
-          <div className="text-sm font-medium mb-10 text-gray-500">
-            Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+          <div className="text-sm font-medium text-gray-500">
+            Showing data{" "}
+            {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+            entries
           </div>
 
           <div className="flex gap-4">
             {/* Rows Per Page */}
-            <div className="flex items-center gap-2 mb-10">
-              <span className="text-sm font-medium">Rows per page:</span>
-              <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-900">
+                Rows per page:
+              </span>
+              <Select
+                value={`${itemsPerPage}`}
+                onValueChange={handleItemsPerPageChange}
+              >
                 <SelectTrigger className="h-8 w-[70px]">
                   <SelectValue placeholder={itemsPerPage} />
                 </SelectTrigger>
@@ -274,7 +279,7 @@ export default function JobListTableComponent() {
             </div>
 
             {/* Pagination Controls */}
-            <div className="flex items-center gap-4 mb-10">
+            <div className="flex items-center gap-4">
               <Button
                 variant="secondary"
                 onClick={() => setCurrentPage(1)}
@@ -291,7 +296,7 @@ export default function JobListTableComponent() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium text-gray-900">
                 Page {currentPage} of {totalPages}
               </span>
 
