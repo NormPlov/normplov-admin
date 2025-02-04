@@ -63,7 +63,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [currentPage,] = useState(1);
     const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
     const [dropdownOpen, setDropdownOpen] = useState(false)
-const {toast} = useToast()
+    const {toast} = useToast()
     const router = useRouter();
 
     // Fetch job data
@@ -166,11 +166,9 @@ const {toast} = useToast()
                 description: "Failed to upload the image. Please try again.",
                 variant: "warning"
             });
-            return null;
+            
         }
     };
-
-    console.log("update job ")
 
     const handleUpdateJob = async (values: UpdateJob) => {
         console.log("Updating job with values:", values);
@@ -187,7 +185,7 @@ const {toast} = useToast()
                         description: "Failed to upload logo. Please try again.",
                         variant: "destructive"
                     });
-                    return;
+                   
                 }
             }
 

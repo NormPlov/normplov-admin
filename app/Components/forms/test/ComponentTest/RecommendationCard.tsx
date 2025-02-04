@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { List } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+
 
 type SchoolType = {
     school_uuid: string;

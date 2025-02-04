@@ -21,10 +21,8 @@ import {
 } from "@/app/redux/service/university";
 import { UniversityType, UploadImageResponse } from "@/types/types";
 import { useUploadImageMutation } from "@/app/redux/service/media";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/hooks/use-toast";
 import React from "react";
-import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaUpload } from "react-icons/fa6"
 
@@ -53,6 +51,7 @@ export default function EditUniversityPage({
 }: {
   params: { uuid: string };
 }) {
+  const {toast} = useToast()
   const router = useRouter();
   const { data, isLoading, isError } = useUniversityDetailsQuery(params.uuid);
   const [editUniversity, { isLoading: isUpdating }] =
@@ -70,8 +69,9 @@ export default function EditUniversityPage({
   );
 
   if (isError) {
-    toast.error("Failed to load university data. Please try again.", {
-      hideProgressBar: true
+    toast({
+      description: "Failed to load university data. Please try again.", 
+      variant: "destructive"
     });
   }
 
@@ -130,14 +130,16 @@ export default function EditUniversityPage({
   const handleUploadImage = async (file: File) => {
     try {
       const res: UploadImageResponse = await uploadImage({ url: file }).unwrap();
-      toast.success("Upload Logo successfully!", {
-        hideProgressBar: true
+      toast({
+        description: "Upload Logo successfully!", 
+        variant: "default"
       })
       return res.payload.file_url;
     } catch (error) {
       console.log("Error upload image:", error)
-      toast.error("Failed to upload the image. Please try again.", {
-        hideProgressBar: true
+      toast({
+        description: "Failed to upload the image. Please try again.", 
+        variant: "destructive"
       });
       return null;
     }
@@ -192,15 +194,17 @@ export default function EditUniversityPage({
             // Call the mutation to update the university
             await editUniversity({ uuid: params.uuid, data: updatedUniversity }).unwrap();
 
-            toast.success("University updated successfully!", {
-              hideProgressBar: true
+            toast({
+              description: "University updated successfully!", 
+              variant: "default"
             });
             // router.push("/majors-universities");
           } catch (err) {
             console.error("Failed to update university:", err);
             setSubmissionError("Failed to update university. Please try again.");
-            toast.error("Failed to update university. Please try again.", {
-              hideProgressBar: true
+            toast({
+              description: "Failed to update university. Please try again.",
+              variant: "destructive"
             });
           } finally {
             setSubmitting(false);
@@ -211,7 +215,6 @@ export default function EditUniversityPage({
       >
         {({ isSubmitting, setFieldValue }) => (
           <Form className="space-y-6">
-            <ToastContainer position="top-right" autoClose={3000} />
 
             <div className="space-y-4">
                 <Label htmlFor="cover_image" className="block text-md font-normal py-2 text-primary">Cover Image</Label>

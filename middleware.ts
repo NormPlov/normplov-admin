@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
 
 // multiple middleware
 export const config = {
-  matcher: ["/"], 
+  matcher: ["/", "/setting", "/updateProfile", "/jobs", "/scrape", "/test-history", "/majors-universities", "/user", "/feedback"], 
 //   compiler: {
 //     removeConsole: true,
 // }

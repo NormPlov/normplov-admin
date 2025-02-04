@@ -188,9 +188,16 @@ export const resultApi = normPlovApi.injectEndpoints({
         url: `api/v1/assessment/final-test/${uuid}`,
         method: "GET",
       }),
-    })
+    }),
     
+    getFinalJob: builder.query<any, { uuid: string }>({
+      query :({uuid}) => ({
+        url: `api/v1/admin/responses/${uuid}`, // Dynamic query parameter
+        method: 'GET',
+      })
+    })
+
   }),
 });
 
-export const { useFetchAssessmentDetailsQuery, useGetAllUserTestQuery, useGetAllAssessmentDetailQuery } = resultApi;
+export const { useFetchAssessmentDetailsQuery, useGetAllUserTestQuery, useGetAllAssessmentDetailQuery, useGetFinalJobQuery } = resultApi;

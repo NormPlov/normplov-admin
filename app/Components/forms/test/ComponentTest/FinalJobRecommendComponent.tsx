@@ -1,7 +1,7 @@
 import React from 'react'
 import QuizHeader from './QuizHeader';
 import { useParams } from 'next/navigation';
-import { useGetAllAssessmentDetailQuery } from '@/app/redux/service/result';
+import { useGetFinalJobQuery } from '@/app/redux/service/result';
 import { RecommendationCard } from './RecommendationCard';
 import Image from 'next/image';
 import errorLoading from '@/public/assets/errorLoading.png'
@@ -36,12 +36,13 @@ export const FinalJobRecommendComponent = () => {
     const uuidString = typeof params.uuid === 'string' ? params.uuid : '';
 
 
-    const { data: response, isLoading, error } = useGetAllAssessmentDetailQuery({
+    const resultTypeString = typeof params.type === 'string' ? params.type : '';
+
+
+    const { data: response, isLoading, error } = useGetFinalJobQuery({
         uuid: uuidString,
     });
-
-    const resultTypeString = typeof params.resultType === 'string' ? params.resultType : '';
-
+    console.log("data reponse: ", response);
     console.log("data from career: ", response?.payload?.[0]?.user_response_data.recommendations)
 
     if(resultTypeString === 'AllTests'){
