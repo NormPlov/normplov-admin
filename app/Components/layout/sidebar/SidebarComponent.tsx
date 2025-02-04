@@ -17,15 +17,14 @@ import { items } from "./menu";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export function SidebarComponent() {
   const router = useRouter()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
+  const {toast} = useToast()
 
       const handleLogout = async () => {
         try {
@@ -38,19 +37,22 @@ export function SidebarComponent() {
     
           if (res.ok) {
             window.location.reload();
-            toast.success(data.message || "Logged out successfully!",{
-              hideProgressBar: true
+            toast({
+              description: "Logged out successfully!",
+              variant: "default"
             });
             
            
           } else {
-            toast.error(data.message || "Failed to log out.",{
-              hideProgressBar: true
+            toast({
+              description: "Failed to log out.",
+              variant: "destructive"
             });
           }
         } catch (error) {
-          toast.error("An error occurred during logout.",{
-            hideProgressBar: true,
+          toast({
+            description: "An error occurred during logout.",
+            variant: "destructive"
           });
           console.error(error);
         }
