@@ -59,6 +59,15 @@ export const userApi = normPlovApi.injectEndpoints({
             invalidatesTags:["userProfile"]
         }),
 
+        // unpromote feedback
+        unpromoteFeedback: builder.mutation<FeedbackResponse, { uuid: string }>({
+            query: ({uuid}) => ({
+                url: `api/v1/feedback/unpromote/${uuid}`,
+                method: 'POST'
+            }),
+            invalidatesTags:["userProfile"]
+        }),
+
         // get user by uuid 
         getUserBYuuid: builder.query<User, string | undefined>({
             query: (uuid) => ({
@@ -176,6 +185,7 @@ export const {
     useUnBlockUserMutation,
     useGetUserFeedbackQuery,
     usePromoteFeedbackMutation,
+    useUnpromoteFeedbackMutation,
     useUpdateUserInfoMutation,
     usePostImageMutation,
     useChangePasswordMutation,

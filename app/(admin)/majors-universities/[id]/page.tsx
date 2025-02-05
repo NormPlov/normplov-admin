@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
     FaEnvelope,
@@ -41,16 +41,14 @@ import { Faculty, Major } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import ConfirmationModal from "@/app/Components/popup/ConfrimBlock";
 
 const UniversityPage = () => {
     const { toast } = useToast();
     const params = useParams();
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
-    const { data, isLoading } = useUniversityDetailsQuery(id);
-
+    const { data, isLoading } = useUniversityDetailsQuery(id || "");
     const university = data?.payload;
-
+    console.log("University data", university?.cover_image)
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isFacultyDialogOpen, setIsFacultyDialogOpen] = useState(false);
     const [newFacultyName, setNewFacultyName] = useState("");
@@ -76,14 +74,11 @@ const UniversityPage = () => {
     const [editingFaculty, setEditingFaculty] = useState<Faculty | null>(null);
     const [editingMajor, setEditingMajor] = useState<Major | null>(null);
     const [, setIsModalOpen] = useState(false);
-    const [faculties, setFaculties] = useState<Faculty[]>([]);
+    const [isDeleteFacultyModalOpen, setDeleteFacultyModalOpen] = useState(false);
+    const [facultyToDelete, setFacultyToDelete] = useState<Faculty | null>(null);
+    
     if (!university) {
-        return (
-            <div className="text-center text-red-500 py-14">
-            <div>University not found</div>
-            <Button className="bg-primary hover:bg-primary/50" onClick={()=>window.history.back}>Back</Button>
-            </div>
-        );
+        return <div>University not found</div>;
     }
     const handleAddNewFaculty = async () => {
         if (newFacultyName && id) {
@@ -199,22 +194,22 @@ const UniversityPage = () => {
         }
     };
 
-    // const handleDeleteFaculty = async (id: string) => {
-    //     try {
-    //         await deleteFaculty(id).unwrap();
-    //         toast({
-    //             description: "Faculty deleted successfully",
-    //             variant: "default"
-    //         });
-    //         window.location.reload();
-    //     } catch (error) {
-    //         console.error("Failed to delete faculty:", error);
-    //         toast({
-    //             description: "Failed to delete faculty",
-    //             variant: "destructive"
-    //         })
-    //     }
-    // };
+    const handleDeleteFaculty = async (id: string) => {
+        try {
+            await deleteFaculty(id).unwrap();
+            toast({
+                description: "Faculty deleted successfully",
+                variant: "default"
+            });
+            window.location.reload();
+        } catch (error) {
+            console.error("Failed to delete faculty:", error);
+            toast({
+                description: "Failed to delete faculty",
+                variant: "destructive"
+            })
+        }
+    };
 
     const handleEditMajor = async (major: Major) => {
         if (editingMajor) {
@@ -243,101 +238,38 @@ const UniversityPage = () => {
         }
     };
 
-    // const handleDeleteMajor = async (id: string) => {
-    //     console.log("uuid delete", id)
-    //     try {
-    //         await deleteMajor({ id: id }).unwrap();
-    //         toast({
-    //             description: "Major deleted successfully",
-    //             variant: "default"
-    //         });
-    //         window.location.reload();
-    //     } catch (error) {
-    //         console.error("Failed to create major:", error);
-    //         if (error.status === 400) {
-    //             toast({
-    //                 description: "Deletion not allowed for recommended majors.",
-    //                 variant: "destructive"
-    //             });
-    //         } else if (error.status === 404) {
-    //             toast({
-    //                 description: "Major not found. Please verify the ID.",
-    //                 variant: "destructive"
-    //             });
-    //         } else if (error.status === 403) {
-    //             toast({
-    //                 description: "You don't have permission to delete this major.",
-    //                 variant: "destructive"
-    //             });
-    //         } else if (error.status === 500) {
-    //             toast({
-    //                 description: "Server error occurred while deleting the major.",
-    //                 variant: "destructive"
-    //             });
-    //         } else {
-    //             toast({
-    //                 description: "An unknown error occurred while deleting the major.",
-    //                 variant: "destructive"
-    //             });
-    //         }
-    //     }
-    // };
 
-    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [deleteTarget, setDeleteTarget] = useState<{ type: "faculty" | "major"; id: string } | null>(null);
-
-    useEffect(() => {
-        if (data?.payload?.faculties) {
-            setFaculties(data.payload.faculties); // Set faculties initially
-        }
-    }, [data]); // Only run when `data` changes
-    
-    const openDeleteModal = (type: "faculty" | "major", id: string, isRecommended?: boolean) => {
-        if (type === "major" && isRecommended) {
-            toast({
-                description: "This major is recommended and cannot be deleted!",
-                variant: "destructive",
-            });
-            return;
-        }
-        setDeleteTarget({ type, id });
-        setDeleteModalOpen(true);
-    };
-    
-    const handleConfirmDelete = async () => {
-        if (!deleteTarget) return;
-    
+    const handleDeleteMajor = async (id: string) => {
+        
+            console.log("uuid delete", id)
         try {
-            if (deleteTarget.type === "faculty") {
-                await deleteFaculty(deleteTarget.id).unwrap();
-                toast({ description: "Faculty deleted successfully", variant: "default" });
-    
-                // Remove deleted faculty from local state
-                setFaculties((prev) => prev.filter((faculty) => faculty.uuid !== deleteTarget.id));
-            } else if (deleteTarget.type === "major") {
-                await deleteMajor({ id: deleteTarget.id }).unwrap();
-                toast({ description: "Major deleted successfully", variant: "default" });
-    
-                // Remove deleted major from local state
-                setFaculties((prev) =>
-                    prev.map((faculty) => ({
-                        ...faculty,
-                        majors: {
-                            ...faculty.majors,
-                            items: faculty.majors.items.filter((major) => major.uuid !== deleteTarget.id),
-                        },
-                    }))
-                );
-            }
-    
-            setDeleteModalOpen(false);
-            setDeleteTarget(null);
-        } catch (error) {
+            await deleteMajor({ id: id }).unwrap();
             toast({
-                description: `Failed to delete ${deleteTarget.type}.`,
-                variant: "destructive",
+                description: "Major deleted successfully",
+                variant: "default"
             });
-        }
+            window.location.reload();
+            } catch (error) {
+                console.error("Failed to create major:", error);
+                let message = "An unknown error occurred while creating the major.";
+
+                switch (error.status) {
+                    case 400:
+                        message = "Deletion not allowed for recommended majors."
+                        break;
+                    case 404:
+                        message = "Major not found. Please verify the ID."
+                        break;
+                    case 500:
+                        message = "Server error occurred while deleting the major."
+                        break;
+                }
+                toast({
+                    description: message,
+                    variant: "destructive"
+                });
+            }
+        
     };
 
     if (isLoading) {
@@ -588,8 +520,7 @@ const UniversityPage = () => {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    // onClick={() => handleDeleteFaculty(faculty.uuid)}
-                                                    onClick={() => openDeleteModal("faculty", faculty.uuid, false)}
+                                                    onClick={() => handleDeleteFaculty(faculty.uuid)}
                                                     className="text-red-500 hover:text-red-700"
                                                 >
                                                     <FaTrash className="mr-2" /> Delete
@@ -708,17 +639,16 @@ const UniversityPage = () => {
                                                                     <Button
                                                                         variant="outline"
                                                                         size="sm"
-                                                                        // onClick={() => {
-                                                                        //     if (!major.is_recommended) {
-                                                                        //         handleDeleteMajor(major.uuid)
-                                                                        //     } else {
-                                                                        //         toast({
-                                                                        //             description: "This major is recommended cannot be deleted",
-                                                                        //             variant: "destructive"
-                                                                        //         })
-                                                                        //     }
-                                                                        // }}
-                                                                        onClick={() => openDeleteModal("major", major.uuid, major.is_recommended)}
+                                                                        onClick={() => {
+                                                                            if (!major.is_recommended) {
+                                                                                handleDeleteMajor(major.uuid)
+                                                                            } else {
+                                                                                toast({
+                                                                                    description: "This major is recommended cannot be deleted",
+                                                                                    variant: "destructive"
+                                                                                })
+                                                                            }
+                                                                        }}
                                                                         className="text-red-500 hover:text-red-700"
                                                                     >
                                                                         <FaTrash className="mr-2" /> Delete
@@ -878,18 +808,9 @@ const UniversityPage = () => {
                         ))}
                     </div>
                 </section>
-                {isDeleteModalOpen && deleteTarget && (
-                    <ConfirmationModal
-                        title="Confirm Deletion"
-                        message={`Are you sure you want to delete this ${deleteTarget.type}?`}
-                        onConfirm={handleConfirmDelete}
-                        onCancel={() => setDeleteModalOpen(false)}
-                        confirmText="Delete"
-                        cancelText="Cancel"
-                    />
-                )}
             </div>
         </div>
+
     );
 };
 
