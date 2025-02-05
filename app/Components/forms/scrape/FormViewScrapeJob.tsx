@@ -61,7 +61,7 @@ const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
       {/* Back Button */}
       <div className="mb-6 flex justify-end mx-4">
         <button
-          onClick={() => router.back()}
+          onClick={() => window.history.back()}
           className="text-secondary font-medium hover:underline text-md"
         >
           &larr; Back
@@ -171,11 +171,9 @@ const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
         </p>
         <div className="space-y-2 text-gray-700 flex gap-44 ">
           <div className="">
-
             <p>
               <span className="font-medium text-textprimary">Website: </span>
               <Link
-                // href={`https://${job.website}` || "#"}
                 href={job.website || "#"}
                 target="_blank"
                 rel="noopener noreferrer"

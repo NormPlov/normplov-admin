@@ -25,8 +25,12 @@ export default function TableUserFeedback() {
 
   const { toast } = useToast()
   
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+   const [search, setSearch] = useState("");
+    const [status, setStatus] = useState<string | null>(null); // Status filter (null = no filter)
+  
+    // Convert status to boolean for API
+    const isPromoted = status === "promoted" ? true : status === "not-promoted" ? false : undefined;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
 
@@ -36,6 +40,8 @@ export default function TableUserFeedback() {
   const { data, isLoading } = useGetUserFeedbackQuery({
     page: currentPage,
     pageSize: itemsPerPage,
+    search,
+    is_promoted: isPromoted,
   });
 
   if (isLoading) {
@@ -84,22 +90,7 @@ export default function TableUserFeedback() {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-
-  // Filter logic
-  const filteredUsers =
-    data?.payload?.feedbacks.items?.filter((item) => {
-      const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
-
-      const matchesSearch =
-        item.username.toLowerCase().includes(normalizeString(search)) ||
-        item.email.toLowerCase().includes(normalizeString(search));
-      const matchesFilter =
-        filter === "all" ||
-        (filter === "promoted" && item.is_promoted) ||
-        (filter === "not-promoted" && !item.is_promoted);
-      return matchesSearch && matchesFilter;
-    }) || [];
-
+  const filteredFeedbacks = data?.payload?.feedbacks?.items || [];
 
   // Handle promote feedback
   const handlePromote = async (uuid: string) => {
@@ -139,7 +130,7 @@ export default function TableUserFeedback() {
               />
             </div>
             {/* Filter */}
-            <Select value={filter} onValueChange={setFilter}>
+            <Select value={status || ""} onValueChange={setStatus}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
@@ -154,7 +145,6 @@ export default function TableUserFeedback() {
 
         {/* Table */}
         <div className="rounded-md border border-gray-200 rounded-md">
-         
           <Table>
             <TableHeader>
               <TableRow>
@@ -172,14 +162,14 @@ export default function TableUserFeedback() {
                     <Skeleton className="h-8 w-full" />
                   </TableCell>
                 </TableRow>
-              ) : filteredUsers.length === 0 ? (
+              ) : filteredFeedbacks.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-gray-500">
                     No data available
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredUsers.map((item) => (
+                filteredFeedbacks.map((item) => (
                   <TableRow key={item.feedback_uuid}>
                     {/* Avatar */}
                     <TableCell>

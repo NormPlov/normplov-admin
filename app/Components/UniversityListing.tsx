@@ -42,7 +42,7 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 export function UniversityListing() {
   const {toast} = useToast()
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const router = useRouter()
@@ -50,11 +50,13 @@ export function UniversityListing() {
   const [universityToDelete, setUniversityToDelete] = useState<School | null>(null)
 
   const [deleteUniversity] = useDeleteUniversityMutation()
-
-  const { data , isLoading} = useUniversityQuery({
+  const { data, isLoading } = useUniversityQuery({
     page: currentPage,
     size: itemsPerPage,
+    search: searchQuery || undefined,
+    type: filter !== "all" ? filter : undefined,
   });
+
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
@@ -113,6 +115,7 @@ const handleNextPage = () => {
       (filter === "PRIVATE" && school?.type === "PRIVATE") ||
       (filter === "PUBLIC" && school?.type === "PUBLIC") ||
       (filter === "TVET" && school?.type === "TVET");
+      (filter === "MAJORS_COURSES" && school?.type === "MAJORS_COURSES");
 
     return matchesSearch && matchFilter;
   }) || [];
@@ -153,6 +156,7 @@ const handleNextPage = () => {
             <Input
               placeholder="Search"
               className="pl-8"
+              onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Search universities"
             />
           </div>
@@ -165,6 +169,7 @@ const handleNextPage = () => {
               <SelectItem value="PUBLIC">Public School</SelectItem>
               <SelectItem value="PRIVATE">Private School</SelectItem>
               <SelectItem value="TVET">TVET</SelectItem>
+              <SelectItem value="MAJORS_COURSES">Majors Courses</SelectItem>
             </SelectContent>
           </Select>
           <Button asChild className="bg-primary hover:bg-green-600">

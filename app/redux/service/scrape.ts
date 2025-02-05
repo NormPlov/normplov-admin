@@ -53,7 +53,7 @@ export const scrape = normPlovApi.injectEndpoints({
                             email: update.email,
                             phone: update.phone,
                             website: update.website,
-                            logo: update.logo,
+                            logo: update.logo_url,
                             posted_at: update.posted_at,
                             closing_date: update.closing_date,
                             schedule: update.schedule,

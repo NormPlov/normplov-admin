@@ -6,15 +6,24 @@ export const universityApi = normPlovApi.injectEndpoints({
   endpoints: (builder) => ({
     university: builder.query<
     SchoolsResponse,
-      { page: number; size: number; search?: string; type?: string }
-    >({
-      query: ({ page, size, search, type }) => ({
-        url: `api/v1/schools?page=${page}&page_size=${size}`,
+    { page: number; size: number; search?: string; type?: string }
+  >({
+    query: ({ page, size, search, type }) => {
+      const params = new URLSearchParams();
+  
+      params.append("page", page.toString());
+      params.append("page_size", size.toString());
+  
+      if (search) params.append("search", search);
+      if (type) params.append("type", type);
+  
+      return {
+        url: `api/v1/schools?${params.toString()}`,
         method: "GET",
-        params: { page, size, search, type },
-      }),
-      providesTags: ["university"],
-    }),
+      };
+    },
+    providesTags: ["university"],
+  }),  
 
     universityDetails: builder.query<SchoolDetailResponse, string>({
       query: (uuid) => ({
@@ -47,25 +56,14 @@ export const universityApi = normPlovApi.injectEndpoints({
       invalidatesTags: ["university"]
     }),
 
-    deleteUniversity: builder.mutation<void, {uuid:string}>({
-      query: ({uuid}) => ({
+    deleteUniversity: builder.mutation<void, { uuid: string }>({
+      query: ({ uuid }) => ({
         url: `api/v1/schools/${uuid}`,
         method: "DELETE",
       }),
       invalidatesTags: ["university"]
     }),
-    // getAllFaculties: builder.query({
-    //   query: (uuid) => ({
-    //     url: `api/v1/faculties`,
-    //     method: "GET",
-    //   }),
-    // }),
-    // getAllMajors: builder.query({
-    //   query: (uuid) => ({
-    //     url: `api/v1/majors`,
-    //     method: "GET",
-    //   }),
-    // }),
+
     createFaculty: builder.mutation({
       query: (faculty) => ({
         url: "api/v1/faculties/",
@@ -74,7 +72,7 @@ export const universityApi = normPlovApi.injectEndpoints({
       }),
       invalidatesTags: ["faculty"],
     }),
-    
+
     updateFaculty: builder.mutation({
       query: ({ id, ...faculty }) => ({
         url: `api/v1/faculties/${id}`,

@@ -34,7 +34,7 @@ export function NavbarComponent() {
                 <Avatar className="mt-3">
                     <AvatarImage
                         src={`${process.env.NEXT_PUBLIC_NORMPLOV_API}${userData?.avatar}`|| "/assets/placeholderProfile.png"}
-                        className="object-cover"
+                        className="object-cover w-12 h-12"
                     />
                     <AvatarFallback>
                         {userData?.username?.[0] || "?"}

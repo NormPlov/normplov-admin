@@ -10,7 +10,7 @@ import { useGetJobCategoryQuery, usePostJobMutation } from '@/app/redux/service/
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {  PostJob, UploadImageResponse } from '@/types/types';
+import { PostJob, UploadImageResponse } from '@/types/types';
 import { PostedDate } from '../../calendar/Component';
 import { ClosingDate } from '../../calendar/ClosingDate';
 import { useToast } from '@/hooks/use-toast';
@@ -76,7 +76,7 @@ const FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
 
 const AddJobForm = () => {
-  const {toast} = useToast()
+  const { toast } = useToast()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const router = useRouter();
   const [postJob] = usePostJobMutation();
@@ -87,46 +87,26 @@ const AddJobForm = () => {
   // upload image 
   const [uploadImage] = useUploadImageMutation()
 
-//  const handleDrop = (
-//         e: React.DragEvent<HTMLDivElement>,
-//         setFieldValue: (field: string, value: File | null) => void
-//     ): void => {
-//         e.preventDefault();
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    setFieldValue: (field: string, value: File | null) => void
+  ): void => {
+    e.preventDefault();
 
-//         const file = e.dataTransfer.files[0];
-//         if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
-//             const previewUrl = URL.createObjectURL(file);
-//             setSelectedImage(previewUrl);
-//             // setImageFile(file);
-//             setFieldValue("logo", file); // Set the File object correctly
-//         } else {
-//             toast.error("Invalid file. Please upload a valid image file.",{
-//               hideProgressBar: true
-//           });
-//         }
-//     };
-const handleDrop = (
-  e: React.DragEvent<HTMLDivElement>,
-  setFieldValue: (field: string, value: File | null) => void
-): void => {
-  e.preventDefault();
-
-  if (typeof window !== 'undefined') {
-    const file = e.dataTransfer.files[0];
-    if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
-      const previewUrl = URL.createObjectURL(file);
-      setSelectedImage(previewUrl);
-      setFieldValue('logo', file);
-    } else {
-      toast({
-        description: 'Invalid file. Please upload a valid image file.', 
-        variant: "warning"
-      });
+    if (typeof window !== 'undefined') {
+      const file = e.dataTransfer.files[0];
+      if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
+        const previewUrl = URL.createObjectURL(file);
+        setSelectedImage(previewUrl);
+        setFieldValue('logo', file);
+      } else {
+        toast({
+          description: 'Invalid file. Please upload a valid image file.',
+          variant: "warning"
+        });
+      }
     }
-  }
-};
-
-
+  };
 
   console.log("Before function call");
 
@@ -139,14 +119,14 @@ const handleDrop = (
       toast({
         description: "Upload Logo successfully!",
         variant: "default"
-    });
+      });
       return res.payload.file_url;
     } catch (error) {
       console.error("Error uploading image:", error);
       toast({
-        description:"Failed to upload the image. Please try again.",
+        description: "Failed to upload the image. Please try again.",
         variant: "warning"
-    });
+      });
       return null;
     }
   };
@@ -156,31 +136,31 @@ const handleDrop = (
       const processedValues = {
         ...values,
         description: values.description
-        ? Array.isArray(values.description)
-          ? values.description
-          : [values.description] // Convert string to array
-        : [],
-      responsibilities: values.responsibilities
-        ? Array.isArray(values.responsibilities)
-          ? values.responsibilities
-          : [values.responsibilities]
-        : [],
-      requirements: values.requirements
-        ? Array.isArray(values.requirements)
-          ? values.requirements
-          : [values.requirements]
-        : [],
-      benefits: values.benefits
-        ? Array.isArray(values.benefits)
-          ? values.benefits
-          : [values.benefits]
-        : [],
+          ? Array.isArray(values.description)
+            ? values.description
+            : [values.description] // Convert string to array
+          : [],
+        responsibilities: values.responsibilities
+          ? Array.isArray(values.responsibilities)
+            ? values.responsibilities
+            : [values.responsibilities]
+          : [],
+        requirements: values.requirements
+          ? Array.isArray(values.requirements)
+            ? values.requirements
+            : [values.requirements]
+          : [],
+        benefits: values.benefits
+          ? Array.isArray(values.benefits)
+            ? values.benefits
+            : [values.benefits]
+          : [],
         phone: Array.isArray(values.phone)
           ? values.phone
           : values.phone.split(",").map((item) => item.trim()),
         logo: values.logo,
       };
-  
+
       // Handle logo upload
       let logoUrl = processedValues.logo;
       if (processedValues.logo instanceof File) {
@@ -191,11 +171,11 @@ const handleDrop = (
           toast({
             description: "Failed to upload logo. Please try again.",
             variant: "destructive"
-        });
+          });
           return;
         }
       }
-  
+
       // Prepare final job data
       const jobData: PostJob = {
         ...processedValues,
@@ -218,14 +198,15 @@ const handleDrop = (
         email: values.email,
         website: values.website,
       };
-  
+
       // Post the job data
       await postJob({ postJob: jobData }).unwrap();
       toast({
         description: "Job successfully created!",
         variant: "default"
       });
-  
+      router.push("/jobs")
+
       // Clear the selected image preview
       setSelectedImage(null);
     } catch (error) {
@@ -238,7 +219,7 @@ const handleDrop = (
   };
   console.log("Before function call")
 
- 
+
   return (
     <Formik
       initialValues={initialValues}
@@ -248,12 +229,12 @@ const handleDrop = (
       {({ values, setFieldValue }) => (
 
         <Form className="w-full p-10 space-y-4">
-          
+
           <h2 className="text-3xl font-semibold mb-6 text-secondary">Add Job</h2>
           {/* Back Button */}
           <div className="mb-6 flex justify-end mx-4">
             <Button
-              onClick={() => router.back()}
+              onClick={() => window.history.back()}
               className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1"
             >
               &larr; Back
@@ -297,10 +278,10 @@ const handleDrop = (
             </div>
 
             <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
-             <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
-             <FaUpload className="text-gray-400 text-lg" />
-             <span className="text-gray-400 text-md font-medium">Upload Image</span>
-             </div>
+              <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                <FaUpload className="text-gray-400 text-lg" />
+                <span className="text-gray-400 text-md font-medium">Upload Image</span>
+              </div>
             </div>
 
             <Input
@@ -319,69 +300,69 @@ const handleDrop = (
           <ErrorMessage name="logo" component="p" className="text-red-500 text-sm mt-2" />
 
           <div className="flex justify-between w-full gap-24">
-                        {/* category */}
-                        <div className="relative mb-4 w-full">
-                            <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
-                                Job Category
-                            </label>
-                            <div className="flex items-center rounded focus-within:ring-primary  block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-5 py-1.5 text-md">
-                                <input
-                                    id="category"
-                                    name="category"
-                                    type="text"
-                                    value={values.category}
-                                    onChange={(e) => setFieldValue('category', e.target.value)}
-                                    placeholder="Type or select a category"
-                                    className="flex-grow outline-none"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setDropdownOpen((prev) => !prev)}
-                                    className=" rounded-md "
-                                >
-                                    <ChevronDown className="h-4 w-4 opacity-50" />
-                                </button>
-                            </div>
-                            {dropdownOpen && (
-                                <div
-                                    className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50"
-                                    style={{ zIndex: 50 }}
-                                >
-                                    {jobCategory.payload.categories.map((type) => (
-                                        <div
-                                            key={type}
-                                            onClick={() => {
-                                                setFieldValue('category', type);
-                                                setDropdownOpen(false);
-                                            }}
-                                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                            {type}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        {/* Position */}
-                        <div className="w-full">
-                            <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
-                                Position
-                            </label>
-                            <Field
-                                id="title"
-                                name="title"
-                                placeholder={'Enter a position'}
-                                type="text"
-                                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
-                            />
-                            <ErrorMessage name="title" component="p" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-
+            {/* category */}
+            <div className="relative mb-4 w-full">
+              <label htmlFor="category" className="block text-md font-normal py-2 text-primary">
+                Job Category
+              </label>
+              <div className="flex items-center rounded focus-within:ring-primary  block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-5 py-1.5 text-md">
+                <input
+                  id="category"
+                  name="category"
+                  type="text"
+                  value={values.category}
+                  onChange={(e) => setFieldValue('category', e.target.value)}
+                  placeholder="Type or select a category"
+                  className="flex-grow outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  className=" rounded-md "
+                >
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </button>
+              </div>
+              {dropdownOpen && (
+                <div
+                  className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50"
+                  style={{ zIndex: 50 }}
+                >
+                  {jobCategory.payload.categories.map((type) => (
+                    <div
+                      key={type}
+                      onClick={() => {
+                        setFieldValue('category', type);
+                        setDropdownOpen(false);
+                      }}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {type}
                     </div>
+                  ))}
+                </div>
+              )}
+
+              <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
+            </div>
+
+            {/* Position */}
+            <div className="w-full">
+              <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
+                Position
+              </label>
+              <Field
+                id="title"
+                name="title"
+                placeholder={'Enter a position'}
+                type="text"
+                className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-6 py-1.5 text-md`}
+              />
+              <ErrorMessage name="title" component="p" className="text-red-500 text-sm mt-1" />
+            </div>
+
+
+          </div>
           <div className="flex justify-between w-full gap-24">
             {/* Job Type */}
             <div className="mb-2.5 w-full">
@@ -615,7 +596,7 @@ const handleDrop = (
               Submit
             </Button>
           </div>
-          
+
         </Form>
       )}
     </Formik>

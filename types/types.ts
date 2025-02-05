@@ -166,7 +166,7 @@ export type SchoolsResponse = {
   status: number; // e.g., 200
   payload: {
     schools: School[];
-    metadata: Metadata;
+    metadata: MetadataType;
   };
   message: string; // e.g., "Schools retrieved successfully"
 };
@@ -185,7 +185,7 @@ export type UpdateProfileResponse = {
 export interface Metadata {
   page: number;
   page_size: number;
-  total_items: number;
+  total: number;
   total_pages: number;
 }
 
@@ -236,7 +236,7 @@ export type FeedbackResponse = {
   payload: {
     feedbacks: {
       items: Feedback[];
-    metadata: Metadata;
+    metadata: MetadataType;
     }
     
   };
@@ -417,7 +417,7 @@ export type GetAllJobType = {
   category: string;
 };
 
-//       post job type
+//  post job type
 export type JobType = {
   uuid: string;
   category: string[];
@@ -490,7 +490,7 @@ export type JobsResponse = {
   status: string;
   payload: {
     items: GetAllJobType[];
-    metadata: Metadata;
+    metadata: MetadataType;
   };
 };
 
@@ -570,14 +570,13 @@ export type MetricsResponse = {
 };
 
 // scrape job
-
 export interface ScrapeJobResponse {
   date: string;
   status: number;
   message: string; // Response message
   payload: {
     jobs:JobScrapeType[];
-    meta:Metadata;
+    meta:MetadataType;
   }; 
 }
 

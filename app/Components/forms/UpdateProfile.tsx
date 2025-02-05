@@ -16,6 +16,7 @@ import { DatePickerDemo } from "../calendar/DatePickerDemo";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 
 const FILE_SIZE = 1024 * 1024 * 5;
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
@@ -55,6 +56,7 @@ const validationSchema = Yup.object().shape({
 
 
 const UpdateProfile = () => {
+    const  router = useRouter()
     const {toast} = useToast()
 
     const [showOldPassword, setShowOldPassword] = useState(false);
@@ -145,6 +147,7 @@ const UpdateProfile = () => {
                     description: "Profile info updated successfully.",
                     variant: "default"
                 });
+                router.refresh()
             }
 
             // Handle password change
@@ -167,10 +170,11 @@ const UpdateProfile = () => {
 
             // If nothing was updated
             if (!imageFile && Object.keys(cleanUpdatedInfo).length === 0 && !hasPasswordToUpdate) {
-                toast({
-                    description: "No updates were provided.",
-                    variant: "destructive"
-                });
+                // toast({
+                //     description: "No updates were provided.",
+                //     variant: "destructive"
+                // });
+                console.log("No update were provided")
             }
         } catch (error) {
             console.error("Error updating profile:", error);

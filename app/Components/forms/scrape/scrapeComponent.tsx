@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -45,7 +44,7 @@ export default function JobPreviewPage() {
     pageSize: itemsPerPage,
   });
 
-  // delete 
+  // delete
   const [deleteScrape] = useDeleteScrapeMutation()
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,10 +55,9 @@ export default function JobPreviewPage() {
     event.preventDefault();
     if (!url) {
       toast({
-        description: "Please enter a valid URL!", 
+        description: "Please enter a valid URL!",
         variant: "warning"
       });
-
       return;
     }
 
@@ -67,14 +65,14 @@ export default function JobPreviewPage() {
       const result = await scrapeJob({ url }).unwrap();
       console.log("Scraping successful:", result);
       toast({
-        description: "Job scraped successfully!", 
+        description: "Job scraped successfully!",
         variant: "default"
       });
       setUrl("")
     } catch (error) {
       console.error("Error scraping job:", error);
       toast({
-        description: "Failed to scrape the job. Please try again.", 
+        description: "Failed to scrape the job. Please try again.",
         variant: "destructive"
       });
     }
@@ -169,7 +167,7 @@ export default function JobPreviewPage() {
   const handleDeleteConfirm = async () => {
     if (!jobToDelete) {
       toast({
-        description: "No job selected to delete.", 
+        description: "No job selected to delete.",
         variant: "destructive"
       });
       return; // Exit if `jobToDelete` is null
@@ -181,22 +179,21 @@ export default function JobPreviewPage() {
       setDeleteModalOpen(false); // Close modal
       setJobToDelete(null); // Reset jobToDelete
       toast({
-        description: "Job successfully deleted.", 
-        variant: "destructive"
+        description: "Job successfully deleted.",
+        variant: "default"
       });
     } catch (error) {
       console.error("Error deleting job:", error);
       toast({
-        description: "Failed to delete the job. Please try again.", 
+        description: "Failed to delete the job. Please try again.",
         variant: "destructive"
       });
     }
   };
 
   return (
-    <div className="h-screen p-6 text-textprimary rounded-md mx-6">
+    <div className="h-screen p-6 rounded-md mx-6">
       <h2 className="text-2xl font-normal text-secondary mb-6">Scrape Job</h2>
-      
       <div className="flex items-center gap-4 mb-6">
         <Input
           type="text"

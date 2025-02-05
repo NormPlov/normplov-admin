@@ -52,6 +52,7 @@ export default function JobListTableComponent() {
   const { data, isLoading } = useGetJobQuery({
     page: currentPage,
     pageSize: itemsPerPage,
+    search,
   });
 
   if (isLoading) {
@@ -113,6 +114,7 @@ export default function JobListTableComponent() {
       return matchesJobs;
     }) || [];
 
+  // const filteredJobs = data.payload.items || [];
 
   // Actions
   const handleView = (uuid: string) => {
@@ -160,7 +162,7 @@ export default function JobListTableComponent() {
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-64 pl-10 py-2 border rounded-md focus:border-yellow-500 focus:ring-yellow-500"
+                className="w-64 pl-10 py-2 border rounded-md focus:border-primary/60 focus:primary/60"
               />
             </div>
 

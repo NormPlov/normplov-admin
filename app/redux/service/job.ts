@@ -26,12 +26,20 @@ export const jobApi = normPlovApi.injectEndpoints({
             }
         }),
        
-        getJob: builder.query<JobsResponse, { page?: number; pageSize?: number }>({
-            query: ({ page = 1, pageSize = 10 }) => ({
-                url: `api/v1/jobs/admin/all-jobs?page=${page}&page-size=${pageSize}`,
+        getJob: builder.query<JobsResponse, { page?: number; pageSize?: number, search?: string }>({
+            query: ({ page = 1, pageSize = 10 , search }) => {
+                const query = new URLSearchParams();
+        
+                query.append("page", page.toString());
+                query.append("page_size", pageSize.toString());
+        
+                if (search) query.append("search", search);
+            
+                return {
+                url: `api/v1/jobs/admin/all-jobs?${query.toString()}`,
                 method: 'GET',
 
-            }),
+            }},
             providesTags: ["job"]
         }),
 
@@ -39,7 +47,6 @@ export const jobApi = normPlovApi.injectEndpoints({
             query: () => ({
                 url: `api/v1/jobs/categories`,
                 method: 'GET',
-
             }),
             providesTags: ["job"]
         }),
@@ -63,7 +70,7 @@ export const jobApi = normPlovApi.injectEndpoints({
                     email: update.email,
                     phone: update.phone,
                     website: update.website,
-                    logo: update.logo,
+                    logo: update.logo_url,
                     posted_at: update.posted_at,
                     closing_date: update.closing_date,
                     schedule: update.schedule,

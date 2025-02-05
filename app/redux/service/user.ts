@@ -14,21 +14,39 @@ export const userApi = normPlovApi.injectEndpoints({
             providesTags: ["userProfile"]
         }),
 
-        // Endpoint to get a paginated list of users
-        getAllUser: builder.query<UserListResponse, { page?: number; pageSize?: number }>({
-            query: ({ page = 1, pageSize = 10 }) => ({
-                url: `api/v1/user/list?page=${page}&page_size=${pageSize}`,
-                method: 'GET',
-            }),
-            providesTags:["userProfile"]
+        getAllUser: builder.query<UserListResponse, { page?: number; pageSize?: number; search?: string; is_active?:boolean }>({
+            query: ({ page = 1, pageSize = 10, search, is_active }) => {
+                const query = new URLSearchParams();
+        
+                query.append("page", page.toString());
+                query.append("page_size", pageSize.toString());
+        
+                if (search) query.append("search", search);
+                if (is_active !== undefined) query.append("is_active", is_active.toString());
+                return {
+                    url: `api/v1/user/list?${query.toString()}`,
+                    method: "GET",
+                };
+            },
+            providesTags: ["userProfile"],
         }),
         
         // user feedback
-        getUserFeedback: builder.query<FeedbackResponse, { page?: number; pageSize?: number }>({
-            query: ({ page = 1, pageSize = 10 }) => ({
-                url: `api/v1/feedback/all?page=${page}&page-size=${pageSize}`,
+        getUserFeedback: builder.query<FeedbackResponse, { page?: number; pageSize?: number, search?: string , is_promoted}>({
+            query: ({ page = 1, pageSize = 10, search, is_promoted }) => {
+                const query = new URLSearchParams();
+        
+                query.append("page", page.toString());
+                query.append("page_size", pageSize.toString());
+        
+                if (search) query.append("search", search);
+                if (is_promoted !== undefined) query.append("is_promoted", is_promoted.toString());
+                return {
+                    
+                url: `api/v1/feedback/all?${query.toString()}`,
                 method: 'GET'
-            }),
+                }
+            },
             providesTags:["userProfile"]
         }),
 
@@ -120,11 +138,21 @@ export const userApi = normPlovApi.injectEndpoints({
         }),
 
         // list test history
-        getTestHistory: builder.query<TestsResponse, { page: number; pageSize: number }>({
-            query: ({ page, pageSize }) => ({
-              url: `api/v1/test/all-tests?page=${page}&page_size=${pageSize}`,
+        getTestHistory: builder.query<TestsResponse, { page: number; pageSize: number , search, is_draft }>({
+            query: ({ page, pageSize, search, is_draft }) => {
+                const query = new URLSearchParams();
+        
+                query.append("page", page.toString());
+                query.append("page_size", pageSize.toString());
+        
+                if (search) query.append("search", search);
+                if (is_draft !== undefined) query.append("is_draft", is_draft.toString());
+            
+            return {
+              url: `api/v1/test/all-tests?${query.toString()}`,
               method: 'GET',
-            }),
+            }
+        },
             providesTags: ["userProfile"], 
           }),
 

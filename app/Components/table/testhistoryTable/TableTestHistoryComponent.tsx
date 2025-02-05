@@ -32,8 +32,12 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 const TestHistoryTable = () => {
     const route = useRouter()
-    const [filter, setFilter] = useState("all");
     const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<string | null>(null); // Status filter (null = no filter)
+
+  // Convert status to boolean for API
+  const isDraft = status === "Draft" ? true : status === "Done" ? false : undefined;
+
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
 
@@ -41,6 +45,8 @@ const TestHistoryTable = () => {
     const { data, isLoading } = useGetTestHistoryQuery({
         page: currentPage,
         pageSize: itemsPerPage,
+        search,
+        is_draft: isDraft,
     });
 
     if (isLoading) {
@@ -94,22 +100,7 @@ const TestHistoryTable = () => {
         Draft: "text-red-600 bg-red-100",
     };
 
-    // Filter logic
-    const filteredUsers =
-        data?.payload?.tests.filter((test) => {
-            const normalizeString = (str: string) => str.replace(/\s+/g, "").toLowerCase();
-
-            const matchesSearch =
-                normalizeString(test?.test_name).includes(normalizeString(search)) ||
-                normalizeString(test?.user_email).includes(normalizeString(search)) ||
-                normalizeString(test?.assessment_type_name).includes(normalizeString(search));
-
-            const matchesFilter =
-                filter === "all" ||
-                (filter === "Done" && test?.is_completed) ||
-                (filter === "Draft" && !test?.is_completed);
-            return matchesSearch && matchesFilter;
-        }) || [];
+    const filterTest = data?.payload?.tests || [];
 
     return (
         <div className="h-screen p-6 rounded-md">
@@ -129,7 +120,7 @@ const TestHistoryTable = () => {
                             />
                         </div>
                         {/* Filter */}
-                        <Select value={filter} onValueChange={setFilter}>
+                        <Select value={status || ""} onValueChange={setStatus}>
                             <SelectTrigger className="w-[150px]">
                                 <SelectValue placeholder="All" />
                             </SelectTrigger>
@@ -163,14 +154,14 @@ const TestHistoryTable = () => {
                                     </TableCell>
                                 </TableRow>
                             ) :
-                                filteredUsers.length === 0 ? (
+                                filterTest.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={4} className="text-center py-6">
                                             No records found.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    filteredUsers.map((test, index) => (
+                                    filterTest.map((test, index) => (
                                         <TableRow key={index} className="border-t">
                                             {/* Avatar */}
                                             <TableCell>
@@ -213,12 +204,12 @@ const TestHistoryTable = () => {
                                             {/* Status */}
                                             <TableCell className="px-6 py-1">
                                                 <span
-                                                    className={`px-3 py-1.5 rounded-full text-sm font-normal border-green-600 ${test?.is_completed
+                                                    className={`px-3 py-1.5 rounded-full text-sm font-normal border-green-600 ${test?.is_draft
                                                         ? statusClasses.Done
                                                         : statusClasses.Draft
                                                         }`}
                                                 >
-                                                    {test?.is_completed ? "Done" : "Draft"}
+                                                    {test?.is_draft ? "Done" : "Draft"}
                                                 </span>
                                             </TableCell>
                                             {/* Action */}
@@ -235,7 +226,7 @@ const TestHistoryTable = () => {
                 </div>
 
                 {/* Pagination Section */}
-                <div className="flex justify-between items-center mt-4">
+                <div className="flex justify-between items-center my-4">
                     {/* Showing data */}
                     <div className="text-sm font-medium text-gray-500">
                         Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}

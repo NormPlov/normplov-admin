@@ -66,7 +66,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
       {/* Back Button */}
       <div className="mb-6 flex justify-end mx-4">
         <button
-          onClick={() => router.back()}
+          onClick={() => window.history.back()}
           className="text-secondary font-medium hover:underline text-md"
         >
           &larr; Back
@@ -79,7 +79,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
           <AvatarImage
             src={
               job.logo
-                ? job.logo.startsWith("http")
+                ? job.logo.startsWith("https")
                   ? job.logo
                   : `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`
                 : "/assets/placeholder.png"
@@ -94,7 +94,7 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         </Avatar>
 
         <div>
-          <h1 className="text-3xl font-semibold text-primary">
+          <h1 className="text-3xl font-semibold text-primary  text-wrap w-[750px]">
             {job.title || "N/A"}
           </h1>
           <p className="text-gray-500 font-medium">{job.company_name || "N/A"}</p>
@@ -119,16 +119,12 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         </div>
         <div>
           <p className="font-medium text-secondary">Salary</p>
-          <p>{ job.salary || "N/A"}</p>
+          <p>{ job.salary || "Negotiable"}</p>
         </div>
         <div>
           <p className="font-medium text-secondary">Job Type</p>
           <p>{job.job_type || "N/A"}</p>
         </div>
-        {/* <div>
-          <p className="font-medium text-secondary">Schedule</p>
-          <p>{job. || "N/A"}</p>
-        </div> */}
       </div>
 
       {/* Job Description */}

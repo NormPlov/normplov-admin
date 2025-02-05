@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { HiOutlineLockOpen, HiOutlineLockClosed } from "react-icons/hi";
 import { FaEye } from "react-icons/fa";
@@ -34,8 +34,6 @@ import {
   useBlockUserMutation,
   useUnBlockUserMutation,
 } from "@/app/redux/service/user";
-// import { ToastContainer, ToastOptions, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 import ProfileModal from "../../popup/PopupViewProfile";
 import { User } from "@/types/types";
 import BlockUserModal from "../../popup/ConfrimBlock";
@@ -51,34 +49,29 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export default function UserTable() {
 
-  const {toast }= useToast()
-
+  const { toast } = useToast()
   const [Unblock] = useUnBlockUserMutation();
   const [blockUser] = useBlockUserMutation();
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [status, setStatus] = useState<string | null>(null); // Status filter (null = no filter)
+
+  // Convert status to boolean for API
+  const isActive = status === "active" ? true : status === "inactive" ? false : undefined;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Store the selected user data
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  // // Toastify Config
-  // const toastConfig: ToastOptions = {
-  //   position: "top-right",
-  //   autoClose: 5000,
-  //   hideProgressBar: false,
-  //   closeOnClick: true,
-  //   pauseOnHover: true,
-  //   draggable: true,
-  //   progress: undefined,
-  // };
 
   // Fetch data
   const { data, isLoading } = useGetAllUserQuery({
     page: currentPage,
     pageSize: itemsPerPage,
+    search,
+    is_active: isActive,
   });
-  
+
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
@@ -109,37 +102,24 @@ export default function UserTable() {
     )
   }
 
-  /// Pagination metadata
-  const totalPages = data?.payload?.metadata?.total_pages || 0;
-  const totalItems = data?.payload?.metadata?.total_items || 0;
+ // Pagination metadata
+ const totalPages = data?.payload?.metadata?.total_pages || 0;
+ const totalItems = data?.payload?.metadata?.total || 0;
 
-  const handleItemsPerPageChange = (value: string) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1);
-  };
+ const handleItemsPerPageChange = (value: string) => {
+     setItemsPerPage(Number(value));
+     setCurrentPage(1);
+ };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
+ const handlePreviousPage = () => {
+     if (currentPage > 1) setCurrentPage(currentPage - 1);
+ };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+ const handleNextPage = () => {
+     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+ };
 
-  // Filter logic
-  const filteredUsers =
-    data?.payload?.users?.filter((user) => {
-      const normalizeString = (str: string) =>
-        str.replace(/\s+/g, "").toLowerCase();
-      const matchesSearch =
-        user.username.toLowerCase().includes(normalizeString(search)) ||
-        user.email.toLowerCase().includes(normalizeString(search));
-      const matchesFilter =
-        filter === "all" ||
-        (filter === "active" && user.is_active) ||
-        (filter === "inactive" && !user.is_active);
-      return matchesSearch && matchesFilter;
-    }) || [];
+  const filteredUsers = data?.payload?.users || [];
 
   // handle view profile
   const handleViewProfileClick = (user: User) => {
@@ -160,13 +140,13 @@ export default function UserTable() {
           .unwrap()
           .then(() => {
             toast({
-              description:"User unblocked successfully",
+              description: "User unblocked successfully",
               variant: "default"
             });
           })
           .catch(() => {
             toast({
-              description: "Failed to unblock user", 
+              description: "Failed to unblock user",
               variant: "destructive"
             });
           });
@@ -175,13 +155,13 @@ export default function UserTable() {
           .unwrap()
           .then(() => {
             toast({
-              description: "User blocked successfully", 
+              description: "User blocked successfully",
               variant: "default"
             });
           })
           .catch(() => {
             toast({
-              description:"Failed to block user",
+              description: "Failed to block user",
               variant: "destructive"
             });
           });
@@ -207,7 +187,7 @@ export default function UserTable() {
               />
             </div>
             {/* Filter Select */}
-            <Select value={filter} onValueChange={(value) => setFilter(value)}>
+            <Select value={status || ""} onValueChange={(value) => setStatus(value)}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
@@ -271,17 +251,16 @@ export default function UserTable() {
                     </TableCell>
                     <TableCell>
                       <div
-                        className={`font-normal rounded-full text-center text-sm border ${
-                          user.is_active
+                        className={`font-normal rounded-full text-center text-sm border ${user.is_active
                             ? "bg-green-200 text-green-900 border-green-500"
                             : "bg-red-100 text-red-500 border-red-400"
-                        }`}
+                          }`}
                       >
                         {user.is_active ? "Active" : "Inactive"}
                       </div>
                     </TableCell>
                     <TableCell className="flex">
-                    <div className="flex items-center justify-center">
+                      <div className="flex items-center justify-center">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -323,25 +302,18 @@ export default function UserTable() {
         </div>
 
         {/* Pagination Section */}
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex justify-between items-center my-4 ">
           {/* Showing data */}
           <div className="text-sm font-medium text-gray-500">
-            Showing data{" "}
-            {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
-            entries
+            Showing data {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
           </div>
 
           <div className="flex gap-4">
             {/* Rows Per Page */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900">
-                Rows per page:
-              </span>
-              <Select
-                value={`${itemsPerPage}`}
-                onValueChange={handleItemsPerPageChange}
-              >
+              <span className="text-sm font-medium">Rows per page:</span>
+              <Select value={`${itemsPerPage}`} onValueChange={handleItemsPerPageChange}>
                 <SelectTrigger className="h-8 w-[70px]">
                   <SelectValue placeholder={itemsPerPage} />
                 </SelectTrigger>
@@ -373,7 +345,7 @@ export default function UserTable() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-gray-800">
                 Page {currentPage} of {totalPages}
               </span>
 
@@ -395,25 +367,26 @@ export default function UserTable() {
             </div>
           </div>
         </div>
+
       </div>
       {/* Profile Modal */}
       {selectedUser && (
         <ProfileModal
           user={selectedUser}
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)} 
+          onClose={() => setIsModalOpen(false)}
         />
       )}
 
       {/* Block User Confirmation Modal */}
       {confirmModalOpen && selectedUser && (
         <BlockUserModal
-        title={`Confirm ${selectedUser.is_blocked ? "unblock" : "block"} User`}
-        message={`Are you sure you want to ${selectedUser.is_blocked ? "unblock" : "block"} this user?`}
-        onConfirm={handleConfirmBlock}
-        onCancel={()=> setConfirmModalOpen(false)}
-        confirmText={selectedUser.is_blocked ? "Unblock" : "Block"}
-        cancelText="Cancel"
+          title={`Confirm ${selectedUser.is_blocked ? "unblock" : "block"} User`}
+          message={`Are you sure you want to ${selectedUser.is_blocked ? "unblock" : "block"} this user?`}
+          onConfirm={handleConfirmBlock}
+          onCancel={() => setConfirmModalOpen(false)}
+          confirmText={selectedUser.is_blocked ? "Unblock" : "Block"}
+          cancelText="Cancel"
         />
       )}
     </div>

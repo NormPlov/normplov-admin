@@ -95,7 +95,7 @@ export default function SchoolForm() {
         description: "School created successfully!", 
         variant: "default"
       });
-      // router.replace("/majors-universities");
+      router.replace("/majors-universities");
     } catch (error) {
       console.error("Failed to create school:", error);
       toast({
@@ -146,7 +146,7 @@ export default function SchoolForm() {
         <h1 className="text-2xl font-bold mb-6 text-secondary">Create School</h1>
         <div className="justify-end mt-6">
           <Button
-            onClick={() => router.back()}
+            onClick={() => window.history.back()}
             className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-1 mb-6"
           >
             &larr; Back
@@ -282,6 +282,7 @@ export default function SchoolForm() {
                             <SelectItem value="PUBLIC">Public School</SelectItem>
                             <SelectItem value="PRIVATE">Private School</SelectItem>
                             <SelectItem value="TVET">TVET</SelectItem>
+                            <SelectItem value="SHORT_COURSE">SHORT_COURSE</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
