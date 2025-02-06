@@ -225,7 +225,7 @@ export default function SchoolForm() {
             <div className="flex gap-4 w-full">
               {/* Logo Upload */}
               <div
-                className="relative border-dashed border-2 bg-gray-100 w-96 h-80 rounded-lg overflow-hidden flex items-center justify-center"
+                className="relative border-dashed border-2 bg-gray-100 w-96 h-96 rounded-lg overflow-hidden flex items-center justify-center"
                 onDrop={(e) => handleDrop(e, setFieldValue, "logo")}
                 onDragOver={(e) => e.preventDefault()}
               >
@@ -236,8 +236,8 @@ export default function SchoolForm() {
                     }
                     alt="Logo"
                     className="object-cover w-full h-full"
-                    width={200}
-                    height={200}
+                    width={300}
+                    height={300}
                   />
                 ) : (
                   <Button className="text-white bg-primary border boder-md">
@@ -303,8 +303,8 @@ export default function SchoolForm() {
                             <SelectValue placeholder={field.value || "Select School Type"} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="PUBLIC">Public School</SelectItem>
-                            <SelectItem value="PRIVATE">Private School</SelectItem>
+                            <SelectItem value="PUBLIC">Public</SelectItem>
+                            <SelectItem value="PRIVATE">Private</SelectItem>
                             <SelectItem value="TVET">TVET</SelectItem>
                             <SelectItem value="MAJORS_COURSE">Majors_Courses</SelectItem>
                           </SelectContent>
@@ -369,6 +369,7 @@ export default function SchoolForm() {
                         id="lowest_price"
                         name="lowest_price"
                         type="number"
+                        value={values.lowest_price === 0 ? '' : values.lowest_price}
                         placeholder="0"
                       />
                       <ErrorMessage
@@ -384,6 +385,7 @@ export default function SchoolForm() {
                         id="highest_price"
                         name="highest_price"
                         type="number"
+                        value={values.highest_price === 0 ? '' : values.highest_price}
                         placeholder="0"
                       />
                       <ErrorMessage

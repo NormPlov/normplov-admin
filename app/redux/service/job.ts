@@ -6,7 +6,8 @@ import {
     GetJobCategoryType,
     UpdateJob,
     JobType,
-    PostJob
+    PostJob,
+    JobDetails
 } from "@/types/types";
 
 export const jobApi = normPlovApi.injectEndpoints({
@@ -40,6 +41,14 @@ export const jobApi = normPlovApi.injectEndpoints({
                 method: 'GET',
 
             }},
+            providesTags: ["job"]
+        }),
+        
+        getJoByUUid: builder.query<JobDetails,{uuid:string}>({
+            query: ({uuid}) => ({
+                url: `api/v1/jobs/${uuid}`,
+                method: 'GET',
+            }),
             providesTags: ["job"]
         }),
 
@@ -120,6 +129,7 @@ export const jobApi = normPlovApi.injectEndpoints({
 });
 
 export const {
+    useGetJoByUUidQuery,
     usePostJobMutation,
     usePostLogoMutation,
     useGetJobQuery,

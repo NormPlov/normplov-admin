@@ -7,6 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useScrapeDetailsQuery } from "@/app/redux/service/scrape";
+import Lottie from "lottie-react";
+import animation from "@/app/json/NotFound.json"
 
 
 const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
@@ -53,7 +55,21 @@ const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
   console.log("uuid: ", uuid);
 
   if (!job) {
-    return <div className="p-6 text-center text-red-500">Job not found.</div>;
+    return (
+      <div className="w-full mx-auto">
+          <div className="w-[190px] mx-auto mt-20">
+              <Lottie
+                  animationData={animation}
+                  width={20}
+                  height={30}
+                  loop
+                  autoplay
+
+              />
+          </div>
+          <div className="p-6 text-center text-red-500">Job not found.</div>
+      </div>
+  );;
   }
 
   return (
@@ -86,7 +102,7 @@ const JobDetailsScrapeComponent = ({ uuid }: JobDetailsProps) => {
         </Avatar>
 
         <div>
-          <h1 className="text-3xl font-semibold text-primary">
+          <h1 className="text-3xl font-semibold text-primary text-wrap w-[750px]">
             {job.title || "N/A"}
           </h1>
           <p className="text-gray-500 font-medium">{job.company || "N/A"}</p>

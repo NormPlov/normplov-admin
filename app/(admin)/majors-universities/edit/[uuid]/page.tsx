@@ -25,6 +25,8 @@ import { useToast } from "@/hooks/use-toast";
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaUpload } from "react-icons/fa6"
+import Lottie from "lottie-react";
+import animationData from "@/app/json/NotFound.json"
 
 const SchoolSchema = Yup.object().shape({
   kh_name: Yup.string(),
@@ -72,10 +74,21 @@ export default function EditUniversityPage({
   console.log("university in edit:", university)
 
   if (isError) {
-    toast({
-      description: "Failed to load university data. Please try again.",
-      variant: "destructive"
-    });
+    (
+      <div className="w-full mx-auto">
+          <div className="w-[190px] mx-auto mt-20">
+              <Lottie
+                  animationData={animationData}
+                  width={20}
+                  height={30}
+                  loop
+                  autoplay
+
+              />
+          </div>
+          <div className="p-6 text-center text-red-500">Something went wrong!.</div>
+      </div>
+  );
   }
 
   if (isLoading) {
@@ -200,7 +213,7 @@ export default function EditUniversityPage({
               description: "University updated successfully!",
               variant: "default"
             });
-            // router.push("/majors-universities");
+            router.push("/majors-universities");
           } catch (err) {
             console.error("Failed to update university:", err);
             setSubmissionError("Failed to update university. Please try again.");
@@ -217,7 +230,7 @@ export default function EditUniversityPage({
           <Form className="space-y-6">
 
             <div className="space-y-4">
-              <Label htmlFor="cover_image" className="block text-md font-normal py-2 text-primary">Cover Image</Label>
+              <Label htmlFor="cover_image" className="block text-md font-semibold py-2 text-primary">Cover Image</Label>
 
               <div className="space-y-6 mb-6">
                 <div
@@ -230,7 +243,7 @@ export default function EditUniversityPage({
                       <img
                         src={coverPreview}
                         alt="Cover Preview"
-                        className="object-cover"
+                        className="object-fit"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
@@ -257,7 +270,7 @@ export default function EditUniversityPage({
                 </div>
                 <div className="flex space-x-4">
                   <div>
-                    <Label htmlFor="logo_url" className="block text-md font-normal py-2 text-primary">Logo</Label>
+                    <Label htmlFor="logo_url" className="block text-md font-semibold py-2 text-primary">Logo</Label>
                     {/* <Field name="logo" > */}
                     <div
                       className="relative border-dashed border-2 bg-gray-100 w-96 h-80 px-4 rounded-lg overflow-hidden flex items-center justify-center"
@@ -268,7 +281,7 @@ export default function EditUniversityPage({
                         <img
                           src={logoPreview}
                           alt="Logo Preview"
-                          className="object-contain"
+                          className="object-cover"
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
@@ -297,7 +310,7 @@ export default function EditUniversityPage({
                   <div className="flex flex-col space-y-4 w-full">
                     <div className="flex gap-4 w-full">
                       <div className="w-full">
-                        <Label className="block text-md font-normal py-2 text-primary" htmlFor="kh_name">Khmer Name</Label>
+                        <Label className="block text-md font-semibold py-2 text-primary" htmlFor="kh_name">Khmer Name</Label>
                         <Field
                           as={Input}
                           id="kh_name"
@@ -312,7 +325,7 @@ export default function EditUniversityPage({
                         />
                       </div>
                       <div className="w-full">
-                        <Label className="block text-md font-normal py-2 text-primary" htmlFor="en_name">English Name</Label>
+                        <Label className="block text-md font-semibold py-2 text-primary" htmlFor="en_name">English Name</Label>
                         <Field
                           as={Input}
                           id="en_name"
@@ -329,7 +342,7 @@ export default function EditUniversityPage({
                     </div>
                     <div className="flex gap-4 w-full">
                       <div className="w-full">
-                        <Label htmlFor="phone" className="block text-md font-normal py-2 text-primary">Phone</Label>
+                        <Label htmlFor="phone" className="block text-md font-semibold py-2 text-primary">Phone</Label>
                         <Field as={Input} id="phone" name="phone" type="text" placeholder={university.phone || "Enter phone number"} />
                         <ErrorMessage
                           name="phone"
@@ -338,7 +351,7 @@ export default function EditUniversityPage({
                         />
                       </div>
                       <div className="w-full">
-                        <Label htmlFor="email" className="block text-md font-normal py-2 text-primary">Email</Label>
+                        <Label htmlFor="email" className="block text-md font-semibold py-2 text-primary">Email</Label>
                         <Field as={Input} id="email" name="email" type="email" placeholder={university.email || "Enter your email"} />
                         <ErrorMessage
                           name="email"
@@ -349,7 +362,7 @@ export default function EditUniversityPage({
                     </div>
                     <div className="flex gap-4">
                       <div className="w-full">
-                        <Label htmlFor="website" className="block text-md font-normal py-2 text-primary">Website</Label>
+                        <Label htmlFor="website" className="block text-md font-semibold py-2 text-primary">Website</Label>
                         <Field
                           as={Input}
                           id="website"
@@ -364,7 +377,7 @@ export default function EditUniversityPage({
                         />
                       </div>
                       <div className="w-full">
-                        <Label htmlFor="type" className="block text-md font-normal py-2 text-primary">School Type</Label>
+                        <Label htmlFor="type" className="block text-md font-semibold py-2 text-primary">School Type</Label>
 
                         <Field name="type">
                           {({ field, form }: FieldProps) => (
@@ -399,7 +412,7 @@ export default function EditUniversityPage({
                     </div>
                     <div className="flex gap-4 w-full">
                       <div className="w-full">
-                        <Label htmlFor="popular_major" className="block text-md font-normal py-2 text-primary">Popular Major</Label>
+                        <Label htmlFor="popular_major" className="block text-md font-semibold py-2 text-primary">Popular Major</Label>
                         <Field
                           as={Input}
                           id="popular_major"
@@ -415,7 +428,7 @@ export default function EditUniversityPage({
                       </div>
                       <div className="flex gap-4 w-full">
                         <div className="w-full">
-                          <Label htmlFor="lowest_price" className="block text-md font-normal py-2 text-primary">Lowest Price</Label>
+                          <Label htmlFor="lowest_price" className="block text-md font-semibold py-2 text-primary">Lowest Price</Label>
                           <Field
                             as={Input}
                             id="lowest_price"
@@ -430,7 +443,7 @@ export default function EditUniversityPage({
                           />
                         </div>
                         <div className="w-full">
-                          <Label htmlFor="highest_price" className="block text-md font-normal py-2 text-primary">Highest Price</Label>
+                          <Label htmlFor="highest_price" className="block text-md font-semibold py-2 text-primary">Highest Price</Label>
                           <Field
                             as={Input}
                             id="highest_price"
@@ -455,7 +468,7 @@ export default function EditUniversityPage({
               </div>
               <div className="flex gap-4 w-full justify-between items-center ">
                 <div className="w-9/12">
-                  <Label htmlFor="location" className="block text-md font-normal py-2 text-primary">Location</Label>
+                  <Label htmlFor="location" className="block text-md font-semibold py-2 text-primary">Location</Label>
                   <div className="w-full">
                     <Field name="location"
                       placeholder="Enter location"
@@ -482,7 +495,7 @@ export default function EditUniversityPage({
                 </div>
               </div>
               <div>
-                <Label htmlFor="map_url" className="block text-md font-normal py-2 text-primary">Google Maps Link</Label>
+                <Label htmlFor="map_url" className="block text-md font-semibold py-2 text-primary">Google Maps Link</Label>
                 <Field as={Input} id="map_url" name="map_url" placeholder={university.map_url || "Enter Google Maps Link"} />
                 <ErrorMessage
                   name="map_url"
@@ -492,14 +505,7 @@ export default function EditUniversityPage({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="mission" className="block text-md font-normal py-2 text-primary">Mission</Label>
-                  {/* <ReactQuill
-                  id="mission"
-                  value={university.mission || ""}
-                  onChange={(value) => setFieldValue("mission", value)} // Formik's setFieldValue
-                  placeholder="Enter your mission here"
-                  className="mb-2"
-                /> */}
+                  <Label htmlFor="mission" className="block text-md font-semibold py-2 text-primary">Mission</Label>
                   <Field as={Textarea} id="mission" name="mission" placeholder={university.mission || "Enter your mission here"} />
                   <ErrorMessage
                     name="mission"
@@ -508,7 +514,7 @@ export default function EditUniversityPage({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="vision" className="block text-md font-normal py-2 text-primary">Vision</Label>
+                  <Label htmlFor="vision" className="block text-md font-semibold py-2 text-primary">Vision</Label>
                   <Field as={Textarea} id="vision" name="vision" placeholder={university.vision || "Enter your vision here"} />
                   <ErrorMessage
                     name="vision"
@@ -518,7 +524,7 @@ export default function EditUniversityPage({
                 </div>
               </div>
               <div>
-                <Label htmlFor="description" className="block text-md font-normal py-2 text-primary">Description</Label>
+                <Label htmlFor="description" className="block text-md font-semibold py-2 text-primary">Description</Label>
                 <Field as={Textarea} id="description" name="description" placeholder={university.description || "Enter Description"} />
                 <ErrorMessage
                   name="description"

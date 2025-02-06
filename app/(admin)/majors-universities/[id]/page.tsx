@@ -65,6 +65,10 @@ const UniversityPage = () => {
         faculty_uuid: ""
     });
 
+    const [isDeleteFacultyDialogOpen, setIsDeleteFacultyDialogOpen] = useState(false);
+    const [isDeleteMajorDialogOpen, setIsDeleteMajorDialogOpen] = useState(false);
+    const [facultyToDelete, setFacultyToDelete] = useState<Faculty | null>(null);
+    const [majorToDelete, setMajorToDelete] = useState<Major | null>(null);
 
     const [createFaculty] = useCreateFacultyMutation();
     const [createMajor] = useCreateMajorMutation();
@@ -143,18 +147,13 @@ const UniversityPage = () => {
 
             } catch (error) {
                 console.error("Failed to create major:", error);
-
                 let message = "An unknown error occurred while creating the major.";
-
                 switch (error.status) {
                     case 400:
                         message = "Major must not have the same degree.";
                         break;
                     case 404:
                         message = "Major not found. Please verify the ID.";
-                        break;
-                    case 403:
-                        message = "You don't have permission to create major.";
                         break;
                     case 409:
                         message = "Cannot create the major because it is associated with active students.";
@@ -163,7 +162,6 @@ const UniversityPage = () => {
                         message = "Server error occurred while creating the major.";
                         break;
                 }
-
                 toast({
                     description: message,
                     variant: "destructive"
@@ -197,20 +195,46 @@ const UniversityPage = () => {
         }
     };
 
-    const handleDeleteFaculty = async (id: string) => {
-        try {
-            await deleteFaculty(id).unwrap();
-            toast({
-                description: "Faculty deleted successfully",
-                variant: "default"
-            });
-            window.location.reload();
-        } catch (error) {
-            console.error("Failed to delete faculty:", error);
-            toast({
-                description: "Failed to delete faculty",
-                variant: "destructive"
-            })
+    // const handleDeleteFaculty = async (id: string) => {
+    //     try {
+    //         await deleteFaculty(id).unwrap();
+    //         toast({
+    //             description: "Faculty deleted successfully",
+    //             variant: "default"
+    //         });
+    //         window.location.reload();
+    //     } catch (error) {
+    //         console.error("Failed to delete faculty:", error);
+    //         toast({
+    //             description: "Failed to delete faculty",
+    //             variant: "destructive"
+    //         })
+    //     }
+    // };
+
+    const confirmDeleteFaculty = (faculty: Faculty) => {
+        setFacultyToDelete(faculty);
+        setIsDeleteFacultyDialogOpen(true);
+    };
+
+    const handleDeleteFacultyConfirmed = async () => {
+        if (facultyToDelete) {
+            try {
+                await deleteFaculty(facultyToDelete.uuid).unwrap();
+                toast({
+                    description: "Faculty deleted successfully",
+                    variant: "default"
+                });
+                setIsDeleteFacultyDialogOpen(false);
+                setFacultyToDelete(null);
+                window.location.reload();
+            } catch (error) {
+                console.error("Failed to delete faculty:", error);
+                toast({
+                    description: "Failed to delete faculty",
+                    variant: "destructive"
+                });
+            }
         }
     };
 
@@ -241,38 +265,43 @@ const UniversityPage = () => {
         }
     };
 
+    const confirmDeleteMajor = (major: Major) => {
+        setMajorToDelete(major);
+        setIsDeleteMajorDialogOpen(true);
+    };
 
-    const handleDeleteMajor = async (id: string) => {
+    const handleDeleteMajorConfirmed = async () => {
+        if (majorToDelete) {
+            try {
+                await deleteMajor({ id: majorToDelete.uuid }).unwrap();
+                toast({
+                    description: "Major deleted successfully",
+                    variant: "default"
+                });
+                setIsDeleteMajorDialogOpen(false);
+                setMajorToDelete(null);
+                window.location.reload();
+            } catch (error) {
+                console.error("Failed to delete major:", error);
+                let message = "An unknown error occurred while deleting the major.";
 
-        console.log("uuid delete", id)
-        try {
-            await deleteMajor({ id: id }).unwrap();
-            toast({
-                description: "Major deleted successfully",
-                variant: "default"
-            });
-            window.location.reload();
-        } catch (error) {
-            console.error("Failed to create major:", error);
-            let message = "An unknown error occurred while creating the major.";
-
-            switch (error.status) {
-                case 400:
-                    message = "Deletion not allowed for recommended majors."
-                    break;
-                case 404:
-                    message = "Major not found. Please verify the ID."
-                    break;
-                case 500:
-                    message = "Server error occurred while deleting the major."
-                    break;
+                switch (error.status) {
+                    case 400:
+                        message = "Deletion not allowed for recommended majors.";
+                        break;
+                    case 404:
+                        message = "Major not found. Please verify the ID.";
+                        break;
+                    case 500:
+                        message = "Server error occurred while deleting the major.";
+                        break;
+                }
+                toast({
+                    description: message,
+                    variant: "destructive"
+                });
             }
-            toast({
-                description: message,
-                variant: "destructive"
-            });
         }
-
     };
 
     if (isLoading) {
@@ -526,7 +555,7 @@ const UniversityPage = () => {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    onClick={() => handleDeleteFaculty(faculty.uuid)}
+                                                    onClick={() => confirmDeleteFaculty(faculty)}
                                                     className="text-red-500 hover:text-red-700"
                                                 >
                                                     <FaTrash className="mr-2" /> Delete
@@ -567,21 +596,21 @@ const UniversityPage = () => {
                                                                 />
                                                                 <Input
                                                                     type="number"
-                                                                    value={editingMajor.fee_per_year}
+                                                                    value={editingMajor.fee_per_year === 0 ? "" : editingMajor.fee_per_year}
                                                                     onChange={(e) =>
                                                                         setEditingMajor({
                                                                             ...editingMajor,
-                                                                            fee_per_year: Number(e.target.value),
+                                                                            fee_per_year: e.target.value === "" ? 0 : Number(e.target.value),
                                                                         })
                                                                     }
                                                                 />
                                                                 <Input
                                                                     type="number"
-                                                                    value={editingMajor.duration_years}
+                                                                    value={editingMajor.duration_years === 0 ? "" : editingMajor.duration_years}
                                                                     onChange={(e) =>
                                                                         setEditingMajor({
                                                                             ...editingMajor,
-                                                                            duration_years: Number(e.target.value),
+                                                                            duration_years: e.target.value === "" ? 0 : Number(e.target.value),
                                                                         })
                                                                     }
                                                                 />
@@ -629,8 +658,9 @@ const UniversityPage = () => {
                                                                     {major.description}
                                                                 </p>
                                                                 <p className="text-sm text-gray-600">
-                                                                    {major.degree} - {major.duration_years} years
+                                                                    {major.degree} - {major.degree === "SHORT_COURSE" ? `${major.duration_years} hours` : `${major.duration_years} years`}
                                                                 </p>
+
                                                                 <p className="text-sm text-gray-600">
                                                                     Fee per year: ${major.fee_per_year}
                                                                 </p>
@@ -647,7 +677,7 @@ const UniversityPage = () => {
                                                                         size="sm"
                                                                         onClick={() => {
                                                                             if (!major.is_recommended) {
-                                                                                handleDeleteMajor(major.uuid)
+                                                                                confirmDeleteMajor(major);
                                                                             } else {
                                                                                 toast({
                                                                                     description: "This major is recommended cannot be deleted",
@@ -732,11 +762,11 @@ const UniversityPage = () => {
                                                         className="col-span-3"
                                                         type="number"
                                                         placeholder="Enter fee per year"
-                                                        value={newMajor.fee_per_year}
+                                                        value={newMajor.fee_per_year === 0 ? '' : newMajor.fee_per_year}
                                                         onChange={(e) =>
                                                             setNewMajor({
                                                                 ...newMajor,
-                                                                fee_per_year: Number(e.target.value),
+                                                                fee_per_year: e.target.value === "" ? 0 : Number(e.target.value),
                                                             })
                                                         }
                                                     />
@@ -750,11 +780,11 @@ const UniversityPage = () => {
                                                         className="col-span-3"
                                                         type="number"
                                                         placeholder="Enter duration in years"
-                                                        value={newMajor.duration_years}
+                                                        value={newMajor.duration_years === 0 ? "" : newMajor.duration_years}
                                                         onChange={(e) =>
                                                             setNewMajor({
                                                                 ...newMajor,
-                                                                duration_years: Number(e.target.value),
+                                                                duration_years: e.target.value === "" ? 0 : Number(e.target.value),
                                                             })
                                                         }
                                                     />
@@ -815,6 +845,32 @@ const UniversityPage = () => {
                     </div>
                 </section>
             </div>
+            {/* Major Delete Confirmation */}
+            <Dialog open={isDeleteMajorDialogOpen} onOpenChange={setIsDeleteMajorDialogOpen}>
+                <DialogContent className="sm:max-w-[400px]">
+                    <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                    </DialogHeader>
+                    <p>Are you sure you want to delete the major <strong>{majorToDelete?.name}</strong>? This action cannot be undone.</p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDeleteMajorDialogOpen(false)}>Cancel</Button>
+                        <Button className="bg-red-500 text-white hover:bg-red-700" onClick={handleDeleteMajorConfirmed}>Delete</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            {/* Faculty Delete Confirmation */}
+            <Dialog open={isDeleteFacultyDialogOpen} onOpenChange={setIsDeleteFacultyDialogOpen}>
+                <DialogContent className="sm:max-w-[400px]">
+                    <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                    </DialogHeader>
+                    <p>Are you sure you want to delete the faculty <strong>{facultyToDelete?.name}</strong>? This action cannot be undone.</p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDeleteFacultyDialogOpen(false)}>Cancel</Button>
+                        <Button className="bg-red-500 text-white hover:bg-red-700" onClick={handleDeleteFacultyConfirmed}>Delete</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
 
     );

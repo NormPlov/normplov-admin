@@ -22,6 +22,8 @@ import {
 } from '@/app/redux/service/scrape';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronDown } from 'lucide-react';
+import animationData from '../../../json/NotFound.json'
+import Lottie from 'lottie-react';
 
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
@@ -94,8 +96,23 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     console.log("data scrape: ", job)
 
     if (!job) {
-        return <div className="p-6 text-center text-red-500">Job not found.</div>;
+        return (
+            <div className="w-full mx-auto">
+                <div className="w-[190px] mx-auto mt-20">
+                    <Lottie
+                        animationData={animationData}
+                        width={20}
+                        height={30}
+                        loop
+                        autoplay
+
+                    />
+                </div>
+                <div className="p-6 text-center text-red-500">Job not found.</div>
+            </div>
+        );
     }
+
 
     const handleDrop = (
         e: React.DragEvent<HTMLDivElement>,
@@ -103,18 +120,17 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     ): void => {
         e.preventDefault();
 
-        if (typeof window !== 'undefined') {
-            const file = e.dataTransfer.files[0];
-            if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
-                const previewUrl = URL.createObjectURL(file);
-                setSelectedImage(previewUrl);
-                setFieldValue('logo', file);
-            } else {
-                toast({
-                    description: 'Invalid file. Please upload a valid image file.',
-                    variant: "warning"
-                });
-            }
+        const file = e.dataTransfer.files[0];
+        if (file && SUPPORTED_FORMATS.includes(file.type) && file.size <= FILE_SIZE) {
+            const previewUrl = URL.createObjectURL(file);
+            setSelectedImage(previewUrl);
+            setImageFile(file);
+            setFieldValue("logo", file);
+        } else {
+            toast({
+                description: "Invalid file. Please upload a valid image file.",
+                variant: "warning"
+            });
         }
     };
 
@@ -326,23 +342,23 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             <img
                                 src={
                                     selectedImage || // Use the selected image if available
-                                    (job.logo && job.logo.startsWith("https")
+                                    (job.logo && job.logo.startsWith("https") // Check if job.logo exists and starts with "http"
                                         ? job.logo
                                         : job.logo
-                                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}`
-                                            : "/assets/placeholder.png") // Fallback to placeholder image
+                                            ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
+                                            : "/assets/placeholder.jpg") // Fallback to placeholder image
                                 }
                                 alt={job.title || "Job Logo"}
-                                className="object-contain rounded-md w-full h-full"
+                                className="object-cover rounded-md w-full h-full"
                                 width={1000}
                                 height={1000}
                                 onError={handleImageError}
                             />
+
                         </div>
 
-
                         <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
-                            <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
+                            <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md ">
                                 <FaUpload className="text-gray-400 text-lg" />
                                 <span className="text-gray-400 text-md font-medium">Upload Image</span>
                             </div>
@@ -350,15 +366,15 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
                         <Input
                             type="file"
-                            accept={SUPPORTED_FORMATS.join(",")}
+                            accept="image/png, image/jpeg, image/jpg"
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                    setFieldValue("logo_url", file);
+                                    setFieldValue('logo_url', file);
                                     setSelectedImage(URL.createObjectURL(file));
                                 }
                             }}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         />
                     </div>
                     <ErrorMessage name="logo_url" component="p" className="text-red-500 text-sm mt-2" />
@@ -430,7 +446,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
                     <div className="flex justify-between w-full gap-24">
                         {/* Job Type */}
-                        <div className="mb-2.5 w-full">
+                        <div className="mb-3 w-full">
                             <label htmlFor="job_type" className="block text-md font-normal py-2 text-primary">
                                 Job Type
                             </label>
@@ -443,7 +459,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 <Select
                                     name="job_type"
                                     onValueChange={(value) => setFieldValue("job_type", value)}>
-                                    <SelectTrigger className="w-full">
+                                    <SelectTrigger className="w-full py-3">
                                         <SelectValue placeholder={job.job_type || "Select Job Type"} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -486,7 +502,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
 
                         {/* Salary */}
-                        <div className="mb-2.5 w-full">
+                        <div className="mb-1 w-full">
                             <label htmlFor="salary" className="block font-normal text-primary text-md py-2">
                                 Salary
                             </label>
@@ -657,7 +673,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 placeholder={
                                     Array.isArray(job.phone) && job.phone.length > 0
                                         ? job.phone.join(", ")
-                                        : "Enter phone number(s)"
+                                        : ""
                                 }
                                 value={
                                     Array.isArray(values.phone) && values.phone.length > 0

@@ -493,12 +493,41 @@ export type JobsResponse = {
     metadata: MetadataType;
   };
 };
+//get job by uuid 
+export type JobDetails = {
+  date: string;
+  status: number;
+  payload: {
+    uuid: string;
+    title: string;
+    company_name: string;
+    logo: string;
+    location: string;
+    job_type: string;
+    posted_at: string;
+    schedule: string | null;
+    salary: string;
+    is_scraped: boolean;
+    description: string;
+    requirements: string[];
+    responsibilities: string[];
+    benefits: string[];
+    facebook_url: string | null;
+    email: string;
+    phone: string[];
+    website: string;
+    created_at: string;
+    closing_date: string;
+    category: string;
+  };
+  message: string;
+};
 
 //
 export type JobDetailsProps = {
   uuid: string;
 };
-
+// get job scrape by uuid
 export type JobDetailsResponse = {
   date: string; // ISO string for the timestamp
   status: number; // HTTP status code

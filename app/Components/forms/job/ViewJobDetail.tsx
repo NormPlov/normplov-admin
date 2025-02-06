@@ -1,26 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import { useGetJobQuery } from "@/app/redux/service/job";
-import { useRouter } from "next/navigation";
+import React from "react";
+import { useGetJoByUUidQuery } from "@/app/redux/service/job";
 import { JobDetailsProps } from "@/types/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import Lottie from "lottie-react";
+import animationData from "@/app/json/NotFound.json"
 
-const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 
 const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
-  const [currentPage,] = useState(1);
-  const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
-
-  const router = useRouter();
 
   // Fetch job data
-  const { data, isLoading } = useGetJobQuery({
-    page: currentPage,
-    pageSize: itemsPerPage,
-  });
+  const { data, isLoading } = useGetJoByUUidQuery({uuid});
 
   if (isLoading) {
     return (
@@ -34,7 +27,6 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         </div>
         <Skeleton className="h-10 w-28 rounded-lg" /> {/* Placeholder for Button */}
       </div>
-    
       {/* Middle Section */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Skeleton className="h-8 w-44" /> {/* Placeholder for Job Industry */}
@@ -42,23 +34,35 @@ const JobDetailsComponent = ({ uuid }: JobDetailsProps) => {
         <Skeleton className="h-8 w-44" /> {/* Placeholder for Job Type */}
         <Skeleton className="h-8 w-44" /> {/* Placeholder for Schedule */}
       </div>
-    
       {/* Bottom Section */}
       <div className="space-y-4">
         <Skeleton className="h-8 w-1/3 rounded-lg" /> {/* Placeholder for Section Title */}
         <Skeleton className="h-20 w-full rounded-lg" /> {/* Placeholder for Description */}
       </div>
     </div>
-    
     );
   }
 
   // Find the job with the matching UUID
-  const job = data?.payload?.items.find((item) => item?.uuid === uuid);
+  const job = data?.payload;
   console.log("uuid: ", uuid);
 
   if (!job) {
-    return <div className="p-6 text-center text-red-500">Job not found.</div>;
+    return (
+      <div className="w-full mx-auto">
+          <div className="w-[190px] mx-auto mt-20">
+              <Lottie
+                  animationData={animationData}
+                  width={20}
+                  height={30}
+                  loop
+                  autoplay
+
+              />
+          </div>
+          <div className="p-6 text-center text-red-500">Job not found.</div>
+      </div>
+  );;
   }
 
   return (

@@ -24,6 +24,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import Lottie from "lottie-react";
+import animationData from '../../../json/Error.json'
 
 
 
@@ -36,7 +38,7 @@ export default function JobPreviewPage() {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<JobScrapeType | null>(null);
   // const [url, setUrl] = useState("");
-  const {toast} = useToast()
+  const { toast } = useToast()
   const router = useRouter();
 
   // Scrape job
@@ -49,18 +51,6 @@ export default function JobPreviewPage() {
   // delete
   const [deleteScrape] = useDeleteScrapeMutation()
 
-  // const handleSubmit = async (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   if (!url) {
-  //     toast({
-  //       description: "Please enter a valid URL!",
-  //       variant: "warning"
-  //     });
-  //     return;
-  //   }
-
-   
-  // };
 
   if (isLoading) {
     return (
@@ -96,7 +86,21 @@ export default function JobPreviewPage() {
   }
 
   if (error || isError) {
-    return <div className="text-center text-red-500 p-10">Error loading data. Please try again later.</div>;
+    return (
+      <div className="w-full mx-auto">
+        <div className="w-[190px] mx-auto mt-20">
+        <Lottie
+          animationData={animationData}
+          width={20}
+          height={30}
+          loop
+          autoplay
+
+        />
+        </div>
+        <div className="text-center text-red-500 p-10">Error loading data. Please try again later.</div>
+      </div>
+    );
   }
 
   // Data handling
@@ -182,24 +186,10 @@ export default function JobPreviewPage() {
   return (
     <div className="h-screen p-6 rounded-md mx-6">
       <h2 className="text-2xl font-normal text-secondary mb-6">Scrape Job</h2>
-      {/* <div className="flex items-center gap-4 mb-6">
-        <Input
-          type="text"
-          placeholder="https://example.com"
-          className="w-full border rounded-md px-8 py-2 focus:ring-2 focus:ring-blue-400"
-          value={url}
-          onChange={handleInputChange}
-          required
-        />
-        <Button onClick={handleSubmit} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-600">
-          {Scrapeloading ? "Scrapping..." : "Scrape"}
-        </Button>
-      </div> */}
-      
       <Formik
         initialValues={{ url: "" }}
         validationSchema={validationSchema}
-        onSubmit={ async (values, { setSubmitting, resetForm }) => {
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
           if (!values.url) {
             toast({
               description: "Please enter a valid URL!",
@@ -238,14 +228,14 @@ export default function JobPreviewPage() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" disabled={isSubmitting} 
-            className="mb-8 bg-primary hover:bg-primary/80">
+            <Button type="submit" disabled={isSubmitting}
+              className="mb-8 bg-primary hover:bg-primary/80">
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </Form>
         )}
       </Formik>
-    
+
 
       <div className="flex justify-between items-center mb-4 mt-10">
         <h2 className="text-2xl font-normal text-secondary">Preview Job</h2>

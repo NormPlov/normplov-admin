@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { FaUpload } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 import {
-    useGetJobQuery,
+    useGetJoByUUidQuery,
     useGetJobCategoryQuery,
     useUpdateJobMutation
 } from '@/app/redux/service/job';
@@ -20,6 +20,8 @@ import { ClosingDate } from '../../calendar/ClosingDate';
 import { useUploadImageMutation } from '@/app/redux/service/media';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronDown } from 'lucide-react';
+import Lottie from 'lottie-react';
+import animationData from "@/app/json/NotFound.json"
 
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
@@ -50,9 +52,6 @@ const validationSchema = Yup.object({
     website: Yup.string().url('Must be a valid URL'),
 });
 
-
-const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
-
 const FILE_SIZE = 1024 * 1024 * 5; // Max file size 5 MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 
@@ -60,18 +59,12 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [, setImageFile] = useState<File | null>(null);
-    const [currentPage,] = useState(1);
-    const [itemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const { toast } = useToast()
     const router = useRouter();
 
     // Fetch job data
-    const { data: jobs, isLoading } = useGetJobQuery({
-        page: currentPage,
-        pageSize: itemsPerPage,
-
-    });
+    const { data: jobs, isLoading } = useGetJoByUUidQuery({uuid});
 
     const { data: jobCategory, isFetching } = useGetJobCategoryQuery()
     // update job 
@@ -97,10 +90,24 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     }
 
     // Find the job with the matching UUID
-    const job = jobs?.payload?.items.find((item) => item.uuid === uuid);
+    const job = jobs?.payload || {};
 
     if (!job) {
-        return <div className="p-6 text-center text-red-500">Job not found.</div>;
+        return (
+            <div className="w-full mx-auto">
+                <div className="w-[190px] mx-auto mt-20">
+                    <Lottie
+                        animationData={animationData}
+                        width={20}
+                        height={30}
+                        loop
+                        autoplay
+
+                    />
+                </div>
+                <div className="p-6 text-center text-red-500">Job not found.</div>
+            </div>
+        );;
     }
 
 
@@ -126,24 +133,24 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
     };
 
     const initialValues: UpdateJob = {
-        company: job.company_name || "",
-        title: job.title || "",
-        logo_url: job.logo || "",
-        facebook_url: job.facebook_url || null,
-        location: job.location || null,
-        description: job.description || "",
-        job_type: job.job_type || null,
-        salary: job.salary || "Negotiable",
-        posted_at: job.created_at || "",
-        closing_date: job.closing_date || null,
-        requirements: Array.isArray(job.requirements) ? job.requirements : [],
-        responsibilities: Array.isArray(job.responsibilities) ? job.responsibilities : [],
-        email: job.email || null,
-        phone: Array.isArray(job.phone) ? job.phone : [],
-        website: job.website || null,
-        category: job.category || "",
-        schedule: job.schedule || "",
-        benefits: Array.isArray(job.benefits) ? job.benefits : [],
+        company: jobs.payload.company_name || "",
+        title: jobs.payload.title || "",
+        logo_url: jobs.payload.logo || "",
+        facebook_url: jobs.payload.facebook_url || null,
+        location: jobs.payload.location || null,
+        description: jobs.payload.description || "",
+        job_type: jobs.payload.job_type || null,
+        salary: jobs.payload.salary || "Negotiable",
+        posted_at: jobs.payload.created_at || "",
+        closing_date: jobs.payload.closing_date || null,
+        requirements: Array.isArray(jobs.payload.requirements) ? jobs.payload.requirements : [],
+        responsibilities: Array.isArray(jobs.payload.responsibilities) ? jobs.payload.responsibilities : [],
+        email: jobs.payload.email || null,
+        phone: Array.isArray(jobs.payload.phone) ? jobs.payload.phone : [],
+        website: jobs.payload.website || null,
+        category: jobs.payload.category || "",
+        schedule: jobs.payload.schedule || "",
+        benefits: Array.isArray(jobs.payload.benefits) ? jobs.payload.benefits : [],
     };
 
 
@@ -181,7 +188,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         description: "Failed to upload logo. Please try again.",
                         variant: "destructive"
                     });
-
                 }
             }
 
@@ -289,9 +295,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
 
                 {({ values, setFieldValue }) => (
                     <Form className="w-full p-10 space-y-4">
-
-
-
                         {/* Company Name */}
                         <div className="mb-2.5">
                             <label htmlFor="company" className="block text-md font-normal py-2 text-primary">
@@ -300,7 +303,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             <Field
                                 id="company"
                                 name="company"
-                                placeholder={job.company_name}
+                                placeholder={jobs.payload.company_name}
                                 type="input"
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-md px-6 py-2`}
                             />
@@ -322,14 +325,14 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 <img
                                     src={
                                         selectedImage || // Use the selected image if available
-                                        (job.logo && job.logo.startsWith("https") // Check if job.logo exists and starts with "http"
-                                            ? job.logo
-                                            : job.logo
-                                                ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${job.logo}` // Prepend the base URL if job.logo exists
+                                        (jobs.payload.logo && jobs.payload.logo.startsWith("https") // Check if job.logo exists and starts with "http"
+                                            ? jobs.payload.logo
+                                            : jobs.payload.logo
+                                                ? `${process.env.NEXT_PUBLIC_NORMPLOV_API}${jobs.payload.logo}` // Prepend the base URL if job.logo exists
                                                 : "/assets/placeholder.jpg") // Fallback to placeholder image
                                     }
-                                    alt={job.title || "Job Logo"}
-                                    className="object-contain rounded-md w-full h-full"
+                                    alt={jobs.payload.title || "Job Logo"}
+                                    className="object-cover rounded-md w-full h-full"
                                     width={1000}
                                     height={1000}
                                     onError={handleImageError}
@@ -414,7 +417,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 <Field
                                     id="title"
                                     name="title"
-                                    placeholder={job.title || 'Enter a position'}
+                                    placeholder={jobs.payload.title || 'Enter a position'}
                                     type="text"
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 px-6 py-1.5 text-md`}
                                 />
@@ -442,7 +445,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     >
                                         <SelectTrigger className="w-full px-5 py-4 text-md">
                                             <SelectValue
-                                                placeholder={job.job_type || "Select Job Type"}
+                                                placeholder={jobs.payload.job_type || "Select Job Type"}
                                                 className="text-md py-8"
                                             />
                                         </SelectTrigger>
@@ -493,7 +496,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     as={Input}
                                     id="salary"
                                     name="salary"
-                                    placeholder={job.salary || "Enter salary"}
+                                    placeholder={jobs.payload.salary || "Enter salary"}
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 px-6 py-3 text-md`}
                                 />
                                 <ErrorMessage name="salary" component="p" className="text-red-500 text-sm mt-1" />
@@ -507,7 +510,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     as={Input}
                                     id="schedule"
                                     name="schedule"
-                                    placeholder={job.schedule || "Enter schedule"}
+                                    placeholder={jobs.payload.schedule || "Enter schedule"}
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 px-6 py-3 text-md`}
                                 />
                                 <ErrorMessage name="schedule" component="p" className="text-red-500 text-sm mt-1" />
@@ -525,7 +528,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="textarea"
                                 id="description"
                                 name="description"
-                                placeholder={job.description || "Enter description"}
+                                placeholder={jobs.payload.description || "Enter description"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                             >
 
@@ -542,7 +545,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="textarea"
                                 id="responsibilities"
                                 name="responsibilities"
-                                placeholder={job.responsibilities || "Enter responsibilities"}
+                                placeholder={jobs.payload.responsibilities || "Enter responsibilities"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                                 value={Array.isArray(values.responsibilities) ? values.responsibilities.join(", ") : ""}
                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -560,7 +563,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="textarea"
                                 id="requirements"
                                 name="requirements"
-                                placeholder={job.requirements || "Enter requirements"}
+                                placeholder={jobs.payload.requirements || "Enter requirements"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                                 value={(values.requirements || []).join(", ")} // Convert array to string
                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -582,7 +585,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="textarea"
                                 id="benefits"
                                 name="benefits"
-                                placeholder={job.benefits || "Enter benefits"}
+                                placeholder={jobs.payload.benefits || "Enter benefits"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                                 value={(values.benefits || []).join(", ")} // Convert array to string
                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -606,7 +609,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     as="input"
                                     id="facebook_url"
                                     name="facebook_url"
-                                    placeholder={job.facebook_url || "Enter Facebook URL"}
+                                    placeholder={jobs.payload.facebook_url || "Enter Facebook URL"}
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-1.5`}
                                 />
                                 <ErrorMessage name="facebook_url" component="p" className="text-red-500 text-sm mt-1" />
@@ -619,7 +622,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 <Field
                                     id="email"
                                     name="email"
-                                    placeholder={job.email || "Enter email"}
+                                    placeholder={jobs.payload.email || "Enter email"}
                                     type="input"
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-1.5`}
                                 />
@@ -638,7 +641,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     as="input"
                                     id="location"
                                     name="location"
-                                    placeholder={job.location || "Enter location"}
+                                    placeholder={jobs.payload.location || "Enter location"}
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-1.5`}
                                 />
                                 <ErrorMessage name="location" component="p" className="text-red-500 text-sm mt-1" />
@@ -654,9 +657,9 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     name="phone"
                                     className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-1.5`}
                                     placeholder={
-                                        Array.isArray(job.phone) && job.phone.length > 0
-                                            ? job.phone.join(", ")
-                                            : "Enter phone number(s)"
+                                        Array.isArray(jobs.payload.phone) && jobs.payload.phone.length > 0
+                                            ? jobs.payload.phone.join(", ")
+                                            : ""
                                     }
                                     value={
                                         Array.isArray(values.phone) && values.phone.length > 0
@@ -684,7 +687,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="input"
                                 id="website"
                                 name="website"
-                                placeholder={job.website || "Enter website"}
+                                placeholder={jobs.payload.website || "Enter website"}
                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-1.5`}
                             />
                             <ErrorMessage name="website" component="p" className="text-red-500 text-sm mt-1" />

@@ -146,12 +146,11 @@ const handleNextPage = () => {
 
 
   return (
-    <main className="p-4">
-      <div className="flex items-center justify-between mb-6">
-        
+    <main className="p-6">
+      <div className="flex items-center justify-between my-5">
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
-          <div className="relative w-[370px]">
+          <div className="relative w-[350px]">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search"
@@ -166,8 +165,8 @@ const handleNextPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
-              <SelectItem value="PUBLIC">Public School</SelectItem>
-              <SelectItem value="PRIVATE">Private School</SelectItem>
+              <SelectItem value="PUBLIC">Public</SelectItem>
+              <SelectItem value="PRIVATE">Private</SelectItem>
               <SelectItem value="TVET">TVET</SelectItem>
               <SelectItem value="MAJORS_COURSES">Majors Courses</SelectItem>
             </SelectContent>
@@ -181,7 +180,7 @@ const handleNextPage = () => {
         </div>
       </div>
 
-      <div className="rounded-md border border-gray-200 text-textprimary ">
+      <div className="rounded-md border border-gray-200 text-textprimary mt-5">
         <Table>
           <TableHeader>
             <TableRow>
