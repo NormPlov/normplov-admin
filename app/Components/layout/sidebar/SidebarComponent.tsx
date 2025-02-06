@@ -57,9 +57,6 @@ export function SidebarComponent() {
           console.error(error);
         }
       };
-    
-      
-      
 
   return (
     <SidebarProvider className="text-textprimary ">
