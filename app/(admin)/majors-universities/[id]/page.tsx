@@ -755,7 +755,7 @@ const UniversityPage = () => {
                                                 </div>
                                                 <div className="grid grid-cols-4 items-center gap-4">
                                                     <Label htmlFor="feePerYear" className="text-right">
-                                                        Fee per Year
+                                                        Fee per Year&#47; Course
                                                     </Label>
                                                     <Input
                                                         id="feePerYear"
@@ -773,7 +773,7 @@ const UniversityPage = () => {
                                                 </div>
                                                 <div className="grid grid-cols-4 items-center gap-4">
                                                     <Label htmlFor="durationYears" className="text-right">
-                                                        Duration (Years)
+                                                        Duration (Years&#47;hours)
                                                     </Label>
                                                     <Input
                                                         id="durationYears"
