@@ -36,17 +36,21 @@ export default function TableUserFeedback() {
   // Fetch feedback data
   const { data, isLoading } = useGetUserFeedbackQuery({
     page: currentPage,
-    pageSize: itemsPerPage,
+    pageSize: itemsPerPage+2,
     search,
     is_promoted: isPromoted,
   });
 
-  // Pagination metadata
-  const totalPages = data?.payload?.feedbacks?.metadata?.total_pages || 1;
-  const totalItems = data?.payload?.feedbacks?.metadata?.total_items || 0;
+  let filteredFeedbacks = data?.payload?.feedbacks?.items.filter(item => !item.is_deleted) || [];
 
-  // Filter out deleted feedbacks
-  const filteredFeedbacks = data?.payload?.feedbacks?.items.filter(item => !item.is_deleted) || [];
+  // Apply pagination after filtering
+  const totalFilteredItems = filteredFeedbacks.length;
+  const totalFilteredPages = Math.ceil(totalFilteredItems / itemsPerPage) || 1;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedFeedbacks = filteredFeedbacks.slice(startIndex, endIndex);
+
 
   const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(Number(value));
@@ -58,7 +62,7 @@ export default function TableUserFeedback() {
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+    if (currentPage < totalFilteredPages) setCurrentPage(prev => prev + 1);
   };
 
   const handleFeedback = async (uuid: string, isPromoted: boolean) => {
@@ -168,13 +172,13 @@ export default function TableUserFeedback() {
                     </TableCell>
 
                     {/* Action Button */}
-                    <TableCell>
-                      <Button
+                    <TableCell className="flext justify-center">
+                      <button
                         onClick={() => handleFeedback(item.feedback_uuid, item.is_promoted)}
-                        className={`rounded-md py-0.5 text-sm ${item.is_promoted ? "bg-red-500 hover:bg-red-600" : "bg-primary hover:bg-green-700"}`}
+                        className={`rounded-md py-1 px-1.5 text-sm text-gray-100 ${item.is_promoted ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90 px-3.5"}`}
                       >
                         {item.is_promoted ? "Unpromote" : "Promote"}
-                      </Button>
+                      </button>
                     </TableCell>
                   </TableRow>
                 ))
@@ -186,8 +190,8 @@ export default function TableUserFeedback() {
         {/* Pagination Section */}
         <div className="flex justify-between items-center mt-4">
           <div className="text-sm font-medium text-gray-500">
-            Showing {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+            Showing {totalFilteredItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalFilteredItems)} of {totalFilteredItems} entries
           </div>
           <div className="flex gap-4">
             {/* Rows Per Page */}
@@ -216,14 +220,14 @@ export default function TableUserFeedback() {
               </Button>
 
               <span className="text-sm font-medium">
-                Page {currentPage} of {totalPages}
+                Page {currentPage} of {totalFilteredPages}
               </span>
 
-              <Button variant="secondary" onClick={handleNextPage} disabled={currentPage >= totalPages}>
+              <Button variant="secondary" onClick={handleNextPage} disabled={currentPage >= totalFilteredPages}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
 
-              <Button variant="secondary" onClick={() => setCurrentPage(totalPages)} disabled={currentPage >= totalPages}>
+              <Button variant="secondary" onClick={() => setCurrentPage(totalFilteredPages)} disabled={currentPage >= totalFilteredPages}>
                 <ChevronsRight className="h-4 w-4" />
               </Button>
             </div>

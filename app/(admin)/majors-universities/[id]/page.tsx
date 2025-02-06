@@ -41,6 +41,8 @@ import { Faculty, Major } from "@/types/university";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingTest } from "@/app/Components/Loading";
+
 
 const UniversityPage = () => {
     const { toast } = useToast();
@@ -74,11 +76,12 @@ const UniversityPage = () => {
     const [editingFaculty, setEditingFaculty] = useState<Faculty | null>(null);
     const [editingMajor, setEditingMajor] = useState<Major | null>(null);
     const [, setIsModalOpen] = useState(false);
-    const [isDeleteFacultyModalOpen, setDeleteFacultyModalOpen] = useState(false);
-    const [facultyToDelete, setFacultyToDelete] = useState<Faculty | null>(null);
-    
+
     if (!university) {
-        return <div>University not found</div>;
+        return (
+            <div className="w-[400px] mx-auto">
+                <LoadingTest />
+            </div>);
     }
     const handleAddNewFaculty = async () => {
         if (newFacultyName && id) {
@@ -240,8 +243,8 @@ const UniversityPage = () => {
 
 
     const handleDeleteMajor = async (id: string) => {
-        
-            console.log("uuid delete", id)
+
+        console.log("uuid delete", id)
         try {
             await deleteMajor({ id: id }).unwrap();
             toast({
@@ -249,27 +252,27 @@ const UniversityPage = () => {
                 variant: "default"
             });
             window.location.reload();
-            } catch (error) {
-                console.error("Failed to create major:", error);
-                let message = "An unknown error occurred while creating the major.";
+        } catch (error) {
+            console.error("Failed to create major:", error);
+            let message = "An unknown error occurred while creating the major.";
 
-                switch (error.status) {
-                    case 400:
-                        message = "Deletion not allowed for recommended majors."
-                        break;
-                    case 404:
-                        message = "Major not found. Please verify the ID."
-                        break;
-                    case 500:
-                        message = "Server error occurred while deleting the major."
-                        break;
-                }
-                toast({
-                    description: message,
-                    variant: "destructive"
-                });
+            switch (error.status) {
+                case 400:
+                    message = "Deletion not allowed for recommended majors."
+                    break;
+                case 404:
+                    message = "Major not found. Please verify the ID."
+                    break;
+                case 500:
+                    message = "Server error occurred while deleting the major."
+                    break;
             }
-        
+            toast({
+                description: message,
+                variant: "destructive"
+            });
+        }
+
     };
 
     if (isLoading) {
@@ -491,16 +494,19 @@ const UniversityPage = () => {
                                                     })
                                                 }
                                             />
-                                            <Button onClick={() => handleEditFaculty(faculty)}
-                                                className="bg-primary hover:bg-green-700">
-                                                Save
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => setEditingFaculty(null)}
-                                            >
-                                                Cancel
-                                            </Button>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={() => setEditingFaculty(null)}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                                <Button onClick={() => handleEditFaculty(faculty)}
+                                                    className="bg-primary hover:bg-green-700">
+                                                    Save
+                                                </Button>
+
+                                            </div>
                                         </div>
                                     ) : (
                                         <>

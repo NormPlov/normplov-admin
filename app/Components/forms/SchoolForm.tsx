@@ -34,6 +34,7 @@ const SchoolSchema = Yup.object().shape({
   school_type: Yup.string().required("Required"),
   cover_image: Yup.mixed().nullable(),
   logo: Yup.mixed().nullable(),
+  is_poular : Yup.boolean(),
 });
 
 export default function SchoolForm() {
@@ -98,14 +99,37 @@ export default function SchoolForm() {
       router.replace("/majors-universities");
     } catch (error) {
       console.error("Failed to create school:", error);
+
+    if (error.status) {
+      switch (error.status) {
+        case 400:
+          toast({
+            description: error.data?.message || "University name already exists.",
+            variant: "destructive",
+          });
+          break;
+        case 404:
+          toast({
+            description: "University not found. Please check the details.",
+            variant: "destructive",
+          });
+          break;
+        default:
+          toast({
+            description: error.data?.message || "Something went wrong. Please try again.",
+            variant: "destructive",
+          });
+      }
+    } else {
       toast({
-        description: "Failed to create school. Please try again.", 
-        variant: "destructive"
+        description: "Failed to create University. Please try again.",
+        variant: "destructive",
       });
-    } finally {
-      setSubmitting(false);
     }
-  };
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
@@ -282,7 +306,7 @@ export default function SchoolForm() {
                             <SelectItem value="PUBLIC">Public School</SelectItem>
                             <SelectItem value="PRIVATE">Private School</SelectItem>
                             <SelectItem value="TVET">TVET</SelectItem>
-                            <SelectItem value="SHORT_COURSE">SHORT_COURSE</SelectItem>
+                            <SelectItem value="MAJORS_COURSE">Majors_Courses</SelectItem>
                           </SelectContent>
                         </Select>
                       )}

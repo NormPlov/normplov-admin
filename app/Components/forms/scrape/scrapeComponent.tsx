@@ -22,6 +22,8 @@ import { FiAlertCircle } from "react-icons/fi";
 import { useScrapeMutation, useGetScrapeQuery, useDeleteScrapeMutation } from "@/app/redux/service/scrape";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 
 
@@ -33,7 +35,7 @@ export default function JobPreviewPage() {
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<JobScrapeType | null>(null);
-  const [url, setUrl] = useState("");
+  // const [url, setUrl] = useState("");
   const {toast} = useToast()
   const router = useRouter();
 
@@ -47,36 +49,18 @@ export default function JobPreviewPage() {
   // delete
   const [deleteScrape] = useDeleteScrapeMutation()
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUrl(event.target.value);
-  };
+  // const handleSubmit = async (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   if (!url) {
+  //     toast({
+  //       description: "Please enter a valid URL!",
+  //       variant: "warning"
+  //     });
+  //     return;
+  //   }
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!url) {
-      toast({
-        description: "Please enter a valid URL!",
-        variant: "warning"
-      });
-      return;
-    }
-
-    try {
-      const result = await scrapeJob({ url }).unwrap();
-      console.log("Scraping successful:", result);
-      toast({
-        description: "Job scraped successfully!",
-        variant: "default"
-      });
-      setUrl("")
-    } catch (error) {
-      console.error("Error scraping job:", error);
-      toast({
-        description: "Failed to scrape the job. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
+   
+  // };
 
   if (isLoading) {
     return (
@@ -191,10 +175,14 @@ export default function JobPreviewPage() {
     }
   };
 
+  const validationSchema = Yup.object({
+    url: Yup.string().url("Invalid URL format").required("URL is required"),
+  });
+
   return (
     <div className="h-screen p-6 rounded-md mx-6">
       <h2 className="text-2xl font-normal text-secondary mb-6">Scrape Job</h2>
-      <div className="flex items-center gap-4 mb-6">
+      {/* <div className="flex items-center gap-4 mb-6">
         <Input
           type="text"
           placeholder="https://example.com"
@@ -206,7 +194,58 @@ export default function JobPreviewPage() {
         <Button onClick={handleSubmit} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-green-600">
           {Scrapeloading ? "Scrapping..." : "Scrape"}
         </Button>
-      </div>
+      </div> */}
+      
+      <Formik
+        initialValues={{ url: "" }}
+        validationSchema={validationSchema}
+        onSubmit={ async (values, { setSubmitting, resetForm }) => {
+          if (!values.url) {
+            toast({
+              description: "Please enter a valid URL!",
+              variant: "warning"
+            });
+            return;
+          }
+          try {
+            const result = await scrapeJob({ url: values.url }).unwrap();
+            console.log("Scraping successful:", result);
+            toast({
+              description: "Job scraped successfully!",
+              variant: "default"
+            });
+            resetForm()
+          } catch (error) {
+            console.error("Error scraping job:", error);
+            toast({ description: "Failed to scrape the job. Please try again.", variant: "destructive" });
+          } finally {
+            setSubmitting(false);
+          }
+        }}
+      >
+        {({ isSubmitting }) => (
+          <Form className="space-y-4 flex justify-between items-center gap-20">
+            {/* Input Field using Formik's Field */}
+            <div className="w-full mt-4">
+              <Field
+                as={Input}
+                type="text"
+                name="url"
+                placeholder="https://example.com"
+                className="w-full border rounded-md px-4 py-3.5 focus:ring-2 focus:ring-blue-400 "
+              />
+              <ErrorMessage name="url" component="div" className="text-red-500 text-sm mt-1" />
+            </div>
+
+            {/* Submit Button */}
+            <Button type="submit" disabled={isSubmitting} 
+            className="mb-8 bg-primary hover:bg-primary/80">
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    
 
       <div className="flex justify-between items-center mb-4 mt-10">
         <h2 className="text-2xl font-normal text-secondary">Preview Job</h2>

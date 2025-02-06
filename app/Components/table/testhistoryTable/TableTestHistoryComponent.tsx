@@ -33,10 +33,10 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
 const TestHistoryTable = () => {
     const route = useRouter()
     const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<string | null>(null); // Status filter (null = no filter)
+    const [status, setStatus] = useState<string | null>(null); // Status filter (null = no filter)
 
-  // Convert status to boolean for API
-  const isDraft = status === "Draft" ? true : status === "Done" ? false : undefined;
+    // Convert status to boolean for API
+    const isDraft = status === "Draft" ? true : status === "Done" ? false : undefined;
 
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
@@ -205,16 +205,20 @@ const TestHistoryTable = () => {
                                             <TableCell className="px-6 py-1">
                                                 <span
                                                     className={`px-3 py-1.5 rounded-full text-sm font-normal border-green-600 ${test?.is_draft
-                                                        ? statusClasses.Done
-                                                        : statusClasses.Draft
+                                                        ? statusClasses.Draft
+                                                        : statusClasses.Done
                                                         }`}
                                                 >
-                                                    {test?.is_draft ? "Done" : "Draft"}
+                                                    {test?.is_draft ? "Draft" : "Done"}
                                                 </span>
                                             </TableCell>
                                             {/* Action */}
                                             <TableCell className="px-4 py-2">
-                                                <button onClick={() => route.push(`/test-history/${test?.assessment_type_name}/${test?.test_uuid}`)} className="px-4 py-1 text-white bg-primary rounded-md hover:bg-green-500">
+                                                <button onClick={() => route.push(`/test-history/${test?.assessment_type_name}/${test?.test_uuid}`)} className={`px-4 py-1 text-white rounded-md 
+                                                    ${test?.is_draft
+                                                        ? "bg-gray-400 cursor-not-allowed opacity-50"
+                                                        : "bg-primary hover:bg-green-500"}`}
+                                                    disabled={test?.is_draft}>
                                                     View
                                                 </button>
                                             </TableCell>

@@ -69,7 +69,7 @@ export type UniversityType = {
     
     kh_name:string;
     en_name: string;
-    school_type: string | "PUBLIC" | "PRIVATE" | "TVET"; // Enum-like structure for school types
+    school_type: string | "PUBLIC" | "PRIVATE" | "TVET" | "MAJORS_COURSES"; // Enum-like structure for school types
     popular_major: string;
     location: string;
     phone: string;
