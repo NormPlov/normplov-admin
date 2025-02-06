@@ -662,7 +662,7 @@ const UniversityPage = () => {
                                                                 </p>
 
                                                                 <p className="text-sm text-gray-600">
-                                                                    Fee per year: ${major.fee_per_year}
+                                                                    Fee per {major.degree === "SHORT_COURSE" ? `course` : `year`}: ${major.fee_per_year}
                                                                 </p>
                                                                 <div className="flex space-x-2 mt-2">
                                                                     <Button
