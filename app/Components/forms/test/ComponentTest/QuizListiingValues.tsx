@@ -38,7 +38,7 @@ export const QuizResultListingValue = ({ title, desc, image }: Props) => {
                                 className="mt-[3px] w-5 h-5"
                                 style={{ color: index % 2 === 0 ? '#4CAF50' : '#FFC107' }}
                             />
-                            <p className="text-md text-textprimary leading-relaxed">{point.trim()}</p>
+                            <p className="text-lg text-textprimary leading-relaxed">{point.trim()}</p>
                         </li>
                     ))}
                 </ul>

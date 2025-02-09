@@ -47,7 +47,7 @@ export const QuizInterestResultCard = ({ title, desc, image, isLoading }: props)
 
     return (
  
-        <div className="max-w-[350px] lg:max-w-[400px] bg-white p-4 md:p-6 gap-4 rounded-xl">
+        <div className="max-w-[420px] lg:max-w-[420px] bg-white p-4 md:p-5 gap-10 rounded-xl">
             {/* Text and Response Section */}
             <div>
                 {/* Title Skeleton */}
@@ -61,7 +61,7 @@ export const QuizInterestResultCard = ({ title, desc, image, isLoading }: props)
                 {isLoading ? (
                     <Skeleton className="h-[20px] w-full mb-4" />
                 ) : (
-                    <p className="text-base text-textprimary mb-4">{desc}</p>
+                    <p className="text-base text-textprimary mb-4 text-lg">{desc}</p>
                 )}
             </div>
 
@@ -74,8 +74,8 @@ export const QuizInterestResultCard = ({ title, desc, image, isLoading }: props)
                     <img
                         src={imageSrc}
                         alt="Quiz Illustration"
-                        width={350}
-                        height={350}
+                        width={400}
+                        height={400}
                         className="object-fill"
                         onError={() => setImageSrc(placeholderImage.src)}
                     />

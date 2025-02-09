@@ -422,7 +422,7 @@ const SidebarGroup = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col pl-8 pt-5 justify-center", className)}
+      className={cn("relative flex w-full min-w-0 flex-col pl-5 pr-1.5 pt-5 justify-center", className)}
       {...props}
     />
   );

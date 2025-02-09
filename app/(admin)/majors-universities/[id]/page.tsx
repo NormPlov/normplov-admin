@@ -7,7 +7,7 @@ import {
     FaGlobe,
     FaMapMarkedAlt,
     FaMapMarkerAlt,
-    FaPhone,
+    FaPhoneAlt,
     FaPlus,
     FaEdit,
     FaTrash,
@@ -195,23 +195,6 @@ const UniversityPage = () => {
         }
     };
 
-    // const handleDeleteFaculty = async (id: string) => {
-    //     try {
-    //         await deleteFaculty(id).unwrap();
-    //         toast({
-    //             description: "Faculty deleted successfully",
-    //             variant: "default"
-    //         });
-    //         window.location.reload();
-    //     } catch (error) {
-    //         console.error("Failed to delete faculty:", error);
-    //         toast({
-    //             description: "Failed to delete faculty",
-    //             variant: "destructive"
-    //         })
-    //     }
-    // };
-
     const confirmDeleteFaculty = (faculty: Faculty) => {
         setFacultyToDelete(faculty);
         setIsDeleteFacultyDialogOpen(true);
@@ -322,7 +305,7 @@ const UniversityPage = () => {
 
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-8 py-8">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
 
                 {
@@ -371,7 +354,7 @@ const UniversityPage = () => {
                         <p className="text-2xl text-textprimary">{university.en_name}</p>
                         <div className="space-y-2 text-gray-700">
                             <p className="flex items-center gap-2">
-                                <FaPhone className="text-gray-500" /> {university.phone}
+                                <FaPhoneAlt  className="text-gray-500" /> {university.phone}
                             </p>
                             <Link
                                 href={`mailto:${university.email}`}

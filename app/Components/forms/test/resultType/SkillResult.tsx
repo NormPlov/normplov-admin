@@ -123,14 +123,14 @@ export const SkillResultComponent = () => {
     <div>
       {/* skill category  container */}
       <div className="bg-white">
-        <div className="space-y-6 lg:space-y-16 max-w-7xl mx-auto p-4 md:p-10 lg:py-12 ">
+        <div className="space-y-6 lg:space-y-14 max-w-7xl mx-auto md:p-10 lg:py-12 ">
           {isLoading ? (
             <Skeleton className='w-full h-[150px]' />
           ) : (
             <div className='space-y-4 lg:space-y-8'>
               
               <div>
-                <p className='text-md md:text-xl mb-2 text-gray-700'>ជំនាញដែលលេចធ្លោរបស់អ្នក</p>
+                <p className='text-md md:text-2xl mb-2 text-gray-700'>ជំនាញដែលលេចធ្លោរបស់អ្នក</p>
                 <p className='text-3xl md:text-4xl text-primary font-bold '>{topCategory?.name || "Category Name"}</p>
               </div>
 

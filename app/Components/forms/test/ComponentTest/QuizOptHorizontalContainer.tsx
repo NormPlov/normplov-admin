@@ -125,7 +125,7 @@ export const QuizOptHorizontalContainer = ({
           {isLoading ? (
             <Skeleton className="h-[50px] w-full rounded-xl mb-2" />
           ) : (
-            <p className="text-base text-textprimary text-wrap">
+            <p className="text-lg text-textprimary text-wrap">
               {desc}
             </p>
           )}

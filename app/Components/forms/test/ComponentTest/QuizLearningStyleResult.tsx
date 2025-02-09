@@ -54,7 +54,7 @@ export const QuizLearningStyleResultCard = ({ title, desc, label, isLoading }: p
                     {isLoading ? (
                         <Skeleton className="h-[15px] w-[80%] rounded-md mb-2" />
                     ) : (
-                        <p className={`text-sm md:text-base text-textprimary mb-1  `} >
+                        <p className={`text-md md:text-lg text-textprimary mb-1  `} >
                             {desc}
                         </p>
                     )}

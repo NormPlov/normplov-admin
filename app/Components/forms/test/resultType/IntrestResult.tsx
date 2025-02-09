@@ -130,7 +130,7 @@ export const InterestResultComponent = () => {
                     {isLoading ? (
                         <Skeleton className="h-6 w-32 rounded-xl" />
                     ) : (
-                        <p className='text-md md:text-xl'>អ្នកគឺជា</p>
+                        <p className='text-2xl'>អ្នកគឺជា</p>
                     )}
 
                     {/* Skeleton for the typeName */}
@@ -150,7 +150,7 @@ export const InterestResultComponent = () => {
                     ) : (
                         <div className='flex flex-wrap gap-2'>
                             {keyTraits.map((item: string, index: number) => (
-                                <div key={index} className="rounded-[8px] text-secondary bg-secondary bg-opacity-10 text-xs lg:text-sm max-w-fit px-1 lg:px-2">{item}</div>
+                                <div key={index} className="rounded-[8px] text-secondary bg-secondary bg-opacity-10 text-sm lg:text-md max-w-fit px-1 lg:px-2">{item}</div>
                             ))}
                         </div>
                     )}
@@ -159,15 +159,15 @@ export const InterestResultComponent = () => {
                     {isLoading ? (
                         <Skeleton className="h-[200px] w-full rounded-xl" />
                     ) : (
-                        <p className='text-textprimary'>{desc}</p>
+                        <p className='text-textprimary text-lg'>{desc}</p>
                     )}
 
                 </div>
 
 
-                <div className="col-span-1 w-full md:h-[350px] h-[250px]">
+                <div className="col-span-1 w-full md:h-[450px] h-[300px]">
                     {isLoading ? (
-                        <Skeleton className="h-full w-full rounded-xl " />
+                        <Skeleton className="h-[250px] w-[300px] rounded-xl " />
                     ) : (
                         <ResponsiveContainer width="100%" height="100%">
                             <RadarChart
@@ -175,7 +175,7 @@ export const InterestResultComponent = () => {
                                 cy="50%"
                                 outerRadius="70%" // Increased outerRadius for more space
                                 data={chartData}
-                                margin={{ top: 10, right: 20, bottom: 20, left: 20 }} // Added margin for more padding
+                                margin={{ top: 10, right: 0, bottom: 20, left: 20 }} // Added margin for more padding
                             >
                                 <PolarGrid />
                                 <PolarAngleAxis dataKey="label" axisLine={false} />

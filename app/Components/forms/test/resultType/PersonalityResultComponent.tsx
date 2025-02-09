@@ -17,7 +17,6 @@ import {
   Rectangle,
   TooltipProps
 } from "recharts";
-import Loading from "../ComponentTest/Loading";
 import PersonalityResultSkeleton from "../ComponentTest/PersonalityResultSkeleton";
 import errorLoading from '@/public/assets/errorLoading.png'
 import Image from "next/image";
@@ -65,7 +64,7 @@ type Job = {
 type RecommendedCareer = {
   career_name: string;
   description: string;
-  majors: Major[]; 
+  majors: Major[];
   career_uuid: string;
   categories: Job[];
 };
@@ -106,8 +105,8 @@ export const PersonalityResultComponent = () => {
     resultType: finalResultTypeString,
   });
 
-  if(resultTypeString === 'AllTests'){
-    localStorage.setItem('currentTestUuid',finalUuid)
+  if (resultTypeString === 'AllTests') {
+    localStorage.setItem('currentTestUuid', finalUuid)
   }
 
   console.log(`result: ${resultTypeString} id: ${uuidString}`);
@@ -199,7 +198,7 @@ export const PersonalityResultComponent = () => {
 
 
   const recommendedCareer = response?.careerRecommendations ?? [];
-  console.log("Recommended Career: ", recommendedCareer);
+  // console.log("Recommended Career: ", recommendedCareer);
 
   const CustomTooltip = ({
     active,
@@ -216,7 +215,7 @@ export const PersonalityResultComponent = () => {
         <div className="bg-white p-2 border rounded shadow-sm">
 
 
-<p className="font-semibold text-slate-600">{data.label}</p>
+          <p className="font-semibold text-slate-600">{data.label}</p>
           <p className="text-gray-500">Score: {data.score}</p>
         </div>
       );
@@ -277,8 +276,6 @@ export const PersonalityResultComponent = () => {
             </div>
           </div>
           {/* Legend */}
-          {/* Legend */}
-
         </div>
         <div className="mx-4 md:mx-0 border border-slate-50 mt-5 md:mt-14 p-6 rounded-[8px]">
           <h2 className="bg-secondary inline-block text-white text-lg md:text-2xl px-4 py-2 rounded-[8px] mb-6">
@@ -299,10 +296,6 @@ export const PersonalityResultComponent = () => {
               </div>
             </div>
           </div>
-
-
-
-
         </div>
         <div className="mx-4 md:mx-0 border border-slate-50 mt-5 md:mt-14 p-6 rounded-[8px]">
           <h2 className="bg-secondary inline-block text-white text-lg md:text-2xl px-4 py-2 rounded-[8px] mb-6">
@@ -318,9 +311,7 @@ export const PersonalityResultComponent = () => {
                 type="result"
                 titleColor="text-success"
               />
-
-
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 {response?.strengths?.map(
                   (strength: string, index: number) => (
                     <QuizResultListing

@@ -72,8 +72,8 @@ export const QuizResultListing = ({ title, desc, image, isLoading }: props) => {
           </>
         ) : (
           <>
-            <h2 className="text-md lg:text-xl font-bold mb-1 text-textprimary">{title}</h2>
-            <p className="text-base text-textprimary mb-4">
+            <h2 className="text-lg lg:text-2xl font-bold mb-1 text-textprimary">{title}</h2>
+            <p className="text-lg text-textprimary mb-4">
               {desc}
             </p>
           </>
