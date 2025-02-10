@@ -306,7 +306,7 @@ export default function SchoolForm() {
                             <SelectItem value="PUBLIC">Public</SelectItem>
                             <SelectItem value="PRIVATE">Private</SelectItem>
                             <SelectItem value="TVET">TVET</SelectItem>
-                            <SelectItem value="MAJORS_COURSE">Majors_Courses</SelectItem>
+                            <SelectItem value="MAJORS_COURSES">Majors_Courses</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
