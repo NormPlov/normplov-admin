@@ -249,7 +249,7 @@ export default function EditUniversityPage({
                       <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
                         <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
                           <FaUpload className="text-gray-400 text-lg" />
-                          <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                          <span className="text-gray-400 text-md font-medium">Upload Image 1024 * 1024</span>
                         </div>
                       </div>
                     )}
@@ -287,7 +287,7 @@ export default function EditUniversityPage({
                         <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
                           <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
                             <FaUpload className="text-gray-400 text-lg" />
-                            <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                            <span className="text-gray-400 text-md font-medium">Upload Image 1024 * 1024</span>
                           </div>
                         </div>
                       )}
@@ -506,7 +506,7 @@ export default function EditUniversityPage({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="mission" className="block text-md font-semibold py-2 text-primary">Mission</Label>
-                  <Field as={Textarea} id="mission" name="mission" placeholder={university.mission || "Enter your mission here"} />
+                  <Field as={Textarea} id="mission" name="mission" placeholder={university.mission || "Enter your mission here"} className="h-32" />
                   <ErrorMessage
                     name="mission"
                     component="div"
@@ -515,7 +515,7 @@ export default function EditUniversityPage({
                 </div>
                 <div>
                   <Label htmlFor="vision" className="block text-md font-semibold py-2 text-primary">Vision</Label>
-                  <Field as={Textarea} id="vision" name="vision" placeholder={university.vision || "Enter your vision here"} />
+                  <Field as={Textarea} id="vision" name="vision" placeholder={university.vision || "Enter your vision here"}  className="h-32"/>
                   <ErrorMessage
                     name="vision"
                     component="div"
@@ -525,7 +525,7 @@ export default function EditUniversityPage({
               </div>
               <div>
                 <Label htmlFor="description" className="block text-md font-semibold py-2 text-primary">Description</Label>
-                <Field as={Textarea} id="description" name="description" placeholder={university.description || "Enter Description"} />
+                <Field as={Textarea} id="description" name="description" placeholder={university.description || "Enter Description"} className="h-32"/>
                 <ErrorMessage
                   name="description"
                   component="div"

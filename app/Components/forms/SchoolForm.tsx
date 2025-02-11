@@ -22,15 +22,15 @@ const SchoolSchema = Yup.object().shape({
   en_name: Yup.string().required("Required"),
   phone: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Required"),
-  website: Yup.string().url("Invalid URL").required("Required"),
+  website: Yup.string().url("Invalid URL"),
   popular_major: Yup.string().required("Required"),
   lowest_price: Yup.number().positive("Must be positive").required("Required"),
   highest_price: Yup.number().positive("Must be positive").required("Required"),
   location: Yup.string().required("Required"),
   map_url: Yup.string().required("Required"),
-  vision: Yup.string().required("Required"),
-  mission: Yup.string().required("Required"),
-  description: Yup.string().required("Required"),
+  vision: Yup.string(),
+  mission: Yup.string(),
+  description: Yup.string(),
   school_type: Yup.string().required("Required"),
   cover_image: Yup.mixed().nullable(),
   logo: Yup.mixed().nullable(),
@@ -209,9 +209,10 @@ export default function SchoolForm() {
                     height={300}
                   />
                 ) : (
-                  <Button className="text-white bg-primary border boder-md">
+                  <Button className="text-gray-400 bg-gray-200 ">
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload</Button>
+                    Upload Cover Image 1024 * 1024
+                  </Button>
                 )}
                 <input
                   type="file"
@@ -240,9 +241,10 @@ export default function SchoolForm() {
                     height={300}
                   />
                 ) : (
-                  <Button className="text-white bg-primary border boder-md">
+                  <Button className="text-gray-400 bg-gray-200 border boder-md">
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload</Button>
+                    Upload Logo 720 * 720
+                    </Button>
                 )}
                 <input
                   type="file"
@@ -254,37 +256,37 @@ export default function SchoolForm() {
               <ErrorMessage name="logo" component="div" className="text-red-500 text-sm" />
               <div className="w-full flex flex-col gap-4">
                 <div className="flex gap-4 w-full">
-                  <div className="w-full">
-                    <Label htmlFor="kh_name">Khmer Name</Label>
+                  <div className="w-full space-y-2 ">
+                    <Label className="text-semibold text-primary" htmlFor="kh_name">Khmer Name</Label>
                     <Field as={Input} id="kh_name" name="kh_name" type="text" placeholder="Enter khmer name" />
                     <ErrorMessage name="kh_name" component="div" className="text-red-500 text-sm" />
                   </div>
-                  <div className="w-full">
-                    <Label htmlFor="en_name">English Name</Label>
+                  <div className="w-full space-y-2">
+                    <Label className="text-semibold text-primary" htmlFor="en_name">English Name</Label>
                     <Field as={Input} id="en_name" name="en_name" type="text" placeholder="Enter English name" />
                     <ErrorMessage name="en_name" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
-                  <div className="w-full">
-                    <Label htmlFor="phone">Phone</Label>
+                  <div className="w-full space-y-2">  
+                    <Label className="text-semibold text-primary" htmlFor="phone">Phone</Label>
                     <Field as={Input} id="phone" name="phone" type="text" placeholder="Enter phone number" />
                     <ErrorMessage name="phone" component="div" className="text-red-500 text-sm" />
                   </div>
-                  <div className="w-full">
-                    <Label htmlFor="email">Email</Label>
+                  <div className="w-full space-y-2">
+                    <Label className="text-semibold text-primary" htmlFor="email">Email</Label>
                     <Field as={Input} id="email" name="email" type="email" placeholder="Enter email" />
                     <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
-                  <div className="w-full">
-                    <Label htmlFor="website">Website</Label>
+                  <div className="w-full space-y-2">
+                    <Label className="text-semibold text-primary" htmlFor="website">Website</Label>
                     <Field as={Input} id="website" name="website" type="url" placeholder="Enter website url" />
                     <ErrorMessage name="website" component="div" className="text-red-500 text-sm" />
                   </div>
-                  <div className="w-full">
-                    <Label htmlFor="school_type">School Type</Label>
+                  <div className="w-full space-y-2">
+                    <Label className="text-semibold text-primary" htmlFor="school_type">School Type</Label>
 
                     <Field name="school_type">
                       {({ field, form }: FieldProps) => (
@@ -318,8 +320,8 @@ export default function SchoolForm() {
 
                 </div>
                 <div className="flex gap-4 w-full justify-between items-center ">
-                  <div className="w-9/12">
-                    <Label htmlFor="location">Location</Label>
+                  <div className="w-9/12 space-y-2">
+                    <Label className="text-semibold text-primary" htmlFor="location">Location</Label>
                     <div className="w-full">
                       <Field name="location"
                         placeholder="Enter location"
@@ -346,8 +348,8 @@ export default function SchoolForm() {
                   </div>
                 </div>
                 <div className="flex gap-4 w-full">
-                  <div className="w-full">
-                    <Label htmlFor="popular_major">Popular Major</Label>
+                  <div className="w-full space-y-2">
+                    <Label className="text-semibold text-primary" htmlFor="popular_major">Popular Major</Label>
                     <Field
                       as={Input}
                       id="popular_major"
@@ -362,8 +364,8 @@ export default function SchoolForm() {
                   </div>
 
                   <div className="flex gap-4 w-full">
-                    <div className="flex-1">
-                      <Label htmlFor="lowest_price">Lowest Price</Label>
+                    <div className="flex-1 space-y-2">
+                      <Label className="text-semibold text-primary" htmlFor="lowest_price">Lowest Price</Label>
                       <Field
                         as={Input}
                         id="lowest_price"
@@ -378,8 +380,8 @@ export default function SchoolForm() {
                         className="text-red-500 text-sm"
                       />
                     </div>
-                    <div className="flex-1">
-                      <Label htmlFor="highest_price">Highest Price</Label>
+                    <div className="flex-1 space-y-2">
+                      <Label className="text-semibold text-primary" htmlFor="highest_price">Highest Price</Label>
                       <Field
                         as={Input}
                         id="highest_price"
@@ -399,26 +401,26 @@ export default function SchoolForm() {
                 </div>
               </div>
             </div>
-            <div className="w-full">
-              <Label htmlFor="map_url">Google Map URL</Label>
+            <div className="w-full space-y-2">
+              <Label className="text-semibold text-primary" htmlFor="map_url">Google Map URL</Label>
               <Field as={Input} id="map_url" name="map_url" placeholder="Enter Google Map URL" />
               <ErrorMessage name="map_url" component="div" className="text-red-500 text-sm h-8" />
             </div>
             <div className="flex gap-4 w-full">
-              <div className="w-full">
-                <Label htmlFor="vision">Vision</Label>
-                <Field as={Textarea} id="vision" name="vision" placeholder="Enter vision" />
+              <div className="w-full space-y-2">
+                <Label className="text-semibold text-primary" htmlFor="vision">Vision</Label>
+                <Field as={Textarea} id="vision" name="vision" placeholder="Enter vision" className="h-32"/>
                 <ErrorMessage name="vision" component="div" className="text-red-500 text-sm h-8" />
               </div>
-              <div className="w-full">
-                <Label htmlFor="mission">Mission</Label>
-                <Field as={Textarea} id="mission" name="mission" placeholder="Enter mission" />
+              <div className="w-full space-y-2">
+                <Label className="text-semibold text-primary" htmlFor="mission">Mission</Label>
+                <Field as={Textarea} id="mission" name="mission" placeholder="Enter mission" className='h-32'/>
                 <ErrorMessage name="mission" component="div" className="text-red-500 text-sm" />
               </div>
             </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Field as={Textarea} id="description" name="description" placeholder="Enter description" />
+            <div className="space-y-2">
+              <Label className="text-semibold text-primary" htmlFor="description">Description</Label>
+              <Field as={Textarea} id="description" name="description" placeholder="Enter description" className="h-32" />
               <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
             </div>
             <div className="flex justify-end space-x-4">

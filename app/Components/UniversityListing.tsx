@@ -146,11 +146,11 @@ const handleNextPage = () => {
 
 
   return (
-    <main className="p-6">
+    <main className="p-8">
       <div className="flex items-center justify-between my-5">
         <h1 className="text-2xl font-bold text-secondary">All Universities</h1>
         <div className="flex items-center space-x-4 text-textprimary">
-          <div className="relative w-[350px]">
+          <div className="relative w-[320px]">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search"
@@ -160,7 +160,7 @@ const handleNextPage = () => {
             />
           </div>
           <Select value={filter} onValueChange={(value) => setFilter(value)}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="All" />
             </SelectTrigger>
             <SelectContent>

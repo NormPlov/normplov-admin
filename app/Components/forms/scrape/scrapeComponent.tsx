@@ -26,6 +26,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Lottie from "lottie-react";
 import animationData from '../../../json/Error.json'
+import { BsInfoCircleFill } from "react-icons/bs";
 
 
 
@@ -37,7 +38,6 @@ export default function JobPreviewPage() {
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<JobScrapeType | null>(null);
-  // const [url, setUrl] = useState("");
   const { toast } = useToast()
   const router = useRouter();
 
@@ -185,7 +185,7 @@ export default function JobPreviewPage() {
 
   return (
     <div className="h-screen p-6 rounded-md mx-6">
-      <h2 className="text-2xl font-normal text-secondary mb-6">Scrape Job</h2>
+      <h2 className="text-2xl font-semibold text-secondary mb-4">Scrape Job</h2>
       <Formik
         initialValues={{ url: "" }}
         validationSchema={validationSchema}
@@ -217,6 +217,7 @@ export default function JobPreviewPage() {
           <Form className="space-y-4 flex justify-between items-center gap-20">
             {/* Input Field using Formik's Field */}
             <div className="w-full mt-4">
+            <p className="text-[15px] text-gray-400 py-2 flex gap-2"><BsInfoCircleFill  className='w-5 h-5 text-blue-500'/> Can scrape form bongthom, Jobtify, Camhr and CamboJob.</p>
               <Field
                 as={Input}
                 type="text"
@@ -226,7 +227,6 @@ export default function JobPreviewPage() {
               />
               <ErrorMessage name="url" component="div" className="text-red-500 text-sm mt-1" />
             </div>
-
             {/* Submit Button */}
             <Button type="submit" disabled={isSubmitting}
               className="mb-8 bg-primary hover:bg-primary/80">
@@ -235,10 +235,8 @@ export default function JobPreviewPage() {
           </Form>
         )}
       </Formik>
-
-
       <div className="flex justify-between items-center mb-4 mt-10">
-        <h2 className="text-2xl font-normal text-secondary">Preview Job</h2>
+        <h2 className="text-2xl font-semibold text-secondary">Preview Job</h2>
         <div className="flex items-center gap-4">
           <div className="relative">
             <IoIosSearch className="absolute left-3 top-2.5 text-gray-400" />
@@ -253,6 +251,7 @@ export default function JobPreviewPage() {
         </div>
       </div>
 
+      <p className="text-[17px] text-gray-400 py-1.5 flex gap-2 items-center"><BsInfoCircleFill  className='w-5 h-5 text-blue-500'/> Update to make this job official.</p>
       <div className="rounded-md border border-gray-200">
         <Table>
           <TableHeader>

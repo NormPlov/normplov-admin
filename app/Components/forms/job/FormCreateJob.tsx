@@ -16,6 +16,13 @@ import { ClosingDate } from '../../calendar/ClosingDate';
 import { useToast } from '@/hooks/use-toast';
 import { ChevronDown } from 'lucide-react';
 import { useUploadImageMutation } from '@/app/redux/service/media';
+import { IoMdInformationCircleOutline } from 'react-icons/io';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
@@ -280,7 +287,7 @@ const AddJobForm = () => {
             <div className="absolute inset-0 flex items-center justify-center gap-4 bg-opacity-50 hover:opacity-100 transition-opacity duration-200">
               <div className="bg-gray-200 w-62 flex justify-center items-center gap-4 p-2 rounded-md">
                 <FaUpload className="text-gray-400 text-lg" />
-                <span className="text-gray-400 text-md font-medium">Upload Image</span>
+                <span className="text-gray-400 text-md font-medium">Upload Image 1024 * 1024</span>
               </div>
             </div>
 
@@ -432,8 +439,6 @@ const AddJobForm = () => {
                 onDateChange={(date) => setFieldValue("closing_date", date)}
               />
             </div>
-
-
           </div>
           {/* Salary */}
           <div className="mb-2.5 w-full">
@@ -450,10 +455,23 @@ const AddJobForm = () => {
             <ErrorMessage name="salary" component="p" className="text-red-500 text-sm mt-1" />
           </div>
           {/* Job description */}
-          <div className="mb-2.5">
-            <label htmlFor="description" className="block text-md font-normal py-2 text-primary">
+          <div className="">
+            <label htmlFor="description" className="block text-md font-normal py-2 text-primary ">
               Job description
+              <TooltipProvider >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" className='hover:bg-white'>
+                      <IoMdInformationCircleOutline className='text-blue-500'/>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                    <p>Can add multiple lines of text by using comma.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </label>
+
             <Field
               as="textarea"
               id="description"
@@ -470,6 +488,18 @@ const AddJobForm = () => {
           <div className="mb-2.5">
             <label htmlFor="responsibilities" className="block text-md font-normal text-primary py-2">
               Job responsibility
+              <TooltipProvider >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" className='hover:bg-white'>
+                      <IoMdInformationCircleOutline className='text-blue-500'/>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                    <p>Can add multiple lines of text by using comma.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </label>
             <Field
               as="textarea"
@@ -484,6 +514,18 @@ const AddJobForm = () => {
           <div className="mb-2.5">
             <label htmlFor="benefits" className="block text-md font-normal text-primary py-2">
               Job benefits
+              <TooltipProvider >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" className='hover:bg-white'>
+                      <IoMdInformationCircleOutline className='text-blue-500'/>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                    <p>Can add multiple lines of text by using comma.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </label>
             <Field
               as="textarea"
@@ -498,6 +540,18 @@ const AddJobForm = () => {
           <div className="mb-2.5">
             <label htmlFor="requirements" className="block text-md font-normal text-primary py-2">
               Job requirements
+              <TooltipProvider >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" className='hover:bg-white'>
+                      <IoMdInformationCircleOutline className='text-blue-500'/>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="border-none shadow-sm  text-sm text-gray-50 p-2 rounded-md">
+                    <p>Can add multiple lines of text by using comma.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </label>
             <Field
               as="textarea"
@@ -509,7 +563,6 @@ const AddJobForm = () => {
             <ErrorMessage name="requirements" component="p" className="text-red-500 text-sm mt-1" />
           </div>
           <div className="flex justify-between w-full gap-24">
-
             {/* Facebook */}
             <div className="mb-2.5 w-full">
               <label htmlFor="Resources" className="block text-md font-normal text-primary py-2">

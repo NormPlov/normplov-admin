@@ -54,6 +54,7 @@ export default function UserTable() {
   const [blockUser] = useBlockUserMutation();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null); // Status filter (null = no filter)
+  const [gender, setGender] = useState<string | null>(null);
 
   // Convert status to boolean for API
   const isActive = status === "active" ? true : status === "inactive" ? false : undefined;
@@ -70,6 +71,7 @@ export default function UserTable() {
     pageSize: itemsPerPage,
     search,
     is_active: isActive,
+    gender: gender === "Other" ? "" : gender || undefined, 
   });
 
   if (isLoading) {
@@ -90,9 +92,7 @@ export default function UserTable() {
             <Skeleton className="h-6 w-24" />
             <Skeleton className="h-6 w-32" />
           </div>
-
           {/* Table Rows */}
-
           <div className="grid grid-cols-5 items-center py-4 border-b ">
             <Skeleton className="h-16 w-16 rounded-full" />
             <Skeleton className="h-8 w-[900px] rounded-md" />
@@ -186,10 +186,22 @@ export default function UserTable() {
                 className="w-64 pl-8 focus:border-primary"
               />
             </div>
+            {/* Filter Select  Gender*/}
+            <Select value={gender || ""} onValueChange={(value) => setGender(value)}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Select Gender"  className="text-gray-300 text-sm"/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Other" >Other</SelectItem>
+              </SelectContent>
+            </Select>
             {/* Filter Select */}
             <Select value={status || ""} onValueChange={(value) => setStatus(value)}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="All" />
+                <SelectValue placeholder="Select Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
@@ -244,7 +256,7 @@ export default function UserTable() {
                       {user.username || "N/A"}
                     </TableCell>
                     <TableCell className="text-gray-600 ">
-                      {user.gender || "N/A"}
+                    {user.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : "Other"}
                     </TableCell>
                     <TableCell className="text-gray-600">
                       {user.email}
@@ -273,7 +285,6 @@ export default function UserTable() {
                             </TooltipTrigger>
                             <TooltipContent>View Profile</TooltipContent>
                           </Tooltip>
-
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button

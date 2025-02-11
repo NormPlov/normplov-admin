@@ -109,7 +109,7 @@ const UpdateProfile = () => {
             if (imageFile) {
                 await postUserImage({ uuid: userData.uuid, avatar_url: imageFile }).unwrap();
                 toast({
-                    description: "Profile image updated successfully.",
+                    title: "Profile image updated successfully.",
                     variant: "default"
                 });
             }
@@ -144,7 +144,7 @@ const UpdateProfile = () => {
             if (Object.keys(cleanUpdatedInfo).length > 0) {
                 await updateUserInfo({ uuid: userData?.uuid, user: cleanUpdatedInfo }).unwrap();
                 toast({
-                    description: "Profile info updated successfully.",
+                    title: "Profile info updated successfully.",
                     variant: "default"
                 });
                 router.refresh()
@@ -179,7 +179,7 @@ const UpdateProfile = () => {
         } catch (error) {
             console.error("Error updating profile:", error);
             toast({
-                description: "Error updating profile. Please try again.",
+                title: "Error updating profile. Please try again.",
                 variant: "destructive"
             });
         }
@@ -292,6 +292,7 @@ const UpdateProfile = () => {
                                     <DatePickerDemo
                                         selectedDate={userData?.date_of_birth}
                                         onDateChange={(date) => setFieldValue("date_of_birth", date)}
+                                        dobUser={userData.date_of_birth}
                                     />
                                     <ErrorMessage name="date_of_birth" component="div" className="text-sm text-red-500" />
                                 </div>

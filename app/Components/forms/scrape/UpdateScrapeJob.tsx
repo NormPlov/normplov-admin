@@ -24,6 +24,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronDown } from 'lucide-react';
 import animationData from '../../../json/NotFound.json'
 import Lottie from 'lottie-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { IoMdInformationCircleOutline } from 'react-icons/io';
 
 
 const jobTypes = ['Full-time', 'Part-time', 'Internship'];
@@ -105,7 +107,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         height={30}
                         loop
                         autoplay
-
                     />
                 </div>
                 <div className="p-6 text-center text-red-500">Job not found.</div>
@@ -272,7 +273,8 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                 .then((response) => {
                     console.log("Job updated successfully:", response);
                     toast({
-                        description: "Job updated successfully!",
+                        title: "Job updated successfully!",
+                        description: "This job is now official for the user.",
                         variant: "default"
                     });
                     router.push("/scrape");
@@ -315,7 +317,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     {/* Company Name */}
                     <div className="mb-2.5">
                         <label htmlFor="company" className="block text-md font-normal py-2 text-primary">
-                            Company Name <span className='text-red-500'>*</span>
+                            Company Name
                         </label>
                         <Field
                             id="company"
@@ -391,8 +393,11 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                     name="category"
                                     type="text"
                                     value={values.category}
-                                    onChange={(e) => setFieldValue('category', e.target.value)}
-                                    placeholder="Type or select a category"
+                                    onChange={(e) => {
+                                        setFieldValue('category', e.target.value);
+                                        setDropdownOpen(true); // Open dropdown when typing
+                                    }}
+                                    placeholder={values.category || "Type or select a category"}
                                     className="flex-grow outline-none"
                                 />
                                 <button
@@ -404,32 +409,37 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 </button>
                             </div>
                             {dropdownOpen && (
-                                <div
-                                    className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50"
-                                    style={{ zIndex: 50 }}
-                                >
-                                    {jobCategory.payload.categories.map((type) => (
-                                        <div
-                                            key={type}
-                                            onClick={() => {
-                                                setFieldValue('category', type);
-                                                setDropdownOpen(false);
-                                            }}
-                                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                            {type}
-                                        </div>
-                                    ))}
+                                <div className="absolute left-0 mt-2 w-full border bg-white rounded shadow z-50">
+                                    {jobCategory.payload.categories
+                                        .filter((type) =>
+                                            type.toLowerCase().includes(values.category.toLowerCase())
+                                        )
+                                        .map((type) => (
+                                            <div
+                                                key={type}
+                                                onClick={() => {
+                                                    setFieldValue('category', type);
+                                                    setDropdownOpen(false);
+                                                }}
+                                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                {type}
+                                            </div>
+                                        ))}
+                                    {/* Show a message if no matches are found */}
+                                    {jobCategory.payload.categories.filter((type) =>
+                                        type.toLowerCase().includes(values.category.toLowerCase())
+                                    ).length === 0 && (
+                                            <div className="px-3 py-2 text-gray-500">No matching categories</div>
+                                        )}
                                 </div>
                             )}
-
                             <ErrorMessage name="category" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
-
                         {/* Position */}
                         <div className="w-full">
                             <label htmlFor="title" className="block font-normal text-primary text-md py-1.5">
-                                Position <span className='text-red-500'>*</span>
+                                Position
                             </label>
                             <Field
                                 id="title"
@@ -440,10 +450,7 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             />
                             <ErrorMessage name="title" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
-
-
                     </div>
-
                     <div className="flex justify-between w-full gap-24">
                         {/* Job Type */}
                         <div className="mb-3 w-full">
@@ -454,7 +461,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                                 as="div"
                                 id="job_type"
                                 name="job_type"
-
                             >
                                 <Select
                                     name="job_type"
@@ -499,8 +505,6 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                         </div>
                     </div>
                     <div className="flex justify-between w-full gap-24">
-
-
                         {/* Salary */}
                         <div className="mb-1 w-full">
                             <label htmlFor="salary" className="block font-normal text-primary text-md py-2">
@@ -529,38 +533,58 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                             />
                             <ErrorMessage name="schedule" component="p" className="text-red-500 text-sm mt-1" />
                         </div>
-
                     </div>
-
 
                     {/* Job description */}
                     <div className="mb-2.5">
                         <label htmlFor="description" className="block text-md font-normal py-2 text-primary">
-                            Job description <span className='text-red-500'>*</span>
+                            Job description
+                            <TooltipProvider >
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" className='hover:bg-white'>
+                                            <IoMdInformationCircleOutline className='text-blue-500' />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                                        <p>Can add multiple lines of text by using comma.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </label>
                         <Field
                             as="textarea"
                             id="description"
                             name="description"
                             placeholder={job.description || "N/A"}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
+                            className={`mt-1 h-48 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                         >
-
                         </Field>
                         <ErrorMessage name="description" component="p" className="text-red-500 text-sm mt-1" />
                     </div>
-
                     {/* Job responsibility */}
                     <div className="mb-2.5">
                         <label htmlFor="responsibilities" className="block text-md font-normal text-primary py-2">
-                            Job responsibility <span className='text-red-500'>*</span>
+                            Job responsibility
+                            <TooltipProvider >
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" className='hover:bg-white'>
+                                            <IoMdInformationCircleOutline className='text-blue-500' />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                                        <p>Can add multiple lines of text by using comma.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </label>
                         <Field
                             as="textarea"
                             id="responsibilities"
                             name="responsibilities"
                             placeholder={job.responsibilities}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
+                            className={`mt-1 h-48 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                             value={Array.isArray(values.responsibilities) ? values.responsibilities.join(", ") : ""}
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                                 setFieldValue("responsibilities", e.target.value.split(",").map((item) => item.trim()));
@@ -571,14 +595,26 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     {/* Job requirements */}
                     <div className="mb-2.5">
                         <label htmlFor="requirements" className="block text-md font-normal text-primary py-2">
-                            Job requirements <span className='text-red-500'>*</span>
+                            Job requirements
+                            <TooltipProvider >
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" className='hover:bg-white'>
+                                            <IoMdInformationCircleOutline className='text-blue-500' />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                                        <p>Can add multiple lines of text by using comma.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </label>
                         <Field
                             as="textarea"
                             id="requirements"
                             name="requirements"
                             placeholder={job.requirements}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
+                            className={`mt-1 h-48 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary/60 focus:border-primary/60 text-gray-400 px-6 py-3`}
                             value={(values.requirements || []).join(", ")} // Convert array to string
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                                 setFieldValue(
@@ -593,7 +629,19 @@ const UpdateJobForm = ({ uuid }: JobDetailsProps) => {
                     {/* Job benefits */}
                     <div className="mb-2.5">
                         <label htmlFor="benefits" className="block text-md font-normal text-primary py-2">
-                            Job benefits <span className='text-red-500'>*</span>
+                            Job benefits
+                            <TooltipProvider >
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" className='hover:bg-white'>
+                                            <IoMdInformationCircleOutline className='text-blue-500' />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="border-none shadow-sm text-sm text-gray-50 p-2 rounded-md">
+                                        <p>Can add multiple lines of text by using comma.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </label>
                         <Field
                             as="textarea"

@@ -1,9 +1,6 @@
-"use client";
-
 import * as React from "react";
-import { format, parse, parseISO, isValid, differenceInYears, subYears } from "date-fns";
+import { format, parseISO, isValid, differenceInYears, subYears } from "date-fns";
 import { CalendarDays } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -12,26 +9,41 @@ import { Calendar } from "@/components/ui/calendar";
 type DatePickerDemoProps = {
   selectedDate: string | null | undefined;
   onDateChange: (date: string | undefined) => void;
+  dobUser: Date | string;
 };
 
-export function DatePickerDemo({ selectedDate, onDateChange }: DatePickerDemoProps) {
-  const thirteenYearsAgo = subYears(new Date(), 13); // Calculate 13 years ago
-  const [date, setDate] = React.useState<Date | undefined>(
-    selectedDate && typeof selectedDate === "string" && isValid(parseISO(selectedDate))
-      ? parseISO(selectedDate)
-      : thirteenYearsAgo // Default to 13 years ago if no date is provided
-  );
-  const [manualDate, setManualDate] = React.useState<string>(selectedDate || "");
+export function DatePickerDemo({ selectedDate, onDateChange, dobUser }: DatePickerDemoProps) {
+  const thirteenYearsAgo = subYears(new Date(), 13);
+
+  // State for the selected date
+  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [manualDate, setManualDate] = React.useState<string>("");
   const [error, setError] = React.useState<string>("");
 
-  // Handle date change from calendar or input
+  // Parse dobUser on initial load and when dobUser changes
+  React.useEffect(() => {
+    let parsedDate: Date | undefined;
+
+    if (typeof dobUser === "string" && isValid(parseISO(dobUser))) {
+      parsedDate = parseISO(dobUser);
+    } else if (dobUser instanceof Date) {
+      parsedDate = dobUser;
+    }
+
+    if (parsedDate) {
+      setDate(parsedDate);
+      setManualDate(format(parsedDate, "yyyy-MM-dd"));
+    } else {
+      setDate(thirteenYearsAgo); // Default to 13 years ago if dobUser is invalid
+    }
+  }, [dobUser]);
+
   const handleDateChange = (selected: Date | undefined) => {
     if (!selected) {
       setError("Please select a valid date.");
       return;
     }
 
-    // Ensure the user is at least 13 years old
     const age = differenceInYears(new Date(), selected);
     if (age < 13) {
       setError("You must be at least 13 years old.");
@@ -40,19 +52,16 @@ export function DatePickerDemo({ selectedDate, onDateChange }: DatePickerDemoPro
 
     setError("");
     setDate(selected);
-
-    // Format the date to "YYYY-MM-DD"
     const formattedDate = format(selected, "yyyy-MM-dd");
     setManualDate(formattedDate);
-    onDateChange(formattedDate); // Send formatted date back to parent
+    onDateChange(formattedDate);
   };
 
   const handleManualInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setManualDate(value);
 
-    // Check if the value is a valid date in the correct format (yyyy-MM-dd)
-    const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+    const parsedDate = parseISO(value);
     if (isValid(parsedDate)) {
       const age = differenceInYears(new Date(), parsedDate);
       if (age < 13) {
@@ -61,8 +70,8 @@ export function DatePickerDemo({ selectedDate, onDateChange }: DatePickerDemoPro
       }
 
       setError("");
-      setDate(parsedDate); // Update the calendar date when input is valid
-      onDateChange(value); // Pass the valid date back to the parent
+      setDate(parsedDate);
+      onDateChange(value);
     } else {
       setError("Invalid date format. Please use YYYY-MM-DD.");
     }
@@ -86,7 +95,6 @@ export function DatePickerDemo({ selectedDate, onDateChange }: DatePickerDemoPro
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 text-slate-700">
         <div className="p-2">
-          {/* Manual date input */}
           <input
             type="text"
             value={manualDate}
@@ -101,7 +109,7 @@ export function DatePickerDemo({ selectedDate, onDateChange }: DatePickerDemoPro
           selected={date}
           onSelect={handleDateChange}
           initialFocus
-          defaultMonth={thirteenYearsAgo} // Set the calendar to start at 13 years ago
+          defaultMonth={date || thirteenYearsAgo} // Ensure only Date type is passed
           disabled={(date) =>
             date > new Date() || differenceInYears(new Date(), date) < 13 || date < new Date("1900-01-01")
           }

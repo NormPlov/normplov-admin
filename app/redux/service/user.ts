@@ -14,8 +14,8 @@ export const userApi = normPlovApi.injectEndpoints({
             providesTags: ["userProfile"]
         }),
 
-        getAllUser: builder.query<UserListResponse, { page?: number; pageSize?: number; search?: string; is_active?:boolean }>({
-            query: ({ page = 1, pageSize = 10, search, is_active }) => {
+        getAllUser: builder.query<UserListResponse, { page?: number; pageSize?: number; search?: string; is_active?:boolean; gender:string }>({
+            query: ({ page = 1, pageSize = 10, search, is_active, gender }) => {
                 const query = new URLSearchParams();
         
                 query.append("page", page.toString());
@@ -23,6 +23,13 @@ export const userApi = normPlovApi.injectEndpoints({
         
                 if (search) query.append("search", search);
                 if (is_active !== undefined) query.append("is_active", is_active.toString());
+                if (gender) {
+                    if (gender.toLowerCase() === "other") {
+                      query.append("gender", ""); // Fetch users with no gender
+                    } else {
+                      query.append("gender", gender); // Case-insensitive gender filter
+                    }
+                  }                  
                 return {
                     url: `api/v1/user/list?${query.toString()}`,
                     method: "GET",
